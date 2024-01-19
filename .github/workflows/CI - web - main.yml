@@ -1,4 +1,4 @@
-name: nexus-warehouse-web - main
+name: azeno-procheck-web - main
 
 on: 
   push:
@@ -96,4 +96,4 @@ jobs:
 
       - name: Build the stack
         run: |
-          docker-compose --env-file .env.development up --build -d nexus-warehouse-web
+          docker-compose --env-file .env.development up --build -d azeno-procheck-web

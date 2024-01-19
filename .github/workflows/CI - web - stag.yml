@@ -1,0 +1,149 @@
+name: azeno-procheck-web - stag
+
+on: 
+  push:
+    branches: 
+      - staging
+
+jobs:
+  upgrade-version:
+    name: 🆕 - Upgrade version
+    runs-on: ubuntu-latest    
+    defaults:
+      run:
+        working-directory: ./ 
+    permissions:
+      contents: write      
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}    
+
+      - name: Get version from package.json
+        uses: johnnybenson/package-json-versioned-action@v1.0.5
+        id: package-json
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE_JSON_PATH: package.json
+      - run: echo "version -- ${{ steps.package-json.outputs.version }}"
+      
+      - name: Check version increment   
+        id: get-fragment
+        uses: actions/github-script@v6
+        env:
+          VERSION: '${{ steps.package-json.outputs.version }}'        
+        with:
+          script: |
+            var fragment = 'bug'
+            const { VERSION } = process.env
+
+            const values = VERSION.split('.')
+            const min = Number(values[1])
+            const pat = Number(values[2])
+
+            if(pat >= 100) {fragment = 'feature'} 
+            if(min >= 100) {fragment = 'major'} 
+
+            core.setOutput('value', fragment)
+      - run: echo "fragment - ${{ steps.get-fragment.outputs.value }}"
+
+      - name: Bump release version
+        id: bump_version
+        uses: christian-draeger/increment-semantic-version@1.0.2
+        with:
+          current-version: '${{ steps.package-json.outputs.version }}'
+          version-fragment: '${{ steps.get-fragment.outputs.value }}'
+
+      - name: Get version from package.json      
+        uses: shaneapowell/github-tweak-the-json@v1
+        with: 
+          action: write
+          filename: package.json
+          field: version
+          value: "${{ steps.bump_version.outputs.next-version }}"   
+
+      - name: Update .env.staging from package.json
+        run: |          
+          node convertJson2env.js staging
+
+      - name: Update on git .env.staging changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update .env.staging changes
+          branch: staging    
+          push_options: '--force'                  
+
+  build-web:
+    name: 🚀 Build and Deploy 
+    needs: upgrade-version
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
+        
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+
+      - name: Get version from package.json
+        uses: johnnybenson/package-json-versioned-action@v1.0.5
+        id: package-json
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE_JSON_PATH: package.json
+      - run: echo "version -- ${{ steps.package-json.outputs.version }}"
+
+      - name: Dotenv Action
+        uses: falti/dotenv-action@v0.2.7
+        id: dotenv
+        with:
+          path: .env.staging
+
+      - name: Build the stack
+        run: |
+          docker-compose -f docker-compose.staging.yml --env-file .env.staging up --build -d azeno-procheck-web-stag
+
+      - name: Docker login
+        env:
+          DOCKER_USER: ${{ secrets.DOCKER_USER }}
+          DOCKER_PASS: ${{ secrets.DOCKER_PASS }}        
+        run: |
+          echo "DOCKER_USER: $DOCKER_USER | DOCKER_PASS: $DOCKER_PASS"
+          echo "$DOCKER_PASS" | docker login -u $DOCKER_USER --password-stdin https://registry.azeno.dev
+
+      - name: Docker push
+        run: |
+          docker tag registry.azeno.dev/azeno-procheck-web-stag:${{ steps.dotenv.outputs.version }} registry.azeno.dev/azeno-procheck-web-stag:latest
+          docker push registry.azeno.dev/azeno-procheck-web-stag:${{ steps.dotenv.outputs.version }}
+          docker push registry.azeno.dev/azeno-procheck-web-stag:latest
+
+  notif:
+    name: 🔔 - Notification
+    needs: build-web
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./   
+    
+    steps:         
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+        
+      - name: Dotenv Action
+        uses: falti/dotenv-action@v0.2.7
+        id: dotenv
+        with:
+          path: .env.staging
+        
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        env:
+          SLACK_CHANNEL: azeno
+          SLACK_COLOR: 'good'
+          SLACK_ICON: https://github.com/rtCamp.png?size=48
+          SLACK_MESSAGE: 'The azeno-procheck-web-stag with version ${{ steps.dotenv.outputs.version }} was deployed successfully :rocket: on NAS -> https://azeno-procheck.azeno.dev'
+          SLACK_TITLE: 'Deployed successfully :rocket:'
+          SLACK_USERNAME: rtBot
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}                
