@@ -1,0 +1,99 @@
+name: nexus-warehouse-web - main
+
+on: 
+  push:
+    branches: [ main ]
+
+jobs:
+  upgrade-version:
+    name: 🆕 - Upgrade version
+    runs-on: ubuntu-latest    
+    defaults:
+      run:
+        working-directory: ./ 
+    permissions:
+      contents: write      
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+        with:
+          ref: ${{ github.head_ref }}    
+
+      - name: Get version from package.json
+        uses: johnnybenson/package-json-versioned-action@v1.0.5
+        id: package-json
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PACKAGE_JSON_PATH: package.json
+      - run: echo "version -- ${{ steps.package-json.outputs.version }}"
+      
+      - name: Check version increment   
+        id: get-fragment
+        uses: actions/github-script@v6
+        env:
+          VERSION: '${{ steps.package-json.outputs.version }}'        
+        with:
+          script: |
+            var fragment = 'bug'
+            const { VERSION } = process.env
+
+            const values = VERSION.split('.')
+            const min = Number(values[1])
+            const pat = Number(values[2])
+
+            if(pat >= 100) {fragment = 'feature'} 
+            if(min >= 100) {fragment = 'major'} 
+
+            core.setOutput('value', fragment)
+      - run: echo "fragment - ${{ steps.get-fragment.outputs.value }}"
+
+      - name: Bump release version
+        id: bump_version
+        uses: christian-draeger/increment-semantic-version@1.0.2
+        with:
+          current-version: '${{ steps.package-json.outputs.version }}'
+          version-fragment: '${{ steps.get-fragment.outputs.value }}'
+
+      - name: Get version from package.json      
+        uses: shaneapowell/github-tweak-the-json@v1
+        with: 
+          action: write
+          filename: package.json
+          field: version
+          value: "${{ steps.bump_version.outputs.next-version }}"   
+
+      - name: Update .env.development from package.json
+        run: |          
+          node convertJson2env.js development
+
+      - name: Update on git .env.development changes
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Update .env.development changes
+          branch: main    
+          push_options: '--force'
+
+  build-web:
+    name: 🔗 - Build Web
+    needs: upgrade-version
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
+    permissions:
+      contents: write      
+
+    steps:
+      - name: 🚚 Get latest code
+        uses: actions/checkout@v2
+
+      - name: Dotenv Action
+        uses: falti/dotenv-action@v0.2.7
+        id: dotenv
+        with:
+          path: .env.development
+
+      - name: Build the stack
+        run: |
+          docker-compose --env-file .env.development up --build -d nexus-warehouse-web
