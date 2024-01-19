@@ -1,0 +1,42 @@
+version: '3.7'
+
+services:
+  azeno-procheck-web-stag:
+    container_name: azeno-procheck-web-stag
+    image: registry.azeno.dev/azeno-procheck-web-stag:${VERSION}
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+      args:
+        VERSION: ${VERSION}      
+        PROFILE: ${PROFILE}       
+        TZ: ${TZ}
+        NODE_ENV: ${NODE_ENV}
+        INTERNAL_PORT: ${INTERNAL_PORT}
+        API_AUTH: ${API_AUTH}
+        DOTENV_CONFIG_PATH: .env.staging      
+    environment:
+        VERSION: ${VERSION}
+        PROFILE: ${PROFILE}       
+        TZ: ${TZ}
+        NODE_ENV: ${NODE_ENV}
+        INTERNAL_PORT: ${INTERNAL_PORT}
+        API_AUTH: ${API_AUTH}
+        DOTENV_CONFIG_PATH: .env.staging    
+    ports:
+      - ${EXTERNAL_PORT}:${INTERNAL_PORT}
+    labels: 
+      - com.centurylinklabs.watchtower.enable = "true"
+      - com.ouroboros.enable="true"  
+    volumes:
+      - data:/usr/src/app          
+    networks:
+      - azeno-network
+
+networks:
+  azeno-network:
+    driver: bridge
+
+volumes:
+  data:
+  data-stag:
