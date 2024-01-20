@@ -64,9 +64,9 @@ jobs:
           field: version
           value: "${{ steps.bump_version.outputs.next-version }}"   
 
-      - name: Update .env.production from package.json
-        run: |          
-          node convertJson2env.js production
+      # - name: Update .env.production from package.json
+      #   run: |          
+      #     node convertJson2env.js production
 
       - name: Update on git .env.production changes
         uses: stefanzweifel/git-auto-commit-action@v4

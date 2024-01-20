@@ -64,9 +64,9 @@ jobs:
           field: version
           value: "${{ steps.bump_version.outputs.next-version }}"   
 
-      - name: Update .env.staging from package.json
-        run: |          
-          node convertJson2env.js staging
+      # - name: Update .env.staging from package.json
+      #   run: |          
+      #     node convertJson2env.js staging
 
       - name: Update on git .env.staging changes
         uses: stefanzweifel/git-auto-commit-action@v4
