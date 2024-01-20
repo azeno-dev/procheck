@@ -1,7 +1,7 @@
 <!-- ProductGrid.vue -->
 
 <template>
-  <div class="bg-gray-100 p-8 h-[100vh]">
+  <div :class="{'bg-gray-100 p-8 ':filteredProducts.length > 0, '' : 'h-[100vh]' }">
     <!-- Search, Import, and Export Buttons -->
     <div class="flex mb-4 justify-between ">
       <div class="relative w-3/4 mr-4">
