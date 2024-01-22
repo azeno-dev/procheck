@@ -1,7 +1,7 @@
 <!-- ProductGrid.vue -->
 
 <template>
-  <div :class="{' ':filteredProducts.length > 0, ' bg-gray-100 p-8' : 'h-[100vh]' }">
+  <div :class="{ ' ': filteredProducts.length > 0, ' bg-gray-100 p-8': 'h-[100vh]' }">
     <!-- Search, Import, and Export Buttons -->
     <div class="flex mb-4 justify-between ">
       <div class="relative w-3/4 mr-4">
@@ -14,11 +14,26 @@
         </button>
       </div>
 
+      <div class="w-[4%] text-black my-auto px-2 py-1 flex">
+        <p class="mr-1 mb-2">{{ countActive }}</p>
+        <div class="w-4 h-4 bg-green-500 rounded-full">
+        </div>
+      </div>
+
+      <div class="w-[4%] text-black my-auto px-2 py-1 flex">
+        <p class="mr-1 mb-2">{{ products.length - countActive }}</p>
+        <div class="w-4 h-4 bg-red-500 rounded-full">
+        </div>
+      </div>
+
+      <input v-model="delayAutoClear" type="number" class="w-[4%] px-1 py-1 border rounded-md" @change="saveDataToLocalStorage('delayAutoClear', delayAutoClear)"><p class=" my-auto ml-1 mr-2">sec</p> 
+      <input v-model="delayClearData" type="number" class="w-[4%] px-1 py-1 border rounded-md" @change="saveDataToLocalStorage('delayClearData', delayClearData)"><p class=" my-auto ml-1">ore</p>
+
       <!-- <button @click="importData" class="w-1/6 bg-blue-500 text-white px-4 py-2 rounded-md">Import</button> -->
       <input type="file" @change="handleFileUpload" class="hidden" ref="fileInput" accept=".xlsx">
-      <button @click="triggerFileInput" class="w-1/12 bg-blue-500 text-white px-4 py-2 rounded-md mx-2">Import</button>
-      <button @click="exportData" class="w-1/12 bg-green-500 text-white px-4 py-2 rounded-md mx-2">Export</button>
-      <button @click="clearData" class="w-1/12 bg-red-500 text-white px-4 py-2 rounded-md mx-2">Clear</button>
+      <button @click="triggerFileInput" class="w-[8%] bg-blue-500 text-white px-4 py-2 rounded-md mx-2">Import</button>
+      <button @click="exportData" class="w-[8%] bg-green-500 text-white px-4 py-2 rounded-md mx-2">Export</button>
+      <button @click="clearData" class="w-[8%] bg-red-500 text-white px-4 py-2 rounded-md mx-2">Clear</button>
     </div>
 
     <!-- Product Grid -->
@@ -51,11 +66,14 @@ export default {
     const values: any[] = [];
     const swalInj = inject('$swal')
 
-    return {      
+    return {
       swal: this.swalInj,
       searchQuery: '',
-      activStatus: 'Colet livrat',
-      inactivStatus: 'Colet nelivrat',
+      activStatus: 'Pregatit',
+      inactivStatus: 'Nepregatit',
+      delayAutoClear: 5,
+      delayClearData: 12,
+      countActive: 0,
       products: values,
       // { id: 1, awb: 'Product 1', date: '19 Jan 2024 15:48:16', status: "Colet livrat", clientName: 'Manea robertina', clientPhone: '0771498277', observations: '3 x CATKLF-CG1' },
       //   { id: 2, awb: 'Product 2', date: '19 Jan 2024 15:48:16', status: "Colet nelivrat", clientName: 'Manea robertina', clientPhone: '0771498277', observations: '3 x CATKLF-CG1' },
@@ -99,7 +117,9 @@ export default {
 
         setTimeout(() => {
           this.searchQuery = '';
-        }, 5 * 1000)
+          this.sortByStatus(this.products);
+          this.countActive = this.products.filter(p => p.status == this.activStatus).length;
+        }, this.delayAutoClear * 1000)
 
         // console.log("result2: ",  result[0]);
       }
@@ -115,18 +135,42 @@ export default {
       this.searchQuery = '';
     },
     initData() {
+      const delayAutoClearJson = localStorage.getItem('delayAutoClear');
+      if (delayAutoClearJson) { 
+        this.delayAutoClear = parseInt(delayAutoClearJson);
+      } else {
+        localStorage.setItem('delayAutoClear', this.delayAutoClear.toString());
+      }
+
+      const delayClearDataJson = localStorage.getItem('delayClearData');
+      if (delayClearDataJson) { 
+        this.delayClearData = parseInt(delayClearDataJson);
+      } else {
+        localStorage.setItem('delayClearData', this.delayClearData.toString());
+      }      
+      
       const json = localStorage.getItem('importedData');
       if (json) {
         const data = JSON.parse(json);
-        if (data && data.products && data.products.length > 0) {
-          const values = data.products as any[];
 
-          this.products = values.sort((a: any, b: any) => {
-            var x = a.status ? a.status.toLowerCase() : "";
-            var y = b.status ? b.status.toLowerCase() : "";
+        if (data) {
+          if ((new Date()).getTime() > data.expiry) {
+            // If the item is expired, delete the item from storage
+            // and return null
+            localStorage.removeItem('importedData');
+            this.products = [];
+            this.countActive = 0;
 
-            return x < y ? 1 : x > y ? -1 : 0;
-          });
+            return null
+          }
+
+          if (data.products && data.products.length > 0) {
+            const values = data.products as any[];
+
+            this.sortByStatus(values);
+
+            this.countActive = this.products.filter(p => p.status == this.activStatus).length;
+          }
         }
       }
     },
@@ -150,6 +194,7 @@ export default {
         this.readExcelFile(file);
       }
     },
+
     readExcelFile(file: any) {
       const reader = new FileReader();
 
@@ -160,33 +205,33 @@ export default {
         const sheet = workbook.Sheets[sheetName];
         const importedData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
-        this.products = [];
-
         // Convert the imported data to an array of objects
         const values = importedData.slice(1).map((row: any, index: number) => {
           return {
-            // name: row[0],
-            // sku: row[1],
-            // code: row[2],
-            // status: row[3],
-            // image: row[4],
             id: index,
             awb: row[0],
             date: row[2], //Data crearii 
-            status: row[4], //Status
+            // status: row[4], //Status
+            // status: this.inactivStatus,
+            status: row[4] && row[4] == this.activStatus ? this.activStatus : this.inactivStatus,
             clientName: row[21], //Nume destinatar
             clientPhone: row[26], //Telefon destinatar
             observations: row[27], //Observatii
           };
         });
 
-        this.products = values.sort((a: any, b: any) => {
-          var x = a.status ? a.status.toLowerCase() : "";
-          var y = b.status ? b.status.toLowerCase() : "";
+        // console.log("values: ", values);
+        if (this.products.length > 0) {
+          Array.prototype.push.apply(this.products, values);
+        } else {
+          this.products = values;
+        }
 
-          return x < y ? 1 : x > y ? -1 : 0;
-        });
+        // console.log("products: ", this.products);
 
+        this.sortByStatus(this.products);
+
+        this.countActive = this.products.filter(p => p.status == this.activStatus).length;
         // console.log("products: ", this.products);
 
         // Save the imported data to local storage
@@ -198,11 +243,24 @@ export default {
 
     saveToLocalStorage(products: any[]) {
       const dataToStore = {
-        timestamp: new Date().getTime(),
+        expiry: ((new Date()).getTime()) + ((this.delayClearData * 3600) * 1000),
         products,
       };
 
       localStorage.setItem('importedData', JSON.stringify(dataToStore));
+    },
+
+    saveDataToLocalStorage(key: string,  data: any) {
+      localStorage.setItem(key, data.toString());
+    },
+
+    sortByStatus(values: any) {
+      this.products = values.sort((a: any, b: any) => {
+        var x = a.status ? a.status.toLowerCase() : "";
+        var y = b.status ? b.status.toLowerCase() : "";
+
+        return x < y ? -1 : x > y ? 1 : 0;
+      });
     },
 
     exportData() {
@@ -215,7 +273,8 @@ export default {
 
     clearData() {
       this.products = [];
-      this.saveToLocalStorage(this.products);
+      this.countActive = 0
+      localStorage.removeItem('importedData');
     },
   },
 };
