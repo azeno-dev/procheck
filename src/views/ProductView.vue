@@ -4,13 +4,13 @@
   <div :class="{ ' ': filteredProducts.length > 0, ' bg-gray-100': 'h-[100vh]' }">
 
     <nav :class="{ 'scrolled': !view.atTopOfPage }"
-      class="fixed flex w-full bg-white border-b items-center justify-between flex-wrap px-2 pt-6 mx-auto top-0 animated">
+      class="fixed flex w-full bg-white border-b items-center justify-between flex-wrap pl-1 pr-6 pt-6 mx-auto top-0 animated">
 
       <!-- Search, Import, and Export Buttons -->
-      <div class="flex mb-4 justify-between px-8">
+      <div class="flex mb-4 justify-between pl-8 w-full">
         <div class="relative w-[20%] mr-4">
           <input v-model="searchQueryAWB" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="AWB..."
-            @mouseenter="activSearch = false; searchQuery = ''" :disabled="activSearch == true">
+            @mouseenter="activSearch = false; searchQuery = ''" @mouseleave="activSearch = true;" :disabled="activSearch == true">
           <button v-if="searchQueryAWB" @click="searchQueryAWB = ''"
             class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
             <!-- X Icon -->
@@ -20,9 +20,10 @@
           </button>
         </div>
 
-        <div class="relative w-[40%] mr-4">
+        <div class="relative w-[30%] mr-4">
           <input v-model="searchQuery" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="Search..."
-            @mouseenter="activSearch = true; searchQueryAWB = ''" :disabled="activSearch == false">
+            @mouseenter="activSearch = true; searchQueryAWB = ''"
+            :disabled="activSearch == false">
           <button v-if="searchQuery" @click="searchQuery = ''" class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
             <!-- X Icon -->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4">
@@ -31,17 +32,13 @@
           </button>
         </div>
 
-        <div class="w-[4%] text-black my-auto px-2 py-1 flex">
-          <p class="mr-1 mb-2">{{ countActive }}</p>
-          <div class="w-4 h-4 bg-green-500 rounded-full">
-          </div>
+        <div class="w-[4%] text-black my-auto px-2 py-1 flex bg-green-500 rounded-full">
+          <p class="m-auto">{{ countActive }}</p>
         </div>
 
-        <div class="w-[4%] text-black my-auto px-2 py-1 flex">
-          <p class="mr-1 mb-2">{{ products.length - countActive }}</p>
-          <div class="w-4 h-4 bg-red-500 rounded-full">
-          </div>
-        </div>
+        <div class="w-[4%] text-black my-auto px-2 py-1 flex bg-red-500 rounded-full">
+          <p class="m-auto">{{ products.length - countActive }}</p>
+        </div>        
 
         <input v-model="delayAutoClear" type="number" class="w-[4%] px-1 py-1 border rounded-md"
           @change="saveDataToLocalStorage('delayAutoClear', delayAutoClear)">
@@ -52,9 +49,9 @@
 
         <!-- <button @click="importData" class="w-1/6 bg-blue-500 text-white px-4 py-2 rounded-md">Import</button> -->
         <input type="file" @change="handleFileUpload" class="hidden" ref="fileInput" accept=".xlsx">
-        <button @click="triggerFileInput" class="w-[8%] bg-blue-500 text-white px-4 py-2 rounded-md mx-2">Import</button>
-        <button @click="exportData" class="w-[8%] bg-green-500 text-white px-4 py-2 rounded-md mx-2">Export</button>
-        <button @click="clearData" class="w-[8%] bg-red-500 text-white px-4 py-2 rounded-md mx-2">Clear</button>
+        <button @click="triggerFileInput" class="w-[6%] bg-blue-500 text-white px-4 py-2 rounded-md mx-2">Import</button>
+        <button @click="exportData" class="w-[6%] bg-green-500 text-white px-4 py-2 rounded-md mx-2">Export</button>
+        <button @click="clearData" class="w-[6%] bg-red-500 text-white px-4 py-2 rounded-md mx-2">Clear</button>
       </div>
     </nav>
 
@@ -81,15 +78,14 @@
   
 <script lang="ts">
 import * as XLSX from 'xlsx';
-import { inject } from 'vue'
+import { toast } from 'vue3-toastify';
+import 'vue3-toastify/dist/index.css';
 
 export default {
   data() {
     const values: any[] = [];
-    const swalInj = inject('$swal')
 
     return {
-      swal: this.swalInj,
       view: {
         atTopOfPage: true
       },
@@ -106,6 +102,31 @@ export default {
       //   { id: 2, awb: 'Product 2', date: '19 Jan 2024 15:48:16', status: "Colet nelivrat", clientName: 'Manea robertina', clientPhone: '0771498277', observations: '3 x CATKLF-CG1' },
       //   { id: 3, awb: 'Product 3', date: '19 Jan 2024 15:48:16', status: "Colet livrat", clientName: 'Manea robertina', clientPhone: '0771498277', observations: '3 x CATKLF-CG1' },      
     };
+  },
+  setup() {
+    const notifyAWBExist = (awb: string, delay: number) => {
+      toast(`AWB #${awb} a fost  gasit!`, {
+        autoClose: (delay * 3) * 1000,
+        type: "success",
+        position: "bottom-right",
+      });
+    }
+    const notifyAWBDouble = (awb: string, no: number) => {
+      toast(`AWB #${awb} a fost gasit de ${no}!`, {
+        type: "warning",
+        position: "bottom-right",
+        "autoClose": false,
+      });
+    }
+    const notifyAWBError = (awb: string) => {
+      toast(`AWB #${awb} nu a fost gasit!`, {
+        type: "error",
+        position: "bottom-right",
+        "autoClose": false,
+      });
+    }
+
+    return { notifyAWBExist, notifyAWBDouble, notifyAWBError };
   },
   computed: {
     filteredProducts() {
@@ -126,18 +147,32 @@ export default {
         (product.observations && product.observations.toLowerCase().includes(valueSearch))
       );
 
-      // console.log("result1: ", result);
-      if (this.activSearch == false && result.length == 1) {
+      console.log("result1: ", result);
+      console.log("this.searchQueryAWB.length: ", this.searchQueryAWB.length);
+      if (this.activSearch == false && this.searchQueryAWB.length >= 14) {
+        if (result.length == 1) {
+          result[0].status = this.activStatus;
+          this.saveToLocalStorage(this.products);
 
-        result[0].status = this.activStatus;
-        this.saveToLocalStorage(this.products);
+          setTimeout(() => {
+            this.notifyAWBExist(valueSearch, this.delayAutoClear);
+          }, 100);
 
-        setTimeout(() => {
-          this.searchQueryAWB = '';
-          this.sortByStatus(this.products);
-          this.countActive = this.products.filter(p => p.status == this.activStatus).length;
-        }, this.delayAutoClear * 1000)
-        // console.log("result2: ",  result[0]);
+          setTimeout(() => {
+            this.searchQueryAWB = '';
+            this.sortByStatus(this.products);
+            this.countActive = this.products.filter(p => p.status == this.activStatus).length;
+          }, this.delayAutoClear * 1000)
+          // 
+        } else if (result.length > 1 ) {
+          setTimeout(() => {
+            this.notifyAWBDouble(valueSearch, result.length);
+          }, 100);
+        } else if (result.length == 0) {
+          setTimeout(() => {
+            this.notifyAWBError(valueSearch);
+          }, 100);
+        }
       }
 
       return result;
@@ -195,7 +230,7 @@ export default {
       }
     },
     updateStatus(product: any) {
-      console.log("product.status: ", product.status);
+      // console.log("product.status: ", product.status);
 
       if (product.status !== this.activStatus) {
         product.status = this.activStatus;
