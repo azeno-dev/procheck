@@ -4,9 +4,22 @@
   <div :class="{ ' ': filteredProducts.length > 0, ' bg-gray-100 p-8': 'h-[100vh]' }">
     <!-- Search, Import, and Export Buttons -->
     <div class="flex mb-4 justify-between ">
-      <div class="relative w-3/4 mr-4">
-        <input v-model="searchQuery" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="Search...">
-        <button v-if="searchQuery" @click="clearSearch" class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
+      <div class="relative w-[20%] mr-4">
+        <input v-model="searchQueryAWB" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="AWB..."
+          @mouseenter="activSearch = false; searchQuery = ''" :disabled="activSearch == true">
+        <button v-if="searchQueryAWB" @click="searchQueryAWB = ''"
+          class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
+          <!-- X Icon -->
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+          </svg>
+        </button>
+      </div>
+
+      <div class="relative w-[40%] mr-4">
+        <input v-model="searchQuery" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="Search..."
+          @mouseenter="activSearch = true; searchQueryAWB = ''" :disabled="activSearch == false">
+        <button v-if="searchQuery" @click="searchQuery = ''" class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
           <!-- X Icon -->
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
@@ -26,8 +39,12 @@
         </div>
       </div>
 
-      <input v-model="delayAutoClear" type="number" class="w-[4%] px-1 py-1 border rounded-md" @change="saveDataToLocalStorage('delayAutoClear', delayAutoClear)"><p class=" my-auto ml-1 mr-2">sec</p> 
-      <input v-model="delayClearData" type="number" class="w-[4%] px-1 py-1 border rounded-md" @change="saveDataToLocalStorage('delayClearData', delayClearData)"><p class=" my-auto ml-1">ore</p>
+      <input v-model="delayAutoClear" type="number" class="w-[4%] px-1 py-1 border rounded-md"
+        @change="saveDataToLocalStorage('delayAutoClear', delayAutoClear)">
+      <p class=" my-auto ml-1 mr-2">sec</p>
+      <input v-model="delayClearData" type="number" class="w-[4%] px-1 py-1 border rounded-md"
+        @change="saveDataToLocalStorage('delayClearData', delayClearData)">
+      <p class=" my-auto ml-1">ore</p>
 
       <!-- <button @click="importData" class="w-1/6 bg-blue-500 text-white px-4 py-2 rounded-md">Import</button> -->
       <input type="file" @change="handleFileUpload" class="hidden" ref="fileInput" accept=".xlsx">
@@ -35,6 +52,7 @@
       <button @click="exportData" class="w-[8%] bg-green-500 text-white px-4 py-2 rounded-md mx-2">Export</button>
       <button @click="clearData" class="w-[8%] bg-red-500 text-white px-4 py-2 rounded-md mx-2">Clear</button>
     </div>
+
 
     <!-- Product Grid -->
     <div class="grid 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4">
@@ -68,11 +86,13 @@ export default {
 
     return {
       swal: this.swalInj,
+      searchQueryAWB: '',
       searchQuery: '',
       activStatus: 'Pregatit',
       inactivStatus: 'Nepregatit',
       delayAutoClear: 5,
       delayClearData: 12,
+      activSearch: false,
       countActive: 0,
       products: values,
       // { id: 1, awb: 'Product 1', date: '19 Jan 2024 15:48:16', status: "Colet livrat", clientName: 'Manea robertina', clientPhone: '0771498277', observations: '3 x CATKLF-CG1' },
@@ -86,41 +106,30 @@ export default {
         return [];
       }
 
+      var valueSearch = this.activSearch == true ? this.searchQuery.toLowerCase() : this.searchQueryAWB.toLocaleLowerCase();
+      if (this.activSearch == false && this.searchQueryAWB.length > 15) {
+        valueSearch = valueSearch.substring(0, 14);
+      }
+
       const result = this.products.filter(product =>
-        (product.awb && product.awb.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
-        (product.date && product.date.toLowerCase().includes(this.searchQuery.toLowerCase())) ||
-        (product.clientName && product.clientName.toLowerCase().includes(this.searchQuery.toLowerCase()))
+        (product.awb && product.awb.toLowerCase().includes(valueSearch)) ||
+        (product.date && product.date.toLowerCase().includes(valueSearch)) ||
+        (product.clientName && product.clientName.toLowerCase().includes(valueSearch)) ||
+        (product.clientPhone && product.clientPhone.toLowerCase().includes(valueSearch)) ||
+        (product.observations && product.observations.toLowerCase().includes(valueSearch))
       );
 
       // console.log("result1: ", result);
-      if (result.length == 1) {
+      if (this.activSearch == false && result.length == 1) {
+
         result[0].status = this.activStatus;
         this.saveToLocalStorage(this.products);
 
-
-        // this.$message({
-        //   message: `A aparut o eroare pe server si nu se poate conectat la baza de date`,
-        //   type: 'error',
-        //   duration: 1000 * 30,
-        //   showClose: true
-        // })
-
-        // this.swal({
-        //   position: "top-end",
-        //   icon: "success",
-        //   title: `Statusul pentru AWB: ${result[0].awb} s-a schimbat cu succes! `,
-        //   html: `AWB ${result[0].awb} se va sterge din cautare in 5 secunde`,
-        //   showConfirmButton: false,
-        //   timer: 5 * 1000,
-        //   timerProgressBar: true,
-        // });
-
         setTimeout(() => {
-          this.searchQuery = '';
+          this.searchQueryAWB = '';
           this.sortByStatus(this.products);
           this.countActive = this.products.filter(p => p.status == this.activStatus).length;
         }, this.delayAutoClear * 1000)
-
         // console.log("result2: ",  result[0]);
       }
 
@@ -133,22 +142,23 @@ export default {
   methods: {
     clearSearch() {
       this.searchQuery = '';
+      this.searchQueryAWB = '';
     },
     initData() {
       const delayAutoClearJson = localStorage.getItem('delayAutoClear');
-      if (delayAutoClearJson) { 
+      if (delayAutoClearJson) {
         this.delayAutoClear = parseInt(delayAutoClearJson);
       } else {
         localStorage.setItem('delayAutoClear', this.delayAutoClear.toString());
       }
 
       const delayClearDataJson = localStorage.getItem('delayClearData');
-      if (delayClearDataJson) { 
+      if (delayClearDataJson) {
         this.delayClearData = parseInt(delayClearDataJson);
       } else {
         localStorage.setItem('delayClearData', this.delayClearData.toString());
-      }      
-      
+      }
+
       const json = localStorage.getItem('importedData');
       if (json) {
         const data = JSON.parse(json);
@@ -175,10 +185,14 @@ export default {
       }
     },
     updateStatus(product: any) {
+      console.log("product.status: ", product.status);
+
       if (product.status !== this.activStatus) {
         product.status = this.activStatus;
-      } else {
+      } else if (product.status === this.activStatus) {
         product.status = this.inactivStatus;
+      } else {
+        product.status = this.activStatus;
       }
       this.saveToLocalStorage(this.products);
     },
@@ -250,7 +264,7 @@ export default {
       localStorage.setItem('importedData', JSON.stringify(dataToStore));
     },
 
-    saveDataToLocalStorage(key: string,  data: any) {
+    saveDataToLocalStorage(key: string, data: any) {
       localStorage.setItem(key, data.toString());
     },
 
