@@ -71,6 +71,12 @@
         <p class="text-gray-600 mb-2">Telefon: {{ product.clientPhone }}</p>
         <p class="text-gray-600 mb-2">Data: {{ product.date }}</p>
         <p class="text-gray-600 mb-2">Observatii: {{ product.observations }}</p>
+
+        <button @click="deleteProduct(product.awb)" class="absolute bottom-0 right-0 p-2 m-2 bg-red-300 hover:bg-red-500 text-white rounded-full">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4 ">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 15h12l3-15H3zm10 3v8M9 3v8M17 3v8"></path>
+          </svg>
+        </button>        
       </div>
     </div>
   </div>
@@ -80,6 +86,8 @@
 import * as XLSX from 'xlsx';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
+
+const lengthAWB = 16;
 
 export default {
   data() {
@@ -105,21 +113,21 @@ export default {
   },
   setup() {
     const notifyAWBExist = (awb: string, delay: number) => {
-      toast(`AWB #${awb} a fost  gasit!`, {
+      toast(`AWB #${awb.toUpperCase()} a fost  gasit!`, {
         autoClose: (delay * 3) * 1000,
         type: "success",
         position: "bottom-right",
       });
     }
     const notifyAWBDouble = (awb: string, no: number) => {
-      toast(`AWB #${awb} a fost gasit de ${no}!`, {
+      toast(`AWB #${awb.toUpperCase()} a fost gasit de ${no}!`, {
         type: "warning",
         position: "bottom-right",
         "autoClose": false,
       });
     }
     const notifyAWBError = (awb: string) => {
-      toast(`AWB #${awb} nu a fost gasit!`, {
+      toast(`AWB #${awb.toUpperCase()} nu a fost gasit!`, {
         type: "error",
         position: "bottom-right",
         "autoClose": false,
@@ -135,8 +143,10 @@ export default {
       }
 
       var valueSearch = this.activSearch == true ? this.searchQuery.toLowerCase() : this.searchQueryAWB.toLocaleLowerCase();
-      if (this.activSearch == false && this.searchQueryAWB.length > 15) {
-        valueSearch = valueSearch.substring(0, 14);
+      if (this.activSearch == false) {
+        if (this.searchQueryAWB.endsWith("001") && this.searchQueryAWB.length == lengthAWB + 3) {
+          valueSearch = valueSearch.substring(0, lengthAWB - 1);
+        }
       }
 
       const result = this.products.filter(product =>
@@ -147,9 +157,9 @@ export default {
         (product.observations && product.observations.toLowerCase().includes(valueSearch))
       );
 
-      console.log("result1: ", result);
-      console.log("this.searchQueryAWB.length: ", this.searchQueryAWB.length);
-      if (this.activSearch == false && this.searchQueryAWB.length >= 14) {
+      // console.log("result1: ", result);
+      // console.log("this.searchQueryAWB.length: ", this.searchQueryAWB.length);
+      if (this.activSearch == false && (this.searchQueryAWB.endsWith("001") && this.searchQueryAWB.length == lengthAWB + 3)) {
         if (result.length == 1) {
           result[0].status = this.activStatus;
           this.saveToLocalStorage(this.products);
@@ -320,6 +330,12 @@ export default {
 
         return x < y ? -1 : x > y ? 1 : 0;
       });
+    },
+
+    deleteProduct(awb: string) {
+      this.products = this.products.filter(product => product.awb !== awb);
+      this.saveToLocalStorage(this.products);
+      this.sortByStatus(this.products);
     },
 
     exportData() {
