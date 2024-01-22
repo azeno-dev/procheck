@@ -1,61 +1,65 @@
 <!-- ProductGrid.vue -->
 
 <template>
-  <div :class="{ ' ': filteredProducts.length > 0, ' bg-gray-100 p-8': 'h-[100vh]' }">
-    <!-- Search, Import, and Export Buttons -->
-    <div class="flex mb-4 justify-between ">
-      <div class="relative w-[20%] mr-4">
-        <input v-model="searchQueryAWB" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="AWB..."
-          @mouseenter="activSearch = false; searchQuery = ''" :disabled="activSearch == true">
-        <button v-if="searchQueryAWB" @click="searchQueryAWB = ''"
-          class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
-          <!-- X Icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
+  <div :class="{ ' ': filteredProducts.length > 0, ' bg-gray-100': 'h-[100vh]' }">
 
-      <div class="relative w-[40%] mr-4">
-        <input v-model="searchQuery" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="Search..."
-          @mouseenter="activSearch = true; searchQueryAWB = ''" :disabled="activSearch == false">
-        <button v-if="searchQuery" @click="searchQuery = ''" class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
-          <!-- X Icon -->
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-          </svg>
-        </button>
-      </div>
+    <nav :class="{ 'scrolled': !view.atTopOfPage }"
+      class="fixed flex w-full bg-white border-b items-center justify-between flex-wrap px-2 pt-6 mx-auto top-0 animated">
 
-      <div class="w-[4%] text-black my-auto px-2 py-1 flex">
-        <p class="mr-1 mb-2">{{ countActive }}</p>
-        <div class="w-4 h-4 bg-green-500 rounded-full">
+      <!-- Search, Import, and Export Buttons -->
+      <div class="flex mb-4 justify-between px-8">
+        <div class="relative w-[20%] mr-4">
+          <input v-model="searchQueryAWB" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="AWB..."
+            @mouseenter="activSearch = false; searchQuery = ''" :disabled="activSearch == true">
+          <button v-if="searchQueryAWB" @click="searchQueryAWB = ''"
+            class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
+            <!-- X Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
         </div>
-      </div>
 
-      <div class="w-[4%] text-black my-auto px-2 py-1 flex">
-        <p class="mr-1 mb-2">{{ products.length - countActive }}</p>
-        <div class="w-4 h-4 bg-red-500 rounded-full">
+        <div class="relative w-[40%] mr-4">
+          <input v-model="searchQuery" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="Search..."
+            @mouseenter="activSearch = true; searchQueryAWB = ''" :disabled="activSearch == false">
+          <button v-if="searchQuery" @click="searchQuery = ''" class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
+            <!-- X Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+            </svg>
+          </button>
         </div>
+
+        <div class="w-[4%] text-black my-auto px-2 py-1 flex">
+          <p class="mr-1 mb-2">{{ countActive }}</p>
+          <div class="w-4 h-4 bg-green-500 rounded-full">
+          </div>
+        </div>
+
+        <div class="w-[4%] text-black my-auto px-2 py-1 flex">
+          <p class="mr-1 mb-2">{{ products.length - countActive }}</p>
+          <div class="w-4 h-4 bg-red-500 rounded-full">
+          </div>
+        </div>
+
+        <input v-model="delayAutoClear" type="number" class="w-[4%] px-1 py-1 border rounded-md"
+          @change="saveDataToLocalStorage('delayAutoClear', delayAutoClear)">
+        <p class=" my-auto ml-1 mr-2">sec</p>
+        <input v-model="delayClearData" type="number" class="w-[4%] px-1 py-1 border rounded-md"
+          @change="saveDataToLocalStorage('delayClearData', delayClearData)">
+        <p class=" my-auto ml-1">ore</p>
+
+        <!-- <button @click="importData" class="w-1/6 bg-blue-500 text-white px-4 py-2 rounded-md">Import</button> -->
+        <input type="file" @change="handleFileUpload" class="hidden" ref="fileInput" accept=".xlsx">
+        <button @click="triggerFileInput" class="w-[8%] bg-blue-500 text-white px-4 py-2 rounded-md mx-2">Import</button>
+        <button @click="exportData" class="w-[8%] bg-green-500 text-white px-4 py-2 rounded-md mx-2">Export</button>
+        <button @click="clearData" class="w-[8%] bg-red-500 text-white px-4 py-2 rounded-md mx-2">Clear</button>
       </div>
-
-      <input v-model="delayAutoClear" type="number" class="w-[4%] px-1 py-1 border rounded-md"
-        @change="saveDataToLocalStorage('delayAutoClear', delayAutoClear)">
-      <p class=" my-auto ml-1 mr-2">sec</p>
-      <input v-model="delayClearData" type="number" class="w-[4%] px-1 py-1 border rounded-md"
-        @change="saveDataToLocalStorage('delayClearData', delayClearData)">
-      <p class=" my-auto ml-1">ore</p>
-
-      <!-- <button @click="importData" class="w-1/6 bg-blue-500 text-white px-4 py-2 rounded-md">Import</button> -->
-      <input type="file" @change="handleFileUpload" class="hidden" ref="fileInput" accept=".xlsx">
-      <button @click="triggerFileInput" class="w-[8%] bg-blue-500 text-white px-4 py-2 rounded-md mx-2">Import</button>
-      <button @click="exportData" class="w-[8%] bg-green-500 text-white px-4 py-2 rounded-md mx-2">Export</button>
-      <button @click="clearData" class="w-[8%] bg-red-500 text-white px-4 py-2 rounded-md mx-2">Clear</button>
-    </div>
-
+    </nav>
 
     <!-- Product Grid -->
-    <div class="grid 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4">
+    <div class="grid 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 p-8 mt-16">
       <!-- Sample Product Card -->
       <div v-for="product in filteredProducts" :key="product.id" class="bg-white p-4 relative">
         <button class="flex justify-end absolute top-0 right-0 p-1" @click="updateStatus(product)">
@@ -86,6 +90,9 @@ export default {
 
     return {
       swal: this.swalInj,
+      view: {
+        atTopOfPage: true
+      },
       searchQueryAWB: '',
       searchQuery: '',
       activStatus: 'Pregatit',
@@ -138,6 +145,9 @@ export default {
   },
   created() {
     this.initData()
+  },
+  beforeMount() {
+    window.addEventListener('scroll', this.handleScroll);
   },
   methods: {
     clearSearch() {
@@ -290,11 +300,30 @@ export default {
       this.countActive = 0
       localStorage.removeItem('importedData');
     },
+
+    handleScroll() {
+      // when the user scrolls, check the pageYOffset
+      if (window.scrollY > 0) {
+        // user is scrolled
+        if (this.view.atTopOfPage) this.view.atTopOfPage = false
+      } else {
+        // user is at top of page
+        if (!this.view.atTopOfPage) this.view.atTopOfPage = true
+      }
+    }
   },
 };
 </script>
   
 <style scoped>
 /* Add Tailwind CSS classes here if needed */
+nav {
+  z-index: 10
+}
+
+nav.scrolled {
+  @apply shadow-2xl;
+  border-bottom: 0px;
+}
 </style>
   
