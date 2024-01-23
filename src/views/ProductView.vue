@@ -1,16 +1,16 @@
 <!-- ProductGrid.vue -->
 
 <template>
-  <div :class="{ ' ': filteredProducts.length > 0, ' bg-gray-100': 'h-[100vh]' }">
+  <div :class="{ ' ': filteredProducts.length > 0, ' bg-gray-200': 'h-[100vh]' }">
 
     <nav :class="{ 'scrolled': !view.atTopOfPage }"
-      class="fixed flex w-full bg-white border-b items-center justify-between flex-wrap pl-1 pr-6 pt-6 mx-auto top-0 animated">
+      class="fixed flex w-full bg-gray-100 border-b items-center justify-between flex-wrap pl-1 pr-6 pt-6 mx-auto top-0 animated">
 
       <!-- Search, Import, and Export Buttons -->
       <div class="flex mb-4 justify-between pl-8 w-full">
         <div class="relative w-[20%] mr-4">
           <input v-model="searchQueryAWB" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="AWB..."
-            @mouseenter="activSearch = false; searchQuery = ''" @mouseleave="activSearch = true;" :disabled="activSearch == true">
+            @mouseenter="activSearch = false; searchQuery = ''" :disabled="activSearch == true">
           <button v-if="searchQueryAWB" @click="searchQueryAWB = ''"
             class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
             <!-- X Icon -->
@@ -22,8 +22,7 @@
 
         <div class="relative w-[30%] mr-4">
           <input v-model="searchQuery" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="Search..."
-            @mouseenter="activSearch = true; searchQueryAWB = ''"
-            :disabled="activSearch == false">
+            @mouseenter="activSearch = true; searchQueryAWB = ''" :disabled="activSearch == false">
           <button v-if="searchQuery" @click="searchQuery = ''" class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
             <!-- X Icon -->
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4">
@@ -32,13 +31,17 @@
           </button>
         </div>
 
+        <!-- <div class="w-[4%] text-black my-auto px-2 py-1 flex bg-green-500 rounded-full">
+          <p class="m-auto">{{ activSearch }}</p>
+        </div> -->
+
         <div class="w-[4%] text-black my-auto px-2 py-1 flex bg-green-500 rounded-full">
           <p class="m-auto">{{ countActive }}</p>
         </div>
 
         <div class="w-[4%] text-black my-auto px-2 py-1 flex bg-red-500 rounded-full">
           <p class="m-auto">{{ products.length - countActive }}</p>
-        </div>        
+        </div>
 
         <input v-model="delayAutoClear" type="number" class="w-[4%] px-1 py-1 border rounded-md"
           @change="saveDataToLocalStorage('delayAutoClear', delayAutoClear)">
@@ -58,7 +61,8 @@
     <!-- Product Grid -->
     <div class="grid 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 p-8 mt-16">
       <!-- Sample Product Card -->
-      <div v-for="product in filteredProducts" :key="product.id" class="bg-white p-4 relative">
+      <div v-for="product in (activSearch == true ? filteredProducts : filteredProductsByAWB)" :key="product.id"
+        class="bg-white p-4 relative">
         <button class="flex justify-end absolute top-0 right-0 p-1" @click="updateStatus(product)">
           <div
             :class="{ 'w-4 h-4 bg-green-500 rounded-full': product.status === activStatus, 'w-4 h-4 bg-red-500 rounded-full': product.status !== activStatus }">
@@ -72,11 +76,13 @@
         <p class="text-gray-600 mb-2">Data: {{ product.date }}</p>
         <p class="text-gray-600 mb-2">Observatii: {{ product.observations }}</p>
 
-        <button @click="deleteProduct(product.awb)" class="absolute bottom-0 right-0 p-2 m-2 bg-red-300 hover:bg-red-500 text-white rounded-full">
+        <button @click="deleteProduct(product.awb)"
+          class="absolute bottom-0 right-0 p-2 m-2 bg-red-300 hover:bg-red-500 text-white rounded-full">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4 ">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 6l3 15h12l3-15H3zm10 3v8M9 3v8M17 3v8"></path>
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+              d="M3 6l3 15h12l3-15H3zm10 3v8M9 3v8M17 3v8"></path>
           </svg>
-        </button>        
+        </button>
       </div>
     </div>
   </div>
@@ -87,12 +93,10 @@ import * as XLSX from 'xlsx';
 import { toast } from 'vue3-toastify';
 import 'vue3-toastify/dist/index.css';
 
-const lengthAWB = 16;
-
 export default {
   data() {
     const values: any[] = [];
-
+    const timeoutVal: any = null
     return {
       view: {
         atTopOfPage: true
@@ -102,6 +106,9 @@ export default {
       activStatus: 'Pregatit',
       inactivStatus: 'Nepregatit',
       delayAutoClear: 5,
+      awbLength: 14,
+      timeout: timeoutVal,
+      awbEndWith: "001",
       delayClearData: 12,
       activSearch: false,
       countActive: 0,
@@ -137,54 +144,92 @@ export default {
     return { notifyAWBExist, notifyAWBDouble, notifyAWBError };
   },
   computed: {
+    filteredProductsByAWB() {
+      if (this.products.length == 0) {
+        return [];
+      }
+
+      if (this.searchQueryAWB.length < this.awbLength) {
+        return this.products;
+      }
+
+      clearTimeout(this.timeout);
+
+      this.timeout = setTimeout(() => {
+
+        var valueSearch = "";
+        if (this.searchQueryAWB.endsWith(this.awbEndWith) && this.searchQueryAWB.length >= this.awbLength + this.awbEndWith.length) {
+          valueSearch = this.searchQueryAWB.toLocaleLowerCase().substring(0, this.awbLength - 1);
+        } else if (this.searchQueryAWB.length >= this.awbLength) {
+          valueSearch = this.searchQueryAWB.toLocaleLowerCase();
+        } else {
+          return this.products;
+        }
+
+        const result = this.products.filter(product =>
+          (product.awb && product.awb.toLowerCase().trim().startsWith(valueSearch))
+        );
+
+        console.log("result0: ", result);
+        // console.log("this.awbEndWith: ", this.awbEndWith);
+        console.log("this.searchQueryAWB0: ", this.searchQueryAWB);
+        console.log("this.searchQueryAWB0.length: ", this.searchQueryAWB.length);
+        // console.log("this.searchQueryAWB.length: ", this.searchQueryAWB.length);
+        if ((this.searchQueryAWB.length >= this.awbLength || (this.searchQueryAWB.endsWith(this.awbEndWith) && this.searchQueryAWB.length >= this.awbLength + this.awbEndWith.length))) {
+          if (result.length == 1) {
+            result[0].status = this.activStatus;
+            this.saveToLocalStorage(this.products);
+
+            setTimeout(() => {
+              this.notifyAWBExist(valueSearch, this.delayAutoClear);
+            }, 100);
+
+            setTimeout(() => {
+              this.searchQueryAWB = '';
+              this.sortByStatus(this.products);
+              this.countActive = this.products.filter(p => p.status == this.activStatus).length;
+            }, this.delayAutoClear * 1000)
+            // 
+          } else if (result.length > 1) {
+            setTimeout(() => {
+              this.searchQueryAWB = '';
+              this.notifyAWBDouble(valueSearch, result.length);
+            }, 100);
+          } else if (result.length == 0) {
+            setTimeout(() => {
+              this.searchQueryAWB = '';
+              this.notifyAWBError(valueSearch);
+            }, 100);
+          }
+        }
+
+        return result;
+      }, 250);
+
+    },
     filteredProducts() {
       if (this.products.length == 0) {
         return [];
       }
 
-      var valueSearch = this.activSearch == true ? this.searchQuery.toLowerCase() : this.searchQueryAWB.toLocaleLowerCase();
       if (this.activSearch == false) {
-        if (this.searchQueryAWB.endsWith("001") && this.searchQueryAWB.length == lengthAWB + 3) {
-          valueSearch = valueSearch.substring(0, lengthAWB - 1);
-        }
+        return this.products;
       }
 
+      var valueSearch = this.searchQuery.toLowerCase();
+
       const result = this.products.filter(product =>
-        (product.awb && product.awb.toLowerCase().includes(valueSearch)) ||
+        (product.awb && product.awb.trim().toLowerCase().includes(valueSearch)) ||
         (product.date && product.date.toLowerCase().includes(valueSearch)) ||
-        (product.clientName && product.clientName.toLowerCase().includes(valueSearch)) ||
-        (product.clientPhone && product.clientPhone.toLowerCase().includes(valueSearch)) ||
-        (product.observations && product.observations.toLowerCase().includes(valueSearch))
+        (product.clientName && product.clientName.toLowerCase().startsWith(valueSearch)) ||
+        (product.clientPhone && product.clientPhone.toLowerCase().startsWith(valueSearch)) ||
+        (product.observations && product.observations.toLowerCase().startsWith(valueSearch))
       );
 
       // console.log("result1: ", result);
+      // console.log("this.awbEndWith: ", this.awbEndWith);
+      // console.log("this.searchQueryAWB: ", this.searchQueryAWB);
       // console.log("this.searchQueryAWB.length: ", this.searchQueryAWB.length);
-      if (this.activSearch == false && (this.searchQueryAWB.endsWith("001") && this.searchQueryAWB.length == lengthAWB + 3)) {
-        if (result.length == 1) {
-          result[0].status = this.activStatus;
-          this.saveToLocalStorage(this.products);
-
-          setTimeout(() => {
-            this.notifyAWBExist(valueSearch, this.delayAutoClear);
-          }, 100);
-
-          setTimeout(() => {
-            this.searchQueryAWB = '';
-            this.sortByStatus(this.products);
-            this.countActive = this.products.filter(p => p.status == this.activStatus).length;
-          }, this.delayAutoClear * 1000)
-          // 
-        } else if (result.length > 1 ) {
-          setTimeout(() => {
-            this.notifyAWBDouble(valueSearch, result.length);
-          }, 100);
-        } else if (result.length == 0) {
-          setTimeout(() => {
-            this.notifyAWBError(valueSearch);
-          }, 100);
-        }
-      }
-
       return result;
     },
   },
@@ -200,6 +245,20 @@ export default {
       this.searchQueryAWB = '';
     },
     initData() {
+      const awbEndWithJson = localStorage.getItem('awbEndWith');
+      if (awbEndWithJson) {
+        this.awbEndWith = awbEndWithJson;
+      } else {
+        localStorage.setItem('awbEndWith', this.awbEndWith);
+      }
+
+      const awbLengthJson = localStorage.getItem('awbLength');
+      if (awbLengthJson) {
+        this.awbLength = parseInt(awbLengthJson);
+      } else {
+        localStorage.setItem('awbLength', this.awbLength.toString());
+      }
+
       const delayAutoClearJson = localStorage.getItem('delayAutoClear');
       if (delayAutoClearJson) {
         this.delayAutoClear = parseInt(delayAutoClearJson);
@@ -249,7 +308,11 @@ export default {
       } else {
         product.status = this.activStatus;
       }
+      
       this.saveToLocalStorage(this.products);
+
+      this.sortByStatus(this.products);
+      this.countActive = this.products.filter(p => p.status == this.activStatus).length;      
     },
     triggerFileInput() {
       (this.$refs.fileInput as HTMLInputElement).click();
@@ -352,6 +415,9 @@ export default {
       localStorage.removeItem('importedData');
     },
 
+    timeout(delay: number) {
+      return new Promise(res => setTimeout(res, delay));
+    },
     handleScroll() {
       // when the user scrolls, check the pageYOffset
       if (window.scrollY > 0) {
