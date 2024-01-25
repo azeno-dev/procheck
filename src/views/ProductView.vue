@@ -91,13 +91,22 @@
 <script lang="ts">
 import * as XLSX from 'xlsx';
 import { toast } from 'vue3-toastify';
+import { useSound } from '@vueuse/sound'
 import 'vue3-toastify/dist/index.css';
+import homer from '../assets/sounds/Voicy_Homer Simpson_ Doh.mp3'
+import boing from '../assets/sounds/Voicy_Slack_Boing.mp3'
+import trombone from '../assets/sounds/Voicy_Sad_trombone.mp3'
 
 export default {
   data() {
     const values: any[] = [];
     const timeoutVal: any = null
     return {
+      sounds: {
+        boing: useSound(boing),
+        homer: useSound(homer),
+        trombone: useSound(trombone),
+      },
       view: {
         atTopOfPage: true
       },
@@ -159,21 +168,22 @@ export default {
 
         var valueSearch = "";
         if (this.searchQueryAWB.endsWith(this.awbEndWith) && this.searchQueryAWB.length >= this.awbLength + this.awbEndWith.length) {
-          valueSearch = this.searchQueryAWB.toLocaleLowerCase().substring(0, this.awbLength - 1);
+          valueSearch = this.searchQueryAWB.trim().toLowerCase().replace(this.awbEndWith, "");
         } else if (this.searchQueryAWB.length >= this.awbLength) {
-          valueSearch = this.searchQueryAWB.toLocaleLowerCase();
+          valueSearch = this.searchQueryAWB.trim().toLowerCase();
         } else {
           return this.products;
         }
 
         const result = this.products.filter(product =>
-          (product.awb && product.awb.toLowerCase().trim().startsWith(valueSearch))
+          (product.awb && product.awb.trim().toLowerCase().includes(valueSearch))
         );
 
-        console.log("result0: ", result);
+        // console.log("valueSearch: ", valueSearch);
+        // console.log("result0: ", result);
         // console.log("this.awbEndWith: ", this.awbEndWith);
-        console.log("this.searchQueryAWB0: ", this.searchQueryAWB);
-        console.log("this.searchQueryAWB0.length: ", this.searchQueryAWB.length);
+        // console.log("this.searchQueryAWB0: ", this.searchQueryAWB);
+        // console.log("this.searchQueryAWB0.length: ", this.searchQueryAWB.length);
         // console.log("this.searchQueryAWB.length: ", this.searchQueryAWB.length);
         if ((this.searchQueryAWB.length >= this.awbLength || (this.searchQueryAWB.endsWith(this.awbEndWith) && this.searchQueryAWB.length >= this.awbLength + this.awbEndWith.length))) {
           if (result.length == 1) {
@@ -182,6 +192,8 @@ export default {
 
             setTimeout(() => {
               this.notifyAWBExist(valueSearch, this.delayAutoClear);
+
+              this.sounds.boing.play();
             }, 100);
 
             setTimeout(() => {
@@ -194,17 +206,21 @@ export default {
             setTimeout(() => {
               this.searchQueryAWB = '';
               this.notifyAWBDouble(valueSearch, result.length);
+
+              this.sounds.trombone.play();
             }, 100);
           } else if (result.length == 0) {
             setTimeout(() => {
               this.searchQueryAWB = '';
               this.notifyAWBError(valueSearch);
+
+              this.sounds.homer.play();
             }, 100);
           }
         }
 
         return result;
-      }, 250);
+      }, 500);
 
     },
     filteredProducts() {
@@ -278,6 +294,7 @@ export default {
         const data = JSON.parse(json);
 
         if (data) {
+          this.products = [];
           if ((new Date()).getTime() > data.expiry) {
             // If the item is expired, delete the item from storage
             // and return null
@@ -309,6 +326,7 @@ export default {
         product.status = this.activStatus;
       }
       
+      this.sounds.boing.play();
       this.saveToLocalStorage(this.products);
 
       this.sortByStatus(this.products);
@@ -337,6 +355,7 @@ export default {
         const sheet = workbook.Sheets[sheetName];
         const importedData = XLSX.utils.sheet_to_json(sheet, { header: 1 });
 
+        // this.products = [];
         // Convert the imported data to an array of objects
         const values = importedData.slice(1).map((row: any, index: number) => {
           return {
@@ -349,6 +368,10 @@ export default {
             clientName: row[21], //Nume destinatar
             clientPhone: row[26], //Telefon destinatar
             observations: row[27], //Observatii
+            hash: (row[0] ?? "").toString().toLowerCase() + " | " +
+                  (row[21] ?? "").toString().toLowerCase() + " | " +
+                  (row[26] ?? "").toString().toLowerCase() + " | " +
+                  (row[27] ?? "").toString().toLowerCase(),
           };
         });
 
@@ -386,7 +409,7 @@ export default {
       localStorage.setItem(key, data.toString());
     },
 
-    sortByStatus(values: any) {
+    sortByStatus(values: any[]) {
       this.products = values.sort((a: any, b: any) => {
         var x = a.status ? a.status.toLowerCase() : "";
         var y = b.status ? b.status.toLowerCase() : "";
