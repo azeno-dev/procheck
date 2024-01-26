@@ -91,6 +91,7 @@
 <script lang="ts">
 import * as XLSX from 'xlsx';
 import { toast } from 'vue3-toastify';
+// @ts-ignore
 import { useSound } from '@vueuse/sound'
 import 'vue3-toastify/dist/index.css';
 import homer from '../assets/sounds/Voicy_Homer Simpson_ Doh.mp3'
