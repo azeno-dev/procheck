@@ -10,6 +10,9 @@ export default defineConfig({
     vue(),
     vueJsx(),
   ],
+  optimizeDeps: {
+    exclude: ['vue-demi']
+  },
   build: {
     chunkSizeWarningLimit: 1600,
   },
