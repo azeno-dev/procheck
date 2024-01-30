@@ -74,7 +74,7 @@
         <p class="text-gray-600 mb-2">Client: {{ product.clientName }}</p>
         <p class="text-gray-600 mb-2">Telefon: {{ product.clientPhone }}</p>
         <p class="text-gray-600 mb-2">Data: {{ product.date }}</p>
-        <p class="text-gray-600 mb-2">Observatii: {{ product.observations }}</p>
+        <p class="text-gray-600 mb-8">Observatii: {{ product.observations }}</p>
 
         <button @click="deleteProduct(product.awb)"
           class="absolute bottom-0 right-0 p-2 m-2 bg-red-300 hover:bg-red-500 text-white rounded-full">
@@ -83,6 +83,8 @@
               d="M3 6l3 15h12l3-15H3zm10 3v8M9 3v8M17 3v8"></path>
           </svg>
         </button>
+
+        <p v-if="product.index" class="absolute bottom-0 left-0 w-7 h-7 p-1 m-2 rounded-full bg-gray-400 text-center">{{  product.index }}</p>
       </div>
     </div>
   </div>
@@ -189,6 +191,8 @@ export default {
         if ((this.searchQueryAWB.length >= this.awbLength || (this.searchQueryAWB.endsWith(this.awbEndWith) && this.searchQueryAWB.length >= this.awbLength + this.awbEndWith.length))) {
           if (result.length == 1) {
             result[0].status = this.activStatus;
+            result[0].index = this.countActive;
+
             this.saveToLocalStorage(this.products);
 
             setTimeout(() => {
@@ -323,6 +327,7 @@ export default {
         product.status = this.activStatus;
       } else if (product.status === this.activStatus) {
         product.status = this.inactivStatus;
+        product.index = "";
       } else {
         product.status = this.activStatus;
       }
@@ -332,6 +337,10 @@ export default {
 
       this.sortByStatus(this.products);
       this.countActive = this.products.filter(p => p.status == this.activStatus).length;      
+      
+      if (product.status === this.activStatus) {
+        product.index = this.countActive;
+      }
     },
     triggerFileInput() {
       (this.$refs.fileInput as HTMLInputElement).click();
@@ -369,6 +378,7 @@ export default {
             clientName: row[21], //Nume destinatar
             clientPhone: row[26], //Telefon destinatar
             observations: row[27], //Observatii
+            index: "",
             hash: (row[0] ?? "").toString().toLowerCase() + " | " +
                   (row[21] ?? "").toString().toLowerCase() + " | " +
                   (row[26] ?? "").toString().toLowerCase() + " | " +
