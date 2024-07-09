@@ -84,7 +84,8 @@
           </svg>
         </button>
 
-        <p v-if="product.index" class="absolute bottom-0 left-0 w-7 h-7 p-1 m-2 rounded-full bg-gray-400 text-center">{{  product.index }}</p>
+        <p v-if="product.index" class="absolute bottom-0 left-0 w-7 h-7 p-1 m-2 rounded-full bg-gray-400 text-center">{{
+          product.index }}</p>
       </div>
     </div>
   </div>
@@ -191,6 +192,9 @@ export default {
         if ((this.searchQueryAWB.length >= this.awbLength || (this.searchQueryAWB.endsWith(this.awbEndWith) && this.searchQueryAWB.length >= this.awbLength + this.awbEndWith.length))) {
           if (result.length == 1) {
             result[0].status = this.activStatus;
+            this.sortByStatus(this.products);
+            this.countActive = this.products.filter(p => p.status == this.activStatus).length;
+            result[0].index = this.countActive;
 
             this.saveToLocalStorage(this.products);
 
@@ -202,10 +206,7 @@ export default {
 
             setTimeout(() => {
               this.searchQueryAWB = '';
-              this.sortByStatus(this.products);
-              this.countActive = this.products.filter(p => p.status == this.activStatus).length;
-              result[0].index = this.countActive;
-              
+
             }, this.delayAutoClear * 1000)
             // 
           } else if (result.length > 1) {
@@ -332,13 +333,13 @@ export default {
       } else {
         product.status = this.activStatus;
       }
-      
+
       this.sounds.boing.play();
       this.saveToLocalStorage(this.products);
 
       this.sortByStatus(this.products);
-      this.countActive = this.products.filter(p => p.status == this.activStatus).length;      
-      
+      this.countActive = this.products.filter(p => p.status == this.activStatus).length;
+
       if (product.status === this.activStatus) {
         product.index = this.countActive;
       }
@@ -381,9 +382,9 @@ export default {
             observations: row[27], //Observatii
             index: "",
             hash: (row[0] ?? "").toString().toLowerCase() + " | " +
-                  (row[21] ?? "").toString().toLowerCase() + " | " +
-                  (row[26] ?? "").toString().toLowerCase() + " | " +
-                  (row[27] ?? "").toString().toLowerCase(),
+              (row[21] ?? "").toString().toLowerCase() + " | " +
+              (row[26] ?? "").toString().toLowerCase() + " | " +
+              (row[27] ?? "").toString().toLowerCase(),
           };
         });
 
