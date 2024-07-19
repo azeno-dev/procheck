@@ -3,8 +3,8 @@
 <template>
   <div :class="{ ' ': filteredProducts.length > 0, ' bg-gray-200': 'h-[100vh]' }">
 
-    <nav :class="{ 'scrolled': !view.atTopOfPage }"
-      class="fixed flex w-full bg-gray-100 border-b items-center justify-between flex-wrap pl-1 pr-6 pt-6 mx-auto top-0 animated">
+    <div :class="{ 'scrolled': !view.atTopOfPage }"
+      class="fixed flex w-full bg-gray-100 border-b items-center justify-between flex-wrap pl-1 pr-6 pt-6 mx-auto top-[68px] animated">
 
       <!-- Search, Import, and Export Buttons -->
       <div class="flex mb-4 justify-between pl-8 w-full">
@@ -56,7 +56,7 @@
         <button @click="exportData" class="w-[6%] bg-green-500 text-white px-4 py-2 rounded-md mx-2">Export</button>
         <button @click="clearData" class="w-[6%] bg-red-500 text-white px-4 py-2 rounded-md mx-2">Clear</button>
       </div>
-    </nav>
+    </div>
 
     <!-- Product Grid -->
     <div class="grid 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 p-8 mt-16">
@@ -84,7 +84,8 @@
           </svg>
         </button>
 
-        <p v-if="product.index" class="absolute bottom-0 left-0 w-7 h-7 p-1 m-2 rounded-full bg-gray-400 text-center">{{  product.index }}</p>
+        <p v-if="product.index" class="absolute bottom-0 left-0 w-7 h-7 p-1 m-2 rounded-full bg-gray-400 text-center">{{
+          product.index }}</p>
       </div>
     </div>
   </div>
@@ -99,8 +100,12 @@ import 'vue3-toastify/dist/index.css';
 import homer from '../assets/sounds/Voicy_Homer Simpson_ Doh.mp3'
 import boing from '../assets/sounds/Voicy_Slack_Boing.mp3'
 import trombone from '../assets/sounds/Voicy_Sad_trombone.mp3'
+import Avatar from "primevue/avatar";
 
 export default {
+  components: {
+    Avatar
+  },  
   data() {
     const values: any[] = [];
     const timeoutVal: any = null
@@ -191,6 +196,9 @@ export default {
         if ((this.searchQueryAWB.length >= this.awbLength || (this.searchQueryAWB.endsWith(this.awbEndWith) && this.searchQueryAWB.length >= this.awbLength + this.awbEndWith.length))) {
           if (result.length == 1) {
             result[0].status = this.activStatus;
+            this.sortByStatus(this.products);
+            this.countActive = this.products.filter(p => p.status == this.activStatus).length;
+            result[0].index = this.countActive;
 
             this.saveToLocalStorage(this.products);
 
@@ -202,10 +210,7 @@ export default {
 
             setTimeout(() => {
               this.searchQueryAWB = '';
-              this.sortByStatus(this.products);
-              this.countActive = this.products.filter(p => p.status == this.activStatus).length;
-              result[0].index = this.countActive;
-              
+
             }, this.delayAutoClear * 1000)
             // 
           } else if (result.length > 1) {
@@ -332,13 +337,13 @@ export default {
       } else {
         product.status = this.activStatus;
       }
-      
+
       this.sounds.boing.play();
       this.saveToLocalStorage(this.products);
 
       this.sortByStatus(this.products);
-      this.countActive = this.products.filter(p => p.status == this.activStatus).length;      
-      
+      this.countActive = this.products.filter(p => p.status == this.activStatus).length;
+
       if (product.status === this.activStatus) {
         product.index = this.countActive;
       }
@@ -381,9 +386,9 @@ export default {
             observations: row[27], //Observatii
             index: "",
             hash: (row[0] ?? "").toString().toLowerCase() + " | " +
-                  (row[21] ?? "").toString().toLowerCase() + " | " +
-                  (row[26] ?? "").toString().toLowerCase() + " | " +
-                  (row[27] ?? "").toString().toLowerCase(),
+              (row[21] ?? "").toString().toLowerCase() + " | " +
+              (row[26] ?? "").toString().toLowerCase() + " | " +
+              (row[27] ?? "").toString().toLowerCase(),
           };
         });
 
