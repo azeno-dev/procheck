@@ -91,47 +91,4 @@ export default class ApiService {
             console.log("error.getClientByCurrentUser: ", err);
         }
     }
-
-    // async getColumn(columnId) {
-    //     try {
-    //         // console.log("this.pb.authStore.model.client:", this.pb.authStore.model);
-    //         const record = await this.pb.collection('columns').getOne(columnId);
-
-    //         return JSON.parse(JSON.stringify(record));
-    //     } catch (err) {
-    //         console.log("error.getColumn: ", err);
-    //     }
-    // }
-
-
-
-
-    // async getClientByCurrentUser2(client) {
-    //     try {
-    //         // console.log("this.client:", client);
-    //         const record = await this.pb.collection('clients').getOne(client, {
-    //             expand: 'config,users,views,views.columns,defaultView',
-    //             keepalive: false,
-    //         });
-
-    //         return JSON.parse(JSON.stringify(record));
-    //     } catch (err) {
-    //         console.log("error.getClientByCurrentUser: ", err);
-    //     }
-    // }   
-    
-    // async getViewConfigByCurrentUser(client, type) {
-    //     try {
-    //         // console.log("this.client:", client);
-    //         // console.log("this.type:", type);
-    //         const record = await this.pb.collection('viewConfig').getFirstListItem(`client="${client}" && type="${type}"`, {
-    //             expand: 'client,client.config,views,views.columns,functions',
-    //             keepalive: false,
-    //         });
-
-    //         return JSON.parse(JSON.stringify(record));
-    //     } catch (err) {
-    //         console.log("error.getViewConfigByCurrentUser: ", err);
-    //     }
-    // }        
 }
