@@ -1,0 +1,35 @@
+<template>
+    <div class="h-screen p-5 flex justify-center dark:text-white text-gray-700">
+      <div>
+        <h2 class="text-5xl mt-48">Bine ați venit</h2>
+        <p class="text-center mt-2">Selectați un meniu din stânga</p>
+      </div>
+    </div>
+  </template>
+  
+  <script>
+  import { useRouter } from 'vue-router';
+  import { useAuthStore } from '@/store/auth';
+  
+  export default {
+    data() {
+      return {
+        router: useRouter(),
+        authStore: useAuthStore(),
+      }
+    },  
+    async mounted() {
+      if (this.authStore.user) {
+        await this.authStore.setData();
+      }
+  
+      if (this.authStore && this.authStore.defaultView && this.authStore.defaultView.route) {
+        this.router.push(this.authStore.defaultView.route)
+      } else {
+        this.router.push('/')
+      }
+      // this.router.push('/warehouses')
+    }
+  }
+  
+  </script>

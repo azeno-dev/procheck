@@ -35,7 +35,7 @@
 </template>
 
 <script>
-import ApiService from '../services/api.services'
+import ApiService from '../../../services/api.services'
 const apiService = new ApiService()
 
 export default {
