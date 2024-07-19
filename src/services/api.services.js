@@ -82,6 +82,18 @@ export default class ApiService {
         }
     }
 
+    async getClientByCurrentUser() {
+        try {
+            const record = await this.pb.collection('clients').getOne(this.pb.authStore.model.client, {
+                expand: 'config,user',
+            });
+
+            return JSON.parse(JSON.stringify(record));
+        } catch (err) {
+            console.log("error.getClientByCurrentUser: ", err);
+        }
+    }
+
     // async getColumn(columnId) {
     //     try {
     //         // console.log("this.pb.authStore.model.client:", this.pb.authStore.model);
@@ -94,18 +106,7 @@ export default class ApiService {
     // }
 
 
-    // async getClientByCurrentUser() {
-    //     try {
-    //         // console.log("this.pb22:", this.pb.authStore);
-    //         const record = await this.pb.collection('clients').getOne(this.pb.authStore.model.client, {
-    //             expand: 'config,users,views,views.columns,defaultView',
-    //         });
 
-    //         return JSON.parse(JSON.stringify(record));
-    //     } catch (err) {
-    //         console.log("error.getClientByCurrentUser: ", err);
-    //     }
-    // }
 
     // async getClientByCurrentUser2(client) {
     //     try {

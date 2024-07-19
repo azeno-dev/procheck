@@ -6,8 +6,6 @@ const apiService = new ApiService();
 export const useAuthStore = defineStore("auth", {
     state: () => ({
         authUser: null,
-        userViews: [],
-        userDefaultView: null,
         userConfig: null
     }),
     getters: {
@@ -27,19 +25,10 @@ export const useAuthStore = defineStore("auth", {
         setConfig(config) {
             this.userConfig = config;
         },
-        setDefaultView(defaultView) {
-            this.userDefaultView = defaultView;
-        },
-        setView(view) {
-            this.userViews = view;
-        },
-
         async setData() {
             const customer = await apiService.getClientByCurrentUser();
             if (customer && customer.expand && customer.expand) {
                 this.userConfig = customer.expand.config;
-                this.userViews = customer.expand.views;
-                this.userDefaultView = customer.expand.defaultView;
 
                 return customer.expand;
             }
@@ -48,13 +37,8 @@ export const useAuthStore = defineStore("auth", {
             try {
                 this.authUser = await apiService.login(email, password);
                 const customer = await apiService.getClientByCurrentUser();
-                // console.log("customer: ", customer);
                 if (customer && customer.expand && customer.expand.config) {
-                    // console.log("config: ", customer.expand.config);
-                    // console.log("views: ", customer.expand.views);
                     this.userConfig = customer.expand.config;
-                    this.userViews = customer.expand.views;
-                    this.userDefaultView = customer.expand.defaultView;
                 }
 
                 return this.authUser;
@@ -73,7 +57,6 @@ export const useAuthStore = defineStore("auth", {
                 const customer = await apiService.getClientByCurrentUser();
                 if (customer && customer.expand && customer.expand.config) {
                     this.userConfig = customer.expand.config;
-                    this.userViews = customer.expand.views;
                 }
             }
 
@@ -84,8 +67,6 @@ export const useAuthStore = defineStore("auth", {
             
             this.authUser = null;
             this.userViews = null;
-            this.userDefaultView = null;
-            this.userConfig = null;
         }
     }
 })

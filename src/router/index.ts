@@ -8,7 +8,7 @@ import Home from '../views/Home.vue'
 // error page
 import Page404 from "../views/layouts/error/404.vue";
 
-import { useAuthStore } from '@/store/auth';
+import { useAuthStore } from '@/stores/auth';
 import { useCookies } from "vue3-cookies"
 
 var appname = " - AWB";
@@ -22,19 +22,19 @@ const routes = [
     meta: { title: "Pagina goala" + appname },
   },  
   {
-    path: '/',
-    name: 'Home',
+    path: '/awb',
+    name: 'Produse',
     component: ProductView
   },
   {
     path: '/auth/login',
-    name: 'Login',
+    name: 'Autentificare',
     component: Login
   },
   // layout/error
   {
     path: '/:pathMatch(.*)*',
-    name: "Page404",
+    name: "Eroare 404",
     component: Page404,
     meta: { title: "Upps! 404" + appname, hideNav: true },
   },  
@@ -56,7 +56,7 @@ async function authGuard(to: any, from: any, next: any) {
   let isAuthenticated = false;
   const authStore = useAuthStore();
   const cookies = useCookies().cookies;
-  authStore.setUser();
+  authStore.setData();
 
   if (cookies.isKey("authStore")) {
     isAuthenticated = true;

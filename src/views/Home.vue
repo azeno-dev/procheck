@@ -9,7 +9,7 @@
   
   <script>
   import { useRouter } from 'vue-router';
-  import { useAuthStore } from '@/store/auth';
+  import { useAuthStore } from '@/stores/auth';
   
   export default {
     data() {
@@ -32,4 +32,4 @@
     }
   }
   
-  </script>
+  </script>@/stores/auth

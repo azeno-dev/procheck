@@ -24,7 +24,7 @@
         <!-- Error Message -->
         <div v-if="errorMessage" class="mb-4 text-red-500 text-sm">
           {{ errorMessage }}
-        </div>        
+        </div>
         <button type="submit"
           class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
           Login
@@ -35,8 +35,9 @@
 </template>
 
 <script>
-import ApiService from '../../../services/api.services'
-const apiService = new ApiService()
+import { useAuthStore } from "@/stores/auth";
+
+const authStore = useAuthStore();
 
 export default {
   name: 'LoginPage',
@@ -53,15 +54,16 @@ export default {
         this.errorMessage = 'Vă rugăm să introduceți atât e-mailul, cât și parola.';
         return;
       }
+      await authStore.login(email, password);
 
-      console.log('Email:', this.email);
-      console.log('Password:', this.password);
-
-      await apiService.login(this.email, this.password)
-      if (localStorage.getItem('pocketbase_auth')) {
-        this.$router.push({ path: "/", force: true });
-      } else {
-        this.errorMessage = "Email sau parola nu sunt corecte!";
+      if (authStore && authStore.user && authStore.user.token) {
+        // console.log("authStore: ", authStore);
+        errorLogin.value = "";
+        if (authStore) {
+          this.$router.push({ path: "/", force: true });
+        } else {
+          this.errorMessage = "Email sau parola nu sunt corecte!";
+        }
       }
     },
   },
@@ -69,10 +71,10 @@ export default {
     if (localStorage.getItem('pocketbase_auth')) {
       localStorage.removeItem('pocketbase_auth');
     }
-  },  
+  },
 };
 </script>
 
 <style scoped>
 /* Add any additional custom styles here */
-</style>
+</style>@/stores/auth

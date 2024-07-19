@@ -20,7 +20,7 @@
 </template>
 
 <script>
-import { useAuthStore } from '@/store/auth';
+import { useAuthStore } from '@/stores/auth';
 
 export default {
   data() {
@@ -45,4 +45,4 @@ export default {
     // console.log("authStore: ", this.authStore);
   },
 }
-</script>
+</script>@/stores/auth
