@@ -1,6 +1,8 @@
 {
   "files": [],
   "compilerOptions": {
+    "allowJs": true,
+    "noImplicitAny": false,
     "types": [
       "vue3-toastify/global"
     ]
