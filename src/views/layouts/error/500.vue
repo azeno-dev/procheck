@@ -34,7 +34,7 @@
 <script lang="ts">
   export default {
     methods: {
-      directTo(links) {
+      directTo(links: string) {
         window.location.href = links;
       },
     },

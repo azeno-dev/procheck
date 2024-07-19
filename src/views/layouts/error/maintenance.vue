@@ -25,11 +25,8 @@
 </template>
 
 <script lang="ts">
-  import { Icon } from "@iconify/vue";
+
   export default {
     name: "maintenance",
-    components: {
-      Icon,
-    },
   };
 </script>

@@ -1,37 +1,13 @@
 <template>
   <Menubar :model="headerItems" v-if="$route.path == '/check'">
     <template #start>
-      <svg
-        viewBox="0 0 24 24"
-        version="1.1"
-        xmlns="http://www.w3.org/2000/svg"
-        fill="#000000"
-        stroke="#000000"
-      >
-        <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
-        <g
-          id="SVGRepo_tracerCarrier"
-          stroke-linecap="round"
-          stroke-linejoin="round"
-        ></g>
-        <g id="SVGRepo_iconCarrier">
-          <path
-            d="M526.628571 512L190.171429 285.257143l343.771428-219.428572 336.457143 219.428572z"
-            fill="#10B981"
-          ></path>
-          <path
-            d="M526.628571 541.257143c-7.314286 0-7.314286 0-14.628571-7.314286L175.542857 307.2c-7.314286 0-7.314286-14.628571-7.314286-21.942857 0-7.314286 7.314286-14.628571 14.628572-21.942857L519.314286 36.571429c7.314286-7.314286 21.942857-7.314286 29.257143 0l343.771428 219.428571c7.314286 7.314286 14.628571 14.628571 14.628572 21.942857 0 7.314286-7.314286 14.628571-14.628572 21.942857L541.257143 533.942857s-7.314286 7.314286-14.628572 7.314286zM241.371429 285.257143l285.257142 190.171428 292.571429-190.171428-292.571429-190.171429-285.257142 190.171429z"
-            fill="#10B981"
-          ></path>
-          <path
-            d="M526.628571 716.8L124.342857 446.171429c-14.628571-7.314286-21.942857-29.257143-7.314286-36.571429 7.314286-14.628571 21.942857-14.628571 36.571429-7.314286L533.942857 658.285714l394.971429-256c14.628571-7.314286 29.257143-7.314286 36.571428 7.314286s7.314286 29.257143-7.314285 36.571429L526.628571 716.8z"
-            fill="#10B981"
-          ></path>
-          <path
-            d="M526.628571 877.714286L124.342857 607.085714c-14.628571-7.314286-21.942857-21.942857-7.314286-36.571428 7.314286-14.628571 21.942857-14.628571 36.571429-7.314286l380.342857 256 394.971429-256c14.628571-7.314286 29.257143-7.314286 36.571428 7.314286 7.314286 14.628571 7.314286 29.257143-7.314285 36.571428L526.628571 877.714286z"
-            fill="#10B981"
-          ></path>
-        </g>
+      <svg width="35" height="40" viewBox="0 0 35 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8">
+        <path
+          d="M25.87 18.05L23.16 17.45L25.27 20.46V29.78L32.49 23.76V13.53L29.18 14.73L25.87 18.04V18.05ZM25.27 35.49L29.18 31.58V27.67L25.27 30.98V35.49ZM20.16 17.14H20.03H20.17H20.16ZM30.1 5.19L34.89 4.81L33.08 12.33L24.1 15.67L30.08 5.2L30.1 5.19ZM5.72 14.74L2.41 13.54V23.77L9.63 29.79V20.47L11.74 17.46L9.03 18.06L5.72 14.75V14.74ZM9.63 30.98L5.72 27.67V31.58L9.63 35.49V30.98ZM4.8 5.2L10.78 15.67L1.81 12.33L0 4.81L4.79 5.19L4.8 5.2ZM24.37 21.05V34.59L22.56 37.29L20.46 39.4H14.44L12.34 37.29L10.53 34.59V21.05L12.42 18.23L17.45 26.8L22.48 18.23L24.37 21.05ZM22.85 0L22.57 0.69L17.45 13.08L12.33 0.69L12.05 0H22.85Z"
+          fill="var(--p-primary-color)" />
+        <path
+          d="M30.69 4.21L24.37 4.81L22.57 0.69L22.86 0H26.48L30.69 4.21ZM23.75 5.67L22.66 3.08L18.05 14.24V17.14H19.7H20.03H20.16H20.2L24.1 15.7L30.11 5.19L23.75 5.67ZM4.21002 4.21L10.53 4.81L12.33 0.69L12.05 0H8.43002L4.22002 4.21H4.21002ZM21.9 17.4L20.6 18.2H14.3L13 17.4L12.4 18.2L12.42 18.23L17.45 26.8L22.48 18.23L22.5 18.2L21.9 17.4ZM4.79002 5.19L10.8 15.7L14.7 17.14H14.74H15.2H16.85V14.24L12.24 3.09L11.15 5.68L4.79002 5.2V5.19Z"
+          fill="var(--p-text-color)" />
       </svg>
     </template>
 
@@ -39,53 +15,28 @@
       <a v-ripple class="flex align-items-center" v-bind="props.action">
         <span :class="item.icon" />
         <span class="ml-2">{{ item.label }}</span>
-        <Badge
-          v-if="item.badge"
-          :class="{ 'ml-auto': !root, 'ml-2': root }"
-          :value="item.badge"
-        />
-        <span
-          v-if="item.shortcut"
-          class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1"
-          >{{ item.shortcut }}</span
-        >
-        <i
-          v-if="hasSubmenu"
-          :class="[
-            'pi pi-angle-down',
-            { 'pi-angle-down ml-2': root, 'pi-angle-right ml-auto': !root },
-          ]"
-        ></i>
+        <Badge v-if="item.badge" :class="{ 'ml-auto': !root, 'ml-2': root }" :value="item.badge" />
+        <span v-if="item.shortcut" class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{{
+    item.shortcut }}</span>
+        <i v-if="hasSubmenu" :class="[
+    'pi pi-angle-down',
+    { 'pi-angle-down ml-2': root, 'pi-angle-right ml-auto': !root },
+  ]"></i>
       </a>
     </template>
 
     <template #end>
       <div class="flex align-items-center gap-2">
         <!-- <InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" /> -->
-        <Button
-          type="button"
-          @click="toggleUserMenu"
-          text
-          rounded
-          aria-haspopup="true"
-          aria-controls="overlay_menu"
-        >
-          <Avatar
-            :image="
-              user && user.avatar
-                ? getLinkForImage(user.collectionId, user.id, user.avatar)
-                : '../assets/img/user.jpg'
-            "
-            shape="circle"
-          />
+        <p class=" my-auto mx-1">Hi, {{ user.name }}</p>
+        <Button type="button" @click="toggleUserMenu" text rounded aria-haspopup="true" aria-controls="overlay_menu">
+          <Avatar :image="user && user.avatar
+      ? getLinkForImage(user.collectionId, user.id, user.avatar)
+      : '../assets/img/user.jpg'
+    " shape="circle" />
         </Button>
 
-        <Menu
-          ref="menuUser"
-          id="overlay_menu"
-          :model="userItems"
-          :popup="true"
-        />
+        <Menu ref="menuUser" id="overlay_menu" :model="userItems" :popup="true" />
       </div>
     </template>
   </Menubar>
@@ -105,10 +56,8 @@ import { ref } from "vue";
 
 import Footer from "@/components/Footer.vue";
 
-import { RouterLink, RouterView } from "vue-router";
-
-import { useAuthStore } from "@/stores/auth";
-import { Constants } from "./Constants.mjs";
+import { RouterView } from "vue-router";
+import { useAuthStore } from '@/stores/auth';
 
 export default {
   name: "myApp", // Renaming the app so it won't conflict with the child component
@@ -121,6 +70,7 @@ export default {
       visibleSidebar: false,
       user: {
         id: null || "",
+        name: null || "",
         collectionId: null || "",
         avatar: null || "",
       },

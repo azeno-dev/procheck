@@ -8,3 +8,5 @@ export const Constants = {
     url: "http://192.168.100.137:6152",    
   }
 }
+
+export default Constants;

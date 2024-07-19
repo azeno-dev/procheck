@@ -135,7 +135,3 @@ export default class ApiService {
     //     }
     // }        
 }
-
-export function getLinkFile(id, imageId) {
-    return `${Constants.database.url}/api/files/${id}/${imageId}`;
-}  

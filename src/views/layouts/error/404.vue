@@ -6,11 +6,10 @@
         Această pagină nu a fost găsită
       </h2>
       <p class="dark:text-gray-500 text-gray-800">
-        Ne pare rău, pagina pe care o cauți
-         {{ this.$route.params.pathMatch[0] }} nu a fost găsit!
+        Ne pare rău, pagina pe care o cauți nu a fost găsit!
       </p>
       <button
-        @click="$router.push(authStore?.defaultView?.route || '/')"
+        @click="$router.push('/')"
         class="bg-primary rounded text-white py-3 px-5"
       >
         Reveniți la pagina principală
