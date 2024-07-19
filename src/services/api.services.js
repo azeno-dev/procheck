@@ -34,7 +34,6 @@ export default class ApiService {
             this.pb.authStore.clear();
 
             await this.pb.collection('users').authWithPassword(email, password);
-            // console.log("authStore: ", this.pb.authStore);
 
             const expires = new Date();
             expires.setTime(expires.getTime() + (90 * 60 * 1000));

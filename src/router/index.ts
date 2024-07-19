@@ -41,7 +41,7 @@ const routes = [
 ]
 
 const router = createRouter({
-  history: createWebHistory(import.meta.env.BASE_URL),
+  history: createWebHistory(),
   routes: routes,
   linkExactActiveClass: "exact-active",
   linkActiveClass: 'active',
@@ -52,11 +52,12 @@ router.beforeEach((to, from, next) => {
   document.title = to.meta.title;
   next()
 })
+
 async function authGuard(to: any, from: any, next: any) {
   let isAuthenticated = false;
   const authStore = useAuthStore();
   const cookies = useCookies().cookies;
-  authStore.setData();
+  // authStore.getUser();
 
   if (cookies.isKey("authStore")) {
     isAuthenticated = true;
@@ -72,7 +73,7 @@ async function authGuard(to: any, from: any, next: any) {
       next('/blank');
     } else {
       if (authStore.user) {
-        await authStore.setData();
+        await authStore.getUser();
       }
 
       next(); // allow to enter route               

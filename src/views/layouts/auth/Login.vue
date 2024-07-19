@@ -37,29 +37,38 @@
 <script>
 import { useAuthStore } from "@/stores/auth";
 
-const authStore = useAuthStore();
-
 export default {
   name: 'LoginPage',
+  setup() {
+  },  
   data() {
     return {
       email: '',
       password: '',
       errorMessage: '',
+      authStore: useAuthStore()
     };
   },
   methods: {
     async submit() {
+      this.errorMessage = "";
       if (!this.email || !this.password) {
         this.errorMessage = 'Vă rugăm să introduceți atât e-mailul, cât și parola.';
         return;
       }
-      await authStore.login(email, password);
 
-      if (authStore && authStore.user && authStore.user.token) {
-        // console.log("authStore: ", authStore);
-        errorLogin.value = "";
-        if (authStore) {
+      console.log("this.authStore: ", this.authStore);
+      // console.log("this.email: ", this.email);
+      // console.log("this.password: ", this.password);
+
+      await this.authStore.login(this.email, this.password)
+        .catch(() => {
+          this.errorMessage = "Email sau parola nu sunt corecte!";
+        })
+
+      if (this.authStore && this.authStore.user && this.authStore.user.token) {
+        
+        if (this.authStore) {
           this.$router.push({ path: "/", force: true });
         } else {
           this.errorMessage = "Email sau parola nu sunt corecte!";
@@ -77,4 +86,4 @@ export default {
 
 <style scoped>
 /* Add any additional custom styles here */
-</style>@/stores/auth
+</style>
