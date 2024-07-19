@@ -58,6 +58,7 @@ import Footer from "@/components/Footer.vue";
 
 import { RouterView } from "vue-router";
 import { useAuthStore } from '@/stores/auth';
+import { Constants } from '@/Constants';
 
 export default {
   name: "myApp", // Renaming the app so it won't conflict with the child component

@@ -1,16 +1,25 @@
 import PocketBase from 'pocketbase';
-import { Constants } from '../Constants.mjs';
+import { Constants } from '@/Constants';
 import { useCookies } from "vue3-cookies"
 
-export default class ApiService {
+interface User {
+    name: string;
+    username: string;
+    email: string;
+    password: string;
+}
 
-    cookies = useCookies().cookies;
-    pb = new PocketBase(Constants.database.url);
+export default class ApiService {
+    cookies: any;
+    pb: PocketBase;
 
     constructor(){ 
+        this.cookies = useCookies().cookies;
+        this.pb = new PocketBase(Constants.database.url);
         this.pb.autoCancellation(false);
     }
-    async registration(name, username, email, password) {
+
+    async registration(name: string, username: string, email: string, password: string): Promise<any> {
         return await this.pb.collection('users').create({
             name: name,
             username: username,
@@ -20,15 +29,15 @@ export default class ApiService {
         });
     }
 
-    async isVerified(email) {
+    async isVerified(email: string): Promise<any> {
         try {
-            return await pb.collection('users').requestVerification(email);
+            return await this.pb.collection('users').requestVerification(email);
         } catch (err) {
             console.log("error.isVerified: ", err);
         }
     }
 
-    async login(email, password) {
+    async login(email: string, password: string): Promise<any> {
         try {
             this.pb.authStore.clear();
 
@@ -51,11 +60,11 @@ export default class ApiService {
         }
     }
 
-    setToken(user) {
+    setToken(user: any): void {
         this.cookies.set("authStore", user.exportToCookie());
     }
 
-    getToken() {
+    getToken(): string | null {
         if (this.pb && this.pb.authStore && this.pb.authStore.token.length > 0 && this.pb.authStore.isValid) {
             // console.log("token1: ", this.pb.authStore.token);
             // console.log("authStore1: ", this.pb.authStore.model);
@@ -72,7 +81,7 @@ export default class ApiService {
         return null;
     }
 
-    logout() {
+    logout(): void {
         this.pb.authStore.clear();
 
         if (this.cookies.isKey("authStore")) {
@@ -80,9 +89,9 @@ export default class ApiService {
         }
     }
 
-    async getClientByCurrentUser() {
+    async getClientByCurrentUser(): Promise<any> {
         try {
-            const record = await this.pb.collection('clients').getOne(this.pb.authStore.model.client, {
+            const record = await this.pb.collection('clients').getOne(this.pb.authStore?.model?.client, {
                 expand: 'config,user',
             });
 
