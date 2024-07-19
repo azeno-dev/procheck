@@ -58,6 +58,7 @@
         ></i>
       </a>
     </template>
+
     <template #end>
       <div class="flex align-items-center gap-2">
         <!-- <InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" /> -->
@@ -138,13 +139,13 @@ export default {
         },
       ],
       headerItems: [
-        {
-          label: "",
-          icon: "pi pi-angle-double-right",
-          command: () => {
-            this.visibleSidebar = true;
-          },
-        },
+        // {
+        //   label: "",
+        //   icon: "pi pi-angle-double-right",
+        //   command: () => {
+        //     this.visibleSidebar = true;
+        //   },
+        // },
         {
           label: "Acasă",
           icon: "pi pi-home",
@@ -238,8 +239,8 @@ export default {
     },
   },
   async mounted() {
-    console.log("this.authStore.user: ", this.authStore.user);
-    console.log("this.$route: ", this.$route);
+    // console.log("this.authStore.user: ", this.authStore.user);
+    // console.log("this.$route: ", this.$route);
 
     if (this.$route.path == "/check") {
       if (!this.authStore.user) {
@@ -255,7 +256,7 @@ export default {
         this.user = this.authStore.user;
       }
     }
-    
+
   },
 };
 </script>
