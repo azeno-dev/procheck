@@ -3,7 +3,7 @@
 <template>
   <div :class="{ ' ': filteredProducts.length > 0, ' bg-gray-200': 'h-[100vh]' }">
 
-    <nav :class="{ 'scrolled': !view.atTopOfPage }"
+    <div :class="{ 'scrolled': !view.atTopOfPage }"
       class="fixed flex w-full bg-gray-100 border-b items-center justify-between flex-wrap pl-1 pr-6 pt-6 mx-auto top-0 animated">
 
       <!-- Search, Import, and Export Buttons -->
@@ -55,8 +55,10 @@
         <button @click="triggerFileInput" class="w-[6%] bg-blue-500 text-white px-4 py-2 rounded-md mx-2">Import</button>
         <button @click="exportData" class="w-[6%] bg-green-500 text-white px-4 py-2 rounded-md mx-2">Export</button>
         <button @click="clearData" class="w-[6%] bg-red-500 text-white px-4 py-2 rounded-md mx-2">Clear</button>
+
+        <Avatar image="../src/assets/user.png" shape="circle" />
       </div>
-    </nav>
+    </div>
 
     <!-- Product Grid -->
     <div class="grid 2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 gap-4 p-8 mt-16">
@@ -100,8 +102,12 @@ import 'vue3-toastify/dist/index.css';
 import homer from '../assets/sounds/Voicy_Homer Simpson_ Doh.mp3'
 import boing from '../assets/sounds/Voicy_Slack_Boing.mp3'
 import trombone from '../assets/sounds/Voicy_Sad_trombone.mp3'
+import Avatar from "primevue/avatar";
 
 export default {
+  components: {
+    Avatar
+  },  
   data() {
     const values: any[] = [];
     const timeoutVal: any = null
