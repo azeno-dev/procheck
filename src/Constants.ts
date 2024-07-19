@@ -8,8 +8,9 @@ export interface Constants {
 }
 
 export const Constants: Constants = {
-  env: 'dev',
+  env: import.meta.env.NODE_ENV || 'dev',
   database: { 
-    url: "http://192.168.100.137:6152",    
+    // url: "http://192.168.100.137:6152",    
+    url: import.meta.env.VUE_APP_API_AUTH ?? "http://192.168.100.137:6152/",
   }
 }
