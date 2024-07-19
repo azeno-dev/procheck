@@ -4,7 +4,7 @@
   <div :class="{ ' ': filteredProducts.length > 0, ' bg-gray-200': 'h-[100vh]' }">
 
     <div :class="{ 'scrolled': !view.atTopOfPage }"
-      class="fixed flex w-full bg-gray-100 border-b items-center justify-between flex-wrap pl-1 pr-6 pt-6 mx-auto top-0 animated">
+      class="fixed flex w-full bg-gray-100 border-b items-center justify-between flex-wrap pl-1 pr-6 pt-6 mx-auto top-[68px] animated">
 
       <!-- Search, Import, and Export Buttons -->
       <div class="flex mb-4 justify-between pl-8 w-full">
@@ -55,8 +55,6 @@
         <button @click="triggerFileInput" class="w-[6%] bg-blue-500 text-white px-4 py-2 rounded-md mx-2">Import</button>
         <button @click="exportData" class="w-[6%] bg-green-500 text-white px-4 py-2 rounded-md mx-2">Export</button>
         <button @click="clearData" class="w-[6%] bg-red-500 text-white px-4 py-2 rounded-md mx-2">Clear</button>
-
-        <Avatar image="../src/assets/user.png" shape="circle" />
       </div>
     </div>
 

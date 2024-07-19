@@ -10,7 +10,6 @@ export default class ApiService {
     constructor(){ 
         this.pb.autoCancellation(false);
     }
-
     async registration(name, username, email, password) {
         return await this.pb.collection('users').create({
             name: name,
@@ -136,3 +135,7 @@ export default class ApiService {
     //     }
     // }        
 }
+
+export function getLinkFile(id, imageId) {
+    return `${Constants.database.url}/api/files/${id}/${imageId}`;
+}  

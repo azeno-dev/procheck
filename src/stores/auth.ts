@@ -1,5 +1,5 @@
 import { defineStore } from "pinia";
-import ApiService from '../services/api.services.js';
+import ApiService from '@/services/api.services.js';
 import { ref } from "vue";
 
 interface AuthStore {
