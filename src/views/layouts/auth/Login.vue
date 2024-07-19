@@ -69,7 +69,7 @@ export default {
       if (this.authStore && this.authStore.user && this.authStore.user.token) {
         
         if (this.authStore) {
-          this.$router.push({ path: "/", force: true });
+          this.$router.push({ path: "/check", force: true });
         } else {
           this.errorMessage = "Email sau parola nu sunt corecte!";
         }

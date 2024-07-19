@@ -4,6 +4,8 @@ import Login from '../views/layouts/auth/Login.vue'
 
 import ProductView from '../views/ProductView.vue'
 import Home from '../views/Home.vue'
+import Help from '../views/Help.vue'
+import Contact from '../views/Contact.vue'
 
 // error page
 import Page404 from "../views/layouts/error/404.vue";
@@ -18,13 +20,26 @@ const routes = [
     path: "/",
     name: "Acasa",
     component: Home,
-    beforeEnter: authGuard,
-    meta: { title: "Pagina goala" + appname },
-  },  
+    meta: { title: "Cel mai bun verificator" + appname },
+  },
   {
-    path: '/awb',
-    name: 'Produse',
-    component: ProductView
+    path: "/contact",
+    name: "Contact",
+    component: Contact,
+    meta: { title: "Cel mai bun verificator" + appname },
+  },
+  {
+    path: '/check',
+    name: 'Verificare produse',
+    beforeEnter: authGuard,
+    component: ProductView,
+    meta: { title: "Cel mai bun verificator" + appname },
+  },
+  {
+    path: "/help",
+    name: "Ajutor",
+    component: Help,
+    meta: { title: "Ajutor verificator" + appname },
   },
   {
     path: '/auth/login',
@@ -37,7 +52,7 @@ const routes = [
     name: "Eroare 404",
     component: Page404,
     meta: { title: "Upps! 404" + appname, hideNav: true },
-  },  
+  },
 ]
 
 const router = createRouter({
@@ -58,28 +73,22 @@ async function authGuard(to: any, from: any, next: any) {
   const authStore = useAuthStore();
   const cookies = useCookies().cookies;
   // authStore.getUser();
+  // console.log("to: ", to);
+  // console.log("from: ", from);
+  // console.log("isAuthenticated: ", isAuthenticated);
 
   if (cookies.isKey("authStore")) {
     isAuthenticated = true;
   } else if (authStore.user && authStore.user.token) {
     isAuthenticated = true;
   }
-  console.log("to: ", to);
-  console.log("from: ", from);
-  console.log("isAuthenticated: ", isAuthenticated);
 
   if (isAuthenticated) {
-    if (to.name == "Login" || to.name == "Register" || to.name == "ForgotPassword") {
-      next('/blank');
-    } else {
-      if (authStore.user) {
-        await authStore.getUser();
-      }
-
-      next(); // allow to enter route               
+    if (authStore.user) {
+      await authStore.getUser();
     }
-  }
-  else {
+    next(); // allow to enter route               
+  } else {
     next('/auth/login');
   }
 }

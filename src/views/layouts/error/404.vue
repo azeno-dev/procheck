@@ -31,16 +31,14 @@ export default {
   async mounted() {
 
     if (this.authStore.user) {
-      await this.authStore.setData();
+      await this.authStore.getUser();
     }
 
-    if (this.authStore && this.authStore.defaultView && this.authStore.defaultView.route) {
-      this.$router.push(this.authStore.defaultView.route)
-      // await this.authStore.logout();
-      // this.$router.push("/auth/login");
+    if (this.authStore && this.authStore.user) {
+      this.$router.push("/check");
     } else {
-      await this.authStore.logout();
-      this.$router.push("/auth/login");
+      this.authStore.logout();
+      // this.$router.push("/");
     }    
     // console.log("authStore: ", this.authStore);
   },
