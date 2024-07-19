@@ -19,7 +19,7 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 import { useAuthStore } from '@/stores/auth';
 
 export default {
