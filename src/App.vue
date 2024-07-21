@@ -12,9 +12,15 @@
         <li><a href="/help" class="hover:text-gray-800">Help</a></li>
         <li><a href="/contact" class="hover:text-gray-800">Contact</a></li>
       </ul>
-      <div>
+
+      <div v-if="!user || !user.id">
         <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" href="/auth/login" >Login</a>
         <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Signup</a>
+      </div>
+
+      <div v-if="user && user.id">
+        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" href="/check" >App</a>
+        <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Logout</a>
       </div>
     </nav>
   </header>
@@ -203,7 +209,7 @@ export default {
       this.authStore.logout();
 
       await this.$router.push({
-        path: "/auth/login",
+        path: "/",
         force: true,
         replace: true,
       });
@@ -213,9 +219,11 @@ export default {
     // console.log("this.authStore.user: ", this.authStore.user);
     // console.log("this.$route: ", this.$route);
 
+    this.user = this.authStore.getUser();
+    console.log("this.user: ", this.user);
+
     if (this.$route.path == "/check") {
       if (!this.authStore.user) {
-        this.user = await this.authStore.getUser();
         if (!this.user) {
           await this.$router.push({
             path: "/auth/login",

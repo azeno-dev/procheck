@@ -17,8 +17,11 @@ export const useAuthStore = defineStore("auth", () => {
         apiService.getToken();
         user.value = apiService.pb.authStore.model;
 
-        if (user) {
+        var locUser = localStorage.getItem("user");
+        if (user && user.value) {
             isAuthenticated.value = true;
+        } else if (locUser) {
+            user.value = JSON.parse(locUser).record;
         }
 
         return user.value;
@@ -28,6 +31,7 @@ export const useAuthStore = defineStore("auth", () => {
         try {
             user.value = await apiService.login(email, password);
             const client = await apiService.getClientByCurrentUser();
+            console.log("client: ", client);
             if (client && client.expand && client.expand.config) {
                 config.value = client.expand.config;
             } 
@@ -44,6 +48,8 @@ export const useAuthStore = defineStore("auth", () => {
         
         user.value = null;
         config.value = null;
+
+        localStorage.clear();
     }    
 
     return {
