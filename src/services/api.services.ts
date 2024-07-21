@@ -13,7 +13,7 @@ export default class ApiService {
     cookies: any;
     pb: PocketBase;
 
-    constructor(){ 
+    constructor() {
         this.cookies = useCookies().cookies;
         this.pb = new PocketBase(Constants.database.url);
         this.pb.autoCancellation(false);
@@ -41,7 +41,8 @@ export default class ApiService {
         try {
             this.pb.authStore.clear();
 
-            await this.pb.collection('users').authWithPassword(email, password);
+            var user = await this.pb.collection('users').authWithPassword(email, password);
+            localStorage.setItem("user", JSON.stringify(user));
 
             const expires = new Date();
             expires.setTime(expires.getTime() + (90 * 60 * 1000));
@@ -91,11 +92,22 @@ export default class ApiService {
 
     async getClientByCurrentUser(): Promise<any> {
         try {
-            const record = await this.pb.collection('clients').getOne(this.pb.authStore?.model?.client, {
-                expand: 'config,user',
-            });
+            const locUser = localStorage.getItem('user');
+            let user = undefined;
+            if (locUser) {
+                user = JSON.parse(locUser).record;
+            }
+            console.log("user: ", user);
 
-            return JSON.parse(JSON.stringify(record));
+            if (user) {
+                const record = await this.pb.collection('clients').getFirstListItem(`user="${user.id}"`, {
+                    // expand: 'config,user',
+                });
+
+                return JSON.parse(JSON.stringify(record));
+            } else {
+                return null;
+            }
         } catch (err) {
             console.log("error.getClientByCurrentUser: ", err);
         }
