@@ -1,4 +1,24 @@
 <template>
+
+  <header class="bg-gray-400 text-white" v-if="$route.path != '/check'">
+    <nav class="container mx-auto p-6 flex justify-between items-center">
+      <a class="text-xl font-bold" href="/">AWB Checker</a>
+      <ul class="flex space-x-6">
+        <li><a href="/" class="hover:text-gray-800">Home</a></li>
+        <li><a href="/#features" class="hover:text-gray-800">Features</a></li>
+        <!-- <li><a href="/#how" class="hover:text-gray-800">How</a></li> -->
+        <!-- <li><a href="/#testimonials" class="hover:text-gray-800">Testimonials</a></li> -->
+        <li><a href="/#pricing" class="hover:text-gray-800">Pricing</a></li>
+        <li><a href="/help" class="hover:text-gray-800">Help</a></li>
+        <li><a href="/contact" class="hover:text-gray-800">Contact</a></li>
+      </ul>
+      <div>
+        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" href="/auth/login" >Login</a>
+        <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Signup</a>
+      </div>
+    </nav>
+  </header>
+
   <Menubar :model="headerItems" v-if="$route.path == '/check'">
     <template #start>
       <svg width="35" height="40" viewBox="0 0 35 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8">

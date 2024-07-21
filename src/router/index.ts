@@ -78,7 +78,7 @@ async function authGuard(to: any, from: any, next: any) {
   // console.log("from: ", from);
   // console.log("isAuthenticated: ", isAuthenticated);
 
-  if (cookies.isKey("authStore")) {
+  if (localStorage.getItem('pocketbase_auth')) {
     isAuthenticated = true;
   } else if (authStore.user && authStore.user.token) {
     isAuthenticated = true;
