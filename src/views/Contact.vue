@@ -66,19 +66,17 @@ export default {
           to: this.form.email,
           // bc: Constants.email.form,
           subject: 'Multumim pentru mesaj',
-          body: `<p>Dear ${this.form.name},<br>
+          body: `<p>Dragă ${this.form.name},<br>
             <br>
-            Thank you for reaching out to us! We have received your message and will respond to you as soon as possible.<br>
+            Vă mulțumim că ne-ați contactat! Am primit mesajul dvs. și vă vom răspunde cât mai curând posibil.<br>
             <br>
-            Here are the details we received:<br>
-            Message: ${this.form.message} <br>
+            Iată detaliile pe care le-am primit:<br>
+            Mesaj: ${this.form.message} <br>
             <br>
-            Best regards,<br>
+            Salutări,<br>
             AWB</p>
           `
         }
-
-        console.log("data: ", data);
 
         await this.mailService.sendEmail(data).then(() => {
           // Reset form
@@ -89,7 +87,7 @@ export default {
           this.toast.add({ 
             severity: 'success', 
             summary: 'Mesajul trimis', 
-            detail: 'Felicitari mesajul dumeavoastra s-a trimis cu succes, vom reveni catre dumeanvoastra in cel mai scurt timp posibil!', 
+            detail: 'Felicitări mesajul dumneavoastră s-a trimis cu succes, vom reveni către dumneavoastră în cel mai scurt timp posibil!', 
             life: 5000 
           });
         })

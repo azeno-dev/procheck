@@ -14,7 +14,7 @@
         <div class="flex flex-col w-full md:w-1/2 justify-center items-start p-8">
           <h1 class="text-3xl md:text-5xl font-bold leading-tight">Revolutionize Your Bar Reading Experience</h1>
           <p class="text-xl mt-4">Our Bar Reader Checker makes it easy to scan, import, and export barcodes efficiently.</p>
-          <button class="bg-blue-500 text-white mt-8 px-6 py-2 rounded hover:bg-blue-400">Contact Us</button>
+          <a href="/contact" class="bg-blue-500 text-white mt-8 px-6 py-2 rounded hover:bg-blue-400">Contactați-ne</a>
         </div>
         <div class="w-full md:w-1/2 py-6 text-center">
           <img src="https://via.placeholder.com/400" alt="Bar Reader Checker" class="w-full md:w-3/4 mx-auto">
@@ -120,8 +120,8 @@
     <!-- CTA Section -->
     <section class="bg-blue-500 text-white py-20">
       <div class="container mx-auto text-center">
-        <h2 class="text-4xl font-bold">Get Started with Bar Reader Checker Today!</h2>
-        <button class="bg-white text-blue-500 mt-8 px-6 py-2 rounded hover:bg-gray-200">Sign Up Now</button>
+        <h2 class="text-4xl font-bold">Începeți astăzi cu Bar Reader Checker!</h2>
+        <button class="bg-white text-blue-500 mt-8 px-6 py-2 rounded hover:bg-gray-200">Înscrieți-vă acum</button>
       </div>
     </section>    
 

@@ -4,23 +4,23 @@
     <nav class="container mx-auto p-6 flex justify-between items-center">
       <a class="text-xl font-bold" href="/">AWB Checker</a>
       <ul class="flex space-x-6">
-        <li><a href="/" class="hover:text-gray-800">Home</a></li>
-        <li><a href="/#features" class="hover:text-gray-800">Features</a></li>
+        <li><a href="/" class="hover:text-gray-800">Acasă</a></li>
+        <li><a href="/#features" class="hover:text-gray-800">Caracteristici</a></li>
         <!-- <li><a href="/#how" class="hover:text-gray-800">How</a></li> -->
         <!-- <li><a href="/#testimonials" class="hover:text-gray-800">Testimonials</a></li> -->
-        <li><a href="/#pricing" class="hover:text-gray-800">Pricing</a></li>
-        <li><a href="/help" class="hover:text-gray-800">Help</a></li>
+        <li><a href="/#pricing" class="hover:text-gray-800">Prețuri</a></li>
+        <li><a href="/help" class="hover:text-gray-800">Ajutor</a></li>
         <li><a href="/contact" class="hover:text-gray-800">Contact</a></li>
       </ul>
 
       <div v-if="!user || !user.id">
-        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" href="/auth/login" >Login</a>
-        <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Signup</a>
+        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" href="/auth/login" >Autentificare</a>
+        <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Înregistrare</a>
       </div>
 
       <div v-if="user && user.id">
         <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" href="/check" >App</a>
-        <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Logout</a>
+        <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Deconectare</a>
       </div>
     </nav>
   </header>
