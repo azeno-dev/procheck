@@ -220,7 +220,7 @@ export default {
     // console.log("this.$route: ", this.$route);
 
     this.user = this.authStore.getUser();
-    console.log("this.user: ", this.user);
+    // console.log("this.user: ", this.user);
 
     if (this.$route.path == "/check") {
       if (!this.authStore.user) {

@@ -132,11 +132,14 @@ app.use(PrimeVue, {
         preset: Aura
     }
 });
+app.use(ToastService);
 
 app.directive('styleclass', StyleClass);
 app.directive('ripple', Ripple);
 app.directive('tooltip', Tooltip);
 
+
+app.component('Toast', Toast);
 app.component('Accordion', Accordion);
 app.component('AccordionTab', AccordionTab);
 app.component('AutoComplete', AutoComplete);
