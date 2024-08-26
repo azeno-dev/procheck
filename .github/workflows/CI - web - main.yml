@@ -88,6 +88,11 @@ jobs:
       - name: 🚚 Get latest code
         uses: actions/checkout@v2
 
+      - name: Check Docker and Docker Compose version
+        run: |
+          docker --version
+          docker-compose --version
+          
       - name: Dotenv Action
         uses: falti/dotenv-action@v0.2.7
         id: dotenv
