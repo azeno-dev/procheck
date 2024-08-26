@@ -1,7 +1,7 @@
 <template>
   <div class="h-[90.4vh] py-10">
     <div class="container mx-auto px-4">
-      <h2 class="text-4xl font-bold text-center mb-10">Help & FAQs</h2>
+      <h2 class="text-4xl font-bold text-center mb-10">Ajutor și întrebări frecvente</h2>
       <div class="max-w-2xl mx-auto">
         <div v-for="(qa, index) in faqs" :key="index" class="mb-4">
           <div @click="toggle(index)"
@@ -18,6 +18,8 @@
         </div>
       </div>
     </div>
+
+    
   </div>
 </template>
 
@@ -30,12 +32,12 @@ export default {
     return {
       activeIndex: null,
       faqs: [
-        { question: "What is Bar Reader Checker?", answer: "Bar Reader Checker is a tool to scan, import, and export barcodes efficiently." },
-        { question: "How do I sign up?", answer: "Click on the Signup button in the header and fill in your details to create an account." },
-        { question: "Is there a free trial available?", answer: "Yes, we offer a 14-day free trial for new users." },
-        { question: "How do I contact support?", answer: "You can contact our support team via the contact form on our Contact Us page." },
-        { question: "What payment methods are accepted?", answer: "We accept all major credit cards and PayPal." },
-        { question: "Can I upgrade my plan later?", answer: "Yes, you can upgrade or downgrade your plan at any time from your account settings." }
+        { question: "Ce este Bar Reader Checker?", answer: "Bar Reader Checker este un instrument de scanare, importare și exportare eficientă a codurilor de bare." },
+        { question: "Cum mă înscriu?", answer: "Faceți clic pe butonul Înregistrare din antet și completați datele dumneavoastră pentru a crea un cont." },
+        { question: "Este disponibilă o perioadă de încercare gratuită?", answer: "Da, oferim o perioadă de încercare gratuită de 14 zile pentru utilizatorii noi." },
+        { question: "Cum pot contacta asistența?", answer: "Puteți contacta echipa noastră de asistență prin intermediul formularului de contact de pe pagina Contactați-ne." },
+        { question: "Ce metode de plată sunt acceptate?", answer: "Acceptăm toate cărțile de credit majore și PayPal." },
+        { question: "Îmi pot actualiza planul mai târziu?", answer: "Da, puteți face oricând upgrade sau downgrade planul dvs. din setările contului." }
       ],
       router: useRouter(),
       authStore: useAuthStore(),
@@ -45,7 +47,7 @@ export default {
     toggle(index: any) {
       this.activeIndex = this.activeIndex === index ? null : index;
     }
-  },  
+  },
   async mounted() {
 
   }

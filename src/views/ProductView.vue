@@ -14,7 +14,8 @@
           <button v-if="searchQueryAWB" @click="searchQueryAWB = ''"
             class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
             <!-- X Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              class="h-4 w-4">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
           </button>
@@ -23,9 +24,11 @@
         <div class="relative w-[30%] mr-4">
           <input v-model="searchQuery" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="Search..."
             @mouseenter="activSearch = true; searchQueryAWB = ''" :disabled="activSearch == false">
-          <button v-if="searchQuery" @click="searchQuery = ''" class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
+          <button v-if="searchQuery" @click="searchQuery = ''"
+            class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
             <!-- X Icon -->
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+              class="h-4 w-4">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
             </svg>
           </button>
@@ -52,7 +55,8 @@
 
         <!-- <button @click="importData" class="w-1/6 bg-blue-500 text-white px-4 py-2 rounded-md">Import</button> -->
         <input type="file" @change="handleFileUpload" class="hidden" ref="fileInput" accept=".xlsx">
-        <button @click="triggerFileInput" class="w-[6%] bg-blue-500 text-white px-4 py-2 rounded-md mx-2">Import</button>
+        <button @click="triggerFileInput"
+          class="w-[6%] bg-blue-500 text-white px-4 py-2 rounded-md mx-2">Import</button>
         <button @click="exportData" class="w-[6%] bg-green-500 text-white px-4 py-2 rounded-md mx-2">Export</button>
         <button @click="clearData" class="w-[6%] bg-red-500 text-white px-4 py-2 rounded-md mx-2">Clear</button>
       </div>
@@ -78,19 +82,20 @@
 
         <button @click="deleteProduct(product.awb)"
           class="absolute bottom-0 right-0 p-2 m-2 bg-red-300 hover:bg-red-500 text-white rounded-full">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" class="h-4 w-4 ">
+          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+            class="h-4 w-4 ">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
               d="M3 6l3 15h12l3-15H3zm10 3v8M9 3v8M17 3v8"></path>
           </svg>
         </button>
 
         <p v-if="product.index" class="absolute bottom-0 left-0 w-7 h-7 p-1 m-2 rounded-full bg-gray-400 text-center">{{
-          product.index }}</p>
+    product.index }}</p>
       </div>
     </div>
   </div>
 </template>
-  
+
 <script lang="ts">
 import * as XLSX from 'xlsx';
 import { toast } from 'vue3-toastify';
@@ -105,7 +110,7 @@ import Avatar from "primevue/avatar";
 export default {
   components: {
     Avatar
-  },  
+  },
   data() {
     const values: any[] = [];
     const timeoutVal: any = null
@@ -193,7 +198,9 @@ export default {
         // console.log("this.searchQueryAWB0: ", this.searchQueryAWB);
         // console.log("this.searchQueryAWB0.length: ", this.searchQueryAWB.length);
         // console.log("this.searchQueryAWB.length: ", this.searchQueryAWB.length);
+        this.activSearch = true;
         if ((this.searchQueryAWB.length >= this.awbLength || (this.searchQueryAWB.endsWith(this.awbEndWith) && this.searchQueryAWB.length >= this.awbLength + this.awbEndWith.length))) {
+
           if (result.length == 1) {
             result[0].status = this.activStatus;
             this.sortByStatus(this.products);
@@ -202,16 +209,18 @@ export default {
 
             this.saveToLocalStorage(this.products);
 
-            setTimeout(() => {
-              this.notifyAWBExist(valueSearch, this.delayAutoClear);
+            if (this.activSearch == true) {
+              setTimeout(() => {
+                this.notifyAWBExist(valueSearch, this.delayAutoClear);
+                this.sounds.boing.play();
+              }, 100);
 
-              this.sounds.boing.play();
-            }, 100);
+              setTimeout(() => {
+                this.searchQueryAWB = '';
+                this.activSearch = false;
+              }, this.delayAutoClear * 1000)
+            }
 
-            setTimeout(() => {
-              this.searchQueryAWB = '';
-
-            }, this.delayAutoClear * 1000)
             // 
           } else if (result.length > 1) {
             setTimeout(() => {
@@ -231,7 +240,7 @@ export default {
         }
 
         return result;
-      }, 500);
+      }, 300);
 
     },
     filteredProducts() {
@@ -471,7 +480,7 @@ export default {
   },
 };
 </script>
-  
+
 <style scoped>
 /* Add Tailwind CSS classes here if needed */
 nav {
@@ -483,4 +492,3 @@ nav.scrolled {
   border-bottom: 0px;
 }
 </style>
-  
