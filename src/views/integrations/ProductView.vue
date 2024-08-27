@@ -99,12 +99,13 @@
 <script lang="ts">
 import * as XLSX from 'xlsx';
 import { toast } from 'vue3-toastify';
+
 // @ts-ignore
 import { useSound } from '@vueuse/sound'
 import 'vue3-toastify/dist/index.css';
-import homer from '../assets/sounds/Voicy_Homer Simpson_ Doh.mp3'
-import boing from '../assets/sounds/Voicy_Slack_Boing.mp3'
-import trombone from '../assets/sounds/Voicy_Sad_trombone.mp3'
+import homer from '../../assets/sounds/Voicy_Homer Simpson_ Doh.mp3'
+import boing from '../../assets/sounds/Voicy_Slack_Boing.mp3'
+import trombone from '../../assets/sounds/Voicy_Sad_trombone.mp3'
 import Avatar from "primevue/avatar";
 
 export default {
