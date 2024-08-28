@@ -20,6 +20,7 @@
 
 <script lang="ts">
 import { useAuthStore } from '@/stores/auth';
+import { Constants } from "@/Constants";
 
 export default {
   data() {
@@ -34,7 +35,7 @@ export default {
     }
 
     if (this.authStore && this.authStore.user) {
-      this.$router.push("/check");
+      this.$router.push(Constants.primaryPage);
     } else {
       this.authStore.logout();
       // this.$router.push("/");

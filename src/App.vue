@@ -1,6 +1,6 @@
 <template>
 
-  <header class="bg-gray-400 text-white" v-if="$route.path != '/check'">
+  <header class="bg-gray-400 text-white" v-if="!$route.path.startsWith(pageStart)">
     <nav class="container mx-auto p-6 flex justify-between items-center">
       <a class="text-xl font-bold" href="/">AWB Checker</a>
       <ul class="flex space-x-6">
@@ -19,13 +19,13 @@
       </div>
 
       <div v-if="user && user.id">
-        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" href="/check" >App</a>
+        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" :href="primaryPage" >App</a>
         <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Deconectare</a>
       </div>
     </nav>
   </header>
 
-  <Menubar :model="headerItems" v-if="$route.path == '/check'">
+  <Menubar :model="headerItems" v-if="$route.path.startsWith(pageStart)">
     <template #start>
       <svg width="35" height="40" viewBox="0 0 35 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8">
         <path
@@ -95,6 +95,8 @@ export default {
     return {
       sidebar: false,
       visibleSidebar: false,
+      primaryPage: Constants.primaryPage,
+      pageStart: Constants.pageStart,
       user: {
         id: null || "",
         name: null || "",
@@ -134,14 +136,26 @@ export default {
           },
         },
         {
-          label: "Verificare",
-          icon: "pi pi-envelope",
-          command: () => {
-            this.$router.push({
-              path: "/check",
-              force: true,
-            });
-          },
+          label: "Integrări",
+          icon: "pi pi-microchip",
+          items: [
+            {
+              label: "Toate",
+              icon: "pi pi-microchip",
+              command: () => this.$router.push({ path: "/integrations", force: true })
+            },            
+            {
+              label: "Import",
+              icon: "pi pi-file-import",
+              command: () => this.$router.push({ path: "/integrations/import", force: true })
+            },
+            {
+              label: "SameDay",
+              icon: "pi pi-truck",
+              command: () => this.$router.push({ path: "/integrations/sameday", force: true })
+            },
+          ],          
+          // command: () => this.$router.push({ path: "/integrations/import", force: true })
         },
         {
           label: "Ajutor",
@@ -222,7 +236,7 @@ export default {
     this.user = this.authStore.getUser();
     // console.log("this.user: ", this.user);
 
-    if (this.$route.path == "/check") {
+    if (this.$route.path == Constants.primaryPage) {
       if (!this.authStore.user) {
         if (!this.user) {
           await this.$router.push({

@@ -31,7 +31,7 @@ export const useAuthStore = defineStore("auth", () => {
         try {
             user.value = await apiService.login(email, password);
             const client = await apiService.getClientByCurrentUser();
-            console.log("client: ", client);
+            // console.log("client: ", client);
             if (client && client.expand && client.expand.config) {
                 config.value = client.expand.config;
             } 
