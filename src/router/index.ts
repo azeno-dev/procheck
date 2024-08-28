@@ -2,10 +2,11 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 import Login from '../views/layouts/auth/Login.vue'
 
-import ProductView from '../views/ProductView.vue'
 import Home from '../views/Home.vue'
 import Help from '../views/Help.vue'
 import Contact from '../views/Contact.vue'
+import Integrations from '../views/integrations/Integrations.vue'
+import ProductView from '../views/integrations/ProductView.vue'
 
 // error page
 import Page404 from "../views/layouts/error/404.vue";
@@ -28,13 +29,34 @@ const routes = [
     component: Contact,
     meta: { title: "Cel mai bun verificator" + appname },
   },
+  // {
+  //   path: '/check',
+  //   name: 'Verificare produse',
+  //   beforeEnter: authGuard,
+  //   component: ProductView,
+  //   meta: { title: "Cel mai bun verificator" + appname },
+  // },
   {
-    path: '/check',
-    name: 'Verificare produse',
+    path: '/integrations',
+    name: 'Integrari',
+    beforeEnter: authGuard,
+    component: Integrations,
+    meta: { title: "Cel mai bun verificator" + appname },
+  },    
+  {
+    path: '/integrations/import',
+    name: 'Verificare produse - Import',
     beforeEnter: authGuard,
     component: ProductView,
     meta: { title: "Cel mai bun verificator" + appname },
-  },
+  },  
+  {
+    path: '/integrations/sameday',
+    name: 'Verificare produse - Sameday',
+    beforeEnter: authGuard,
+    component: Integrations,
+    meta: { title: "Cel mai bun verificator" + appname },
+  },    
   {
     path: "/help",
     name: "Ajutor",

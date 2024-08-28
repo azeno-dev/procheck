@@ -8,8 +8,8 @@
 
       <!-- Search, Import, and Export Buttons -->
       <div class="flex mb-4 justify-between pl-8 w-full">
-        <div class="relative w-[20%] mr-4">
-          <input v-model="searchQueryAWB" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="AWB..."
+        <div class="relative w-[20%] mr-4" id="headerSearch">
+          <input v-model="searchQueryAWB" id="searchAWB" ref="searchAWB" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="AWB..."
             @mouseenter="activSearch = false; searchQuery = ''" :disabled="activSearch == true">
           <button v-if="searchQueryAWB" @click="searchQueryAWB = ''"
             class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
@@ -99,12 +99,13 @@
 <script lang="ts">
 import * as XLSX from 'xlsx';
 import { toast } from 'vue3-toastify';
+
 // @ts-ignore
 import { useSound } from '@vueuse/sound'
 import 'vue3-toastify/dist/index.css';
-import homer from '../assets/sounds/Voicy_Homer Simpson_ Doh.mp3'
-import boing from '../assets/sounds/Voicy_Slack_Boing.mp3'
-import trombone from '../assets/sounds/Voicy_Sad_trombone.mp3'
+import homer from '../../assets/sounds/Voicy_Homer_Simpson_Doh.mp3'
+import boing from '../../assets/sounds/Voicy_Slack_Boing.mp3'
+import trombone from '../../assets/sounds/Voicy_Sad_trombone.mp3'
 import Avatar from "primevue/avatar";
 
 export default {
@@ -208,17 +209,23 @@ export default {
             result[0].index = this.countActive;
 
             this.saveToLocalStorage(this.products);
-
+          
             if (this.activSearch == true) {
               setTimeout(() => {
                 this.notifyAWBExist(valueSearch, this.delayAutoClear);
                 this.sounds.boing.play();
+
+                document.getElementById("headerSearch")?.focus();
               }, 100);
 
               setTimeout(() => {
                 this.searchQueryAWB = '';
                 this.activSearch = false;
-              }, this.delayAutoClear * 1000)
+                // console.log("this.$refs.searchAWB4 ", document.getElementById("searchAWB"));
+                // console.log("this.$refs.searchAWB5 ", document.activeElement);
+                document.getElementById("searchAWB")?.focus();  
+                
+              }, this.delayAutoClear * 500)
             }
 
             // 
