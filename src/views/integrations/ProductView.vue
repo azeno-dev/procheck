@@ -8,9 +8,10 @@
 
       <!-- Search, Import, and Export Buttons -->
       <div class="flex mb-4 justify-between pl-8 w-full">
-        <div class="relative w-[20%] mr-4" id="headerSearch">
-          <input v-model="searchQueryAWB" id="searchAWB" ref="searchAWB" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="AWB..."
-            @mouseenter="activSearch = false; searchQuery = ''" :disabled="activSearch == true">
+        <div class="relative w-[20%] mr-4" id="searchHeader">
+          <input v-model="searchQueryAWB" :tabindex="0" id="searchInputAWB" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="AWB..."
+            @mouseenter="activSearch = false; searchQuery = ''" :readonly="activSearch == true" :style="activSearch ? 'background-color: #d1d5db;' : 'background-color: white;'">
+
           <button v-if="searchQueryAWB" @click="searchQueryAWB = ''"
             class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
             <!-- X Icon -->
@@ -23,7 +24,7 @@
 
         <div class="relative w-[30%] mr-4">
           <input v-model="searchQuery" type="text" class="w-full px-4 py-2 border rounded-md" placeholder="Search..."
-            @mouseenter="activSearch = true; searchQueryAWB = ''" :disabled="activSearch == false">
+            @mouseenter="activSearch = true; searchQueryAWB = ''" :readonly="activSearch == false" :style="!activSearch ? 'background-color: #d1d5db;' : 'background-color: white;'">
           <button v-if="searchQuery" @click="searchQuery = ''"
             class="absolute inset-y-0 right-0 px-2 py-1 text-gray-600">
             <!-- X Icon -->
@@ -99,7 +100,6 @@
 <script lang="ts">
 import * as XLSX from 'xlsx';
 import { toast } from 'vue3-toastify';
-
 // @ts-ignore
 import { useSound } from '@vueuse/sound'
 import 'vue3-toastify/dist/index.css';
@@ -209,23 +209,17 @@ export default {
             result[0].index = this.countActive;
 
             this.saveToLocalStorage(this.products);
-          
+
             if (this.activSearch == true) {
               setTimeout(() => {
                 this.notifyAWBExist(valueSearch, this.delayAutoClear);
                 this.sounds.boing.play();
-
-                document.getElementById("headerSearch")?.focus();
-              }, 100);
+              }, 300);
 
               setTimeout(() => {
                 this.searchQueryAWB = '';
                 this.activSearch = false;
-                // console.log("this.$refs.searchAWB4 ", document.getElementById("searchAWB"));
-                // console.log("this.$refs.searchAWB5 ", document.activeElement);
-                document.getElementById("searchAWB")?.focus();  
-                
-              }, this.delayAutoClear * 500)
+              }, this.delayAutoClear * 1000)
             }
 
             // 
@@ -247,7 +241,7 @@ export default {
         }
 
         return result;
-      }, 300);
+      }, 500);
 
     },
     filteredProducts() {

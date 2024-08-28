@@ -7,6 +7,8 @@ import Help from '../views/Help.vue'
 import Contact from '../views/Contact.vue'
 import Integrations from '../views/integrations/Integrations.vue'
 import ProductView from '../views/integrations/ProductView.vue'
+import SameDayView from '../views/integrations/SameDayView.vue'
+
 
 // error page
 import Page404 from "../views/layouts/error/404.vue";
@@ -54,7 +56,7 @@ const routes = [
     path: '/integrations/sameday',
     name: 'Verificare produse - Sameday',
     beforeEnter: authGuard,
-    component: Integrations,
+    component: SameDayView,
     meta: { title: "Cel mai bun verificator" + appname },
   },    
   {
