@@ -97,12 +97,13 @@ export default class ApiService {
             if (locUser) {
                 user = JSON.parse(locUser).record;
             }
-            console.log("user: ", user);
+            // console.log("user: ", user);
 
             if (user) {
                 const record = await this.pb.collection('clients').getFirstListItem(`user="${user.id}"`, {
-                    // expand: 'config,user',
+                    expand: 'config,user,integrations',
                 });
+                // console.log("record: ", record);
 
                 return JSON.parse(JSON.stringify(record));
             } else {

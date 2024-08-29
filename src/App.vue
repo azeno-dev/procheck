@@ -54,7 +54,7 @@
     <template #end>
       <div class="flex align-items-center gap-2">
         <!-- <InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" /> -->
-        <p class=" my-auto mx-1">Hi, {{ user.name }}</p>
+        <p class=" my-auto mx-1" v-if="user">Hi {{ user.name || "" }}</p>
         <Button type="button" @click="toggleUserMenu" text rounded aria-haspopup="true" aria-controls="overlay_menu">
           <Avatar :image="user && user.avatar
       ? getLinkForImage(user.collectionId, user.id, user.avatar)
