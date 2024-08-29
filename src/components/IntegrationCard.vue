@@ -8,14 +8,15 @@
 
         <!-- More icon button on top right -->
         <div class="absolute top-3 right-3">
-            <button @click="onMoreClick" class="text-gray-500 hover:text-gray-700">
+            <button @click="onMoreClick($event)" class="text-gray-500 hover:text-gray-700">
                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" class="w-6 h-6">
                     <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M6.75 12a.75.75 0 110 1.5.75.75 0 010-1.5zm5.25 0a.75.75 0 110 1.5.75.75 0 010-1.5zm5.25 0a.75.75 0 110 1.5.75.75 0 010-1.5z" />
+                        d="M12 6.75a.75.75 0 110-1.5.75.75 0 010 1.5zm0 5.25a.75.75 0 110-1.5.75.75 0 010 1.5zm0 5.25a.75.75 0 110-1.5.75.75 0 010 1.5z" />
                 </svg>
             </button>
         </div>
+        <Menu ref="menu" :model="items" :popup="true" />
 
         <!-- Image on the center -->
         <div class="flex justify-center items-center w-[200px] h-[200px] p-5">
@@ -57,7 +58,7 @@ export default {
             type: String,
             required: true,
             default: ''
-        },
+        },       
         active: {
             type: Boolean,
             required: true,
@@ -67,14 +68,46 @@ export default {
             type: Object,
             required: true,
             default: {}
+        },
+        doc: {
+            type: String,
+            default: ''
+        }, 
+        site_url: {
+            type: String,
+            default: ''
+        }                
+    },
+    data() {
+        return {
+            items: [
+                {
+                    label: "Documentație",
+                    icon: "pi pi-fw pi-book",
+                    command: () => {
+                        window.open(this.site_url, '_blank');
+                    }
+                },
+                {
+                    label: "Înregistrare",
+                    icon: "pi pi-fw pi-user-plus",
+                    command: () => {
+                        window.open(this.site_url, '_blank');
+                    }
+                }
+            ]
         }
     },
     methods: {
-        onMoreClick() {
+        onMoreClick(event: any) {
             // Handle the click event for the More button
-            alert('More options');
+            // alert('More options');
+            if (this.$refs.menu) {
+                const menu = (this.$refs.menu as any);
+                menu.toggle(event);
+            }
         },
-        onEditClick() {
+        onEditClick(event: any) {
             // Handle the click event for the Edit button
             alert('Edit clicked');
         }

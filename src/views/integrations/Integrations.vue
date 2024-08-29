@@ -8,7 +8,7 @@
     <div class="p-10">
 
       <IntegrationCard v-for="integration in integrations" :key="integration.id" :imageUrl="integration.image_url || ''"
-        :active="integration.active" :service="integration.service" />
+        :active="integration.active" :service="integration.service" :doc="integration.doc || ''" :site_url="integration.site_url || ''" />
 
     </div>
   </div>

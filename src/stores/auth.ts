@@ -12,7 +12,7 @@ export interface Integration {
     name: string;
     collectionId: string;
     active: boolean;
-    type: string | null;
+    type: string;
     doc: string | null;
     image_url: string | null;
     doc_url: string | null;
@@ -41,6 +41,18 @@ export const useAuthStore = defineStore("auth", () => {
         return user.value;
     }
 
+    function getIntegrations(): any {
+        apiService.getToken();
+        user.value = apiService.pb.authStore.model;
+
+        var locIntegrations = localStorage.getItem("integrations");
+        if (locIntegrations) {
+            integrations.value = JSON.parse(locIntegrations);
+        }
+
+        return integrations.value;
+    }    
+
     async function login(email: string, password: string) {
         try {
             user.value = await apiService.login(email, password);
@@ -49,6 +61,7 @@ export const useAuthStore = defineStore("auth", () => {
             if (client && client.expand && client.expand.config) {
                 config.value = client.expand.config;
                 integrations.value = JSON.parse(JSON.stringify(client.expand.integrations)) as Integration[];
+                localStorage.setItem("integrations", JSON.stringify(integrations.value));
             } 
 
             return user.value;
@@ -75,6 +88,7 @@ export const useAuthStore = defineStore("auth", () => {
         integrations,
         isAuthenticated,
         getUser,
+        getIntegrations,
         login,
         logout,
       };    
