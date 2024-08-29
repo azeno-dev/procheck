@@ -48,6 +48,12 @@
             </button>
         </div>
     </div>
+
+    <Dialog v-model:visible="showDocDialog" @close="showDocDialog = false" maximizable modal header="Header" :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+            <div class="m-0" :inner-h-t-m-l="doc">
+            </div>
+    </Dialog>
+
 </template>
 
 <script lang="ts">
@@ -80,12 +86,14 @@ export default {
     },
     data() {
         return {
+            showDocDialog: false,
             items: [
                 {
                     label: "Documentație",
                     icon: "pi pi-fw pi-book",
                     command: () => {
-                        window.open(this.site_url, '_blank');
+                        // window.open(this.site_url, '_blank');
+                        this.setShowDocDialog();    
                     }
                 },
                 {
@@ -95,7 +103,7 @@ export default {
                         window.open(this.site_url, '_blank');
                     }
                 }
-            ]
+            ],
         }
     },
     methods: {
@@ -106,6 +114,9 @@ export default {
                 const menu = (this.$refs.menu as any);
                 menu.toggle(event);
             }
+        },
+        setShowDocDialog() {
+            this.showDocDialog = true;
         },
         onEditClick(event: any) {
             // Handle the click event for the Edit button
