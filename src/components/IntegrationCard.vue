@@ -49,9 +49,40 @@
         </div>
     </div>
 
-    <Dialog v-model:visible="showDocDialog" @close="showDocDialog = false" maximizable modal header="Header" :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
-            <div class="m-0" :inner-h-t-m-l="doc">
-            </div>
+    <Dialog v-model:visible="showDocDialog" @close="showDocDialog = false" maximizable modal header="Documentație"
+        :style="{ width: '50rem' }" :breakpoints="{ '1199px': '75vw', '575px': '90vw' }">
+        <div class="m-0" v-html="doc">
+        </div>
+    </Dialog>
+
+    <Dialog v-model:visible="showEditDialog" @close="showEditDialog = false" header="Editare" modal
+        :style="{ width: '25rem' }">
+        <span class="text-surface-500 dark:text-surface-400 block mb-8">Introduceți datele de conectare</span>
+
+        <div class="flex items-center gap-4 mb-4">
+            <label for="api_url" class="font-semibold w-24">API url</label>
+            <InputText id="api_url" type="text" :value="service.api_url" class="flex-auto" autocomplete="off"
+                readonly="true" disabled="true" />
+        </div>
+        <div class="flex items-center gap-4 mb-4">
+            <label for="user" class="font-semibold w-24">Utilizator</label>
+            <InputText id="user" type="text" :value="service.user" class="flex-auto" autocomplete="off" />
+        </div>
+        <div class="flex items-center gap-4 mb-8">
+            <label for="password" class="font-semibold w-[140px]">Parolă</label>
+            <!-- <InputText id="password" type="password" :value="service.password" class="flex-auto" autocomplete="off" /> -->
+            <InputGroup>
+                <InputText id="password" :type="passwordFieldType"  :value="service.password" placeholder="Enter your password"  class="flex-auto" autocomplete="off" />
+                <InputGroupAddon addonType="append" @click="togglePasswordVisibility">
+                    <i :class="passwordFieldType === 'password' ? 'pi pi-eye' : 'pi pi-eye-slash'" style="cursor: pointer;"></i>
+                </InputGroupAddon>
+            </InputGroup>            
+        </div>
+
+        <div class="flex justify-end gap-2">
+            <Button type="button" label="Anulează" severity="secondary" @click="showEditDialog = false"></Button>
+            <Button type="button" label="Salvează" @click="onSaveServiceClick"></Button>
+        </div>
     </Dialog>
 
 </template>
@@ -64,7 +95,7 @@ export default {
             type: String,
             required: true,
             default: ''
-        },       
+        },
         active: {
             type: Boolean,
             required: true,
@@ -78,30 +109,27 @@ export default {
         doc: {
             type: String,
             default: ''
-        }, 
+        },
         site_url: {
             type: String,
             default: ''
-        }                
+        }
     },
     data() {
         return {
             showDocDialog: false,
+            showEditDialog: false,
+            passwordFieldType: 'password',
             items: [
                 {
                     label: "Documentație",
                     icon: "pi pi-fw pi-book",
-                    command: () => {
-                        // window.open(this.site_url, '_blank');
-                        this.setShowDocDialog();    
-                    }
+                    command: () => this.setShowDocDialog()
                 },
                 {
                     label: "Înregistrare",
                     icon: "pi pi-fw pi-user-plus",
-                    command: () => {
-                        window.open(this.site_url, '_blank');
-                    }
+                    command: () => window.open(this.site_url, '_blank')
                 }
             ],
         }
@@ -115,12 +143,18 @@ export default {
                 menu.toggle(event);
             }
         },
+        togglePasswordVisibility() {
+            this.passwordFieldType = this.passwordFieldType === 'password' ? 'text' : 'password';
+        },
         setShowDocDialog() {
             this.showDocDialog = true;
         },
         onEditClick(event: any) {
-            // Handle the click event for the Edit button
-            alert('Edit clicked');
+            this.showEditDialog = true;
+        },
+        onSaveServiceClick() {
+            
+            this.showEditDialog = false;
         }
     }
 };

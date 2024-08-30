@@ -1,9 +1,7 @@
 <template>
   <div class="container lg:max-w-7xl mx-auto text-center mt-10 h-[88.5vh]">
 
-    <h1 class="text-4xl font-bold text-center mb-10">Integratii</h1>
-
-    <!-- <IntegrationCard v-for="integration in Constants.integrations" :key="integration.service" :service="integration" /> -->
+    <h1 class="text-4xl font-bold text-center mb-5">Integrării</h1>
 
     <div class="p-10">
 
