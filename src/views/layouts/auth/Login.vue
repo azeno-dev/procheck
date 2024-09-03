@@ -58,7 +58,7 @@ export default {
         return;
       }
 
-      console.log("this.authStore: ", this.authStore);
+      // console.log("this.authStore: ", this.authStore);
       // console.log("this.email: ", this.email);
       // console.log("this.password: ", this.password);
 

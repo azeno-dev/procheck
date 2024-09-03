@@ -9,11 +9,17 @@ export interface Email {
   token: string;
 }
 
+export interface Sameday {
+  api: string;
+  pref: string;
+}
+
 
 export interface Constants {
   env: string;
   database: Database;
   email: Email;
+  sameday: Sameday;
   primaryPage: string;
   pageStart: string;
 }
@@ -30,6 +36,10 @@ export const Constants: Constants = {
     transporter: "smtp_azeno_contact",
     form: "contact@azeno.ro",
     token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkF6ZW5vIiwiaWF0IjoxNTE2MjM5MDIyfQ.8v_AbV5f_vJzIX-cj9IPXH4AdyqxIm6yOJGiAJqO5EQ"
+  },
+  sameday: {
+    api: "https://api.sameday.ro",
+    pref: "api",
   },
   primaryPage: "/integrations/import",
   pageStart: "/integrations",

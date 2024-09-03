@@ -14,12 +14,12 @@
       </ul>
 
       <div v-if="!user || !user.id">
-        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" href="/auth/login" >Autentificare</a>
+        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" href="/auth/login">Autentificare</a>
         <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Înregistrare</a>
       </div>
 
       <div v-if="user && user.id">
-        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" :href="primaryPage" >App</a>
+        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" :href="primaryPage">App</a>
         <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Deconectare</a>
       </div>
     </nav>
@@ -54,11 +54,11 @@
     <template #end>
       <div class="flex align-items-center gap-2">
         <!-- <InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" /> -->
-        <p class=" my-auto mx-1">Hi, {{ user.name }}</p>
+        <p class=" my-auto mx-1" v-if="user">Hi {{ user.name || "" }}</p>
         <Button type="button" @click="toggleUserMenu" text rounded aria-haspopup="true" aria-controls="overlay_menu">
           <Avatar :image="user && user.avatar
-      ? getLinkForImage(user.collectionId, user.id, user.avatar)
-      : '../assets/img/user.jpg'
+    ? getLinkForImage(user.collectionId, user.id, user.avatar)
+    : '../assets/img/user.jpg'
     " shape="circle" />
         </Button>
 
@@ -83,7 +83,7 @@ import { ref } from "vue";
 import Footer from "@/components/Footer.vue";
 
 import { RouterView } from "vue-router";
-import { useAuthStore } from '@/stores/auth';
+import { useAuthStore, type Integration } from '@/stores/auth';
 import { Constants } from '@/Constants';
 
 export default {
@@ -103,6 +103,7 @@ export default {
         collectionId: null || "",
         avatar: null || "",
       },
+      integrations: [] as Integration[],
       authStore: useAuthStore(),
       items: [
         {
@@ -137,24 +138,29 @@ export default {
         },
         {
           label: "Integrări",
+          key: "integrations",
           icon: "pi pi-microchip",
           items: [
             {
               label: "Toate",
+              key: "all",
               icon: "pi pi-microchip",
               command: () => this.$router.push({ path: "/integrations", force: true })
-            },            
+            },
             {
               label: "Import",
+              key: "import",
               icon: "pi pi-file-import",
               command: () => this.$router.push({ path: "/integrations/import", force: true })
             },
             {
               label: "SameDay",
+              key: "sameday",
               icon: "pi pi-truck",
+              disabled: true,
               command: () => this.$router.push({ path: "/integrations/sameday", force: true })
             },
-          ],          
+          ],
           // command: () => this.$router.push({ path: "/integrations/import", force: true })
         },
         {
@@ -234,7 +240,21 @@ export default {
     // console.log("this.$route: ", this.$route);
 
     this.user = this.authStore.getUser();
-    // console.log("this.user: ", this.user);
+    this.integrations = this.authStore.getIntegrations();
+    
+    if (this.integrations && this.integrations.length > 0) {
+      this.integrations.forEach((integration: Integration) => {
+        if (integration.active) {
+          const ints = this.headerItems.filter((item) => item.key == "integrations");
+          if (ints.length == 1) {
+            const intValue = ints[0].items?.filter((item) => item.key == integration.type);
+            if (intValue && intValue.length == 1) {
+              intValue[0].disabled = false;
+            }
+          }
+        }
+      })
+    }
 
     if (this.$route.path == Constants.primaryPage) {
       if (!this.authStore.user) {
@@ -246,7 +266,7 @@ export default {
           });
         }
       } else {
-        this.user = this.authStore.user;
+
       }
     }
 
