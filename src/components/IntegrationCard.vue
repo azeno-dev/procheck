@@ -88,6 +88,9 @@
 </template>
 
 <script lang="ts">
+import ApiService from '@/services/api.services.js';
+
+const apiService: ApiService = new ApiService();
 
 export default {
     props: {
@@ -153,7 +156,7 @@ export default {
             this.showEditDialog = true;
         },
         onSaveServiceClick() {
-            
+            // apiService.saveIntegration(this.);
             this.showEditDialog = false;
         }
     }

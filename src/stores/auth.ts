@@ -71,6 +71,15 @@ export const useAuthStore = defineStore("auth", () => {
         }
     }
 
+    function getSameday() {
+        let sameday = integrations.value?.find(i => i.type === "sameday");
+        if (sameday) {
+            return sameday;
+        }
+
+        return null;
+    }
+
     function logout() {
         apiService.logout();
         
@@ -89,6 +98,7 @@ export const useAuthStore = defineStore("auth", () => {
         isAuthenticated,
         getUser,
         getIntegrations,
+        getSameday,
         login,
         logout,
       };    

@@ -113,4 +113,16 @@ export default class ApiService {
             console.log("error.getClientByCurrentUser: ", err);
         }
     }
+
+    async saveIntegration(integration: any): Promise<any> {
+        try {
+            const record = this.pb.collection('integrations').update(integration.id, integration);
+
+            return JSON.parse(JSON.stringify(record));
+        } catch (err) {
+            console.log("error.saveIntegration: ", err);
+        }
+
+        return null;
+    }
 }

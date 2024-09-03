@@ -89,8 +89,10 @@
           </svg>
         </button>
 
-        <p v-if="product.index" class="absolute bottom-0 left-0 w-7 h-7 p-1 m-2 rounded-full bg-gray-400 text-center">{{
-    product.index }}</p>
+        <p v-if="product.index" class="absolute bottom-0 left-0 w-7 h-7 p-1 m-2 rounded-full bg-gray-400 text-center">
+          {{product.index }}
+        </p>
+
       </div>
     </div>
   </div>
@@ -106,6 +108,9 @@ import homer from '../../assets/sounds/Voicy_Homer_Simpson_Doh.mp3'
 import boing from '../../assets/sounds/Voicy_Slack_Boing.mp3'
 import trombone from '../../assets/sounds/Voicy_Sad_trombone.mp3'
 import Avatar from "primevue/avatar";
+
+import SamedayService from '@/services/sameday.services.js';
+import { useAuthStore, type Integration } from '@/stores/auth';
 
 export default {
   components: {
@@ -123,6 +128,9 @@ export default {
       view: {
         atTopOfPage: true
       },
+      samedayService: {} as SamedayService,
+      authStore: useAuthStore(),
+      samedayIntegration: {} as Integration,
       searchQueryAWB: '',
       searchQuery: '',
       activStatus: 'Pregatit',
@@ -275,12 +283,23 @@ export default {
   beforeMount() {
     window.addEventListener('scroll', this.handleScroll);
   },
+  async mounted() {
+    this.authStore.getIntegrations();
+    this.samedayIntegration = this.authStore.getSameday() as Integration;
+    this.samedayService = new SamedayService(this.samedayIntegration.service);
+    console.log("this.samedayIntegration: ", this.samedayIntegration);
+
+    console.log("this.samedayService: ", this.samedayService);
+      const values = await this.samedayService.getData();
+      console.log("values: ", values);    
+  },  
   methods: {
     clearSearch() {
       this.searchQuery = '';
       this.searchQueryAWB = '';
     },
-    initData() {
+    async initData() {      
+
       const awbEndWithJson = localStorage.getItem('awbEndWith');
       if (awbEndWithJson) {
         this.awbEndWith = awbEndWithJson;

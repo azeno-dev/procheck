@@ -16,6 +16,16 @@ export default defineConfig({
   build: {
     chunkSizeWarningLimit: 1600,
   },
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'https://lidta.com/erp/public/api/v1',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, '')
+      }
+    }
+  },
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
