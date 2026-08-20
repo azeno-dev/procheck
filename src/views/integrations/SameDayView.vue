@@ -1052,11 +1052,33 @@ export default {
       LiveSyncService.initChannel(LiveSyncService.getOrCreateRoomId());
     }
 
+    // Subscribe to incoming scan events and batch sync from paired devices
     LiveSyncService.onScanEvent((event: LiveScanEvent) => {
-      if (this.liveSyncEnabled && event.type === 'SCAN_AWB' && event.awb) {
+      if (!this.liveSyncEnabled) return;
+
+      if (event.type === 'REQUEST_SYNC') {
+        if (this.products && this.products.length > 0) {
+          LiveSyncService.broadcastBatch(this.products);
+        }
+      } else if (event.type === 'BATCH_SYNC') {
+        if (event.products && event.products.length > 0) {
+          this.products = event.products;
+          this.sortByStatus(this.products);
+          this.countActive = this.products.filter(p => p.status === this.activStatus).length;
+          this.saveToLocalStorage(this.products, false);
+          toast.success(`📦 Sincronizat ${event.products.length} colete Sameday pe acest dispozitiv!`);
+        }
+      } else if (event.type === 'SCAN_AWB' && event.awb) {
         this.handleIncomingLiveScan(event.awb);
       }
     });
+
+    // If mobile doesn't have products yet, ask paired desktop for current batch
+    if (this.products.length === 0 && this.liveSyncEnabled) {
+      setTimeout(() => {
+        LiveSyncService.requestBatchSync();
+      }, 400);
+    }
   },
   methods: {
     getTimeRangeLabel(range: string): string {
@@ -1143,10 +1165,7 @@ export default {
               localStorage.removeItem('importedData');
               this.products = [];
               this.countActive = 0;
-              return;
-            }
-
-            if (data.products && data.products.length > 0) {
+            } else if (data.products && data.products.length > 0) {
               this.products = data.products;
               this.sortByStatus(this.products);
               this.countActive = this.products.filter(p => p.status === this.activStatus).length;
@@ -1154,6 +1173,16 @@ export default {
           }
         } catch (e) {
           console.error("Error loading local storage data:", e);
+        }
+      }
+
+      // Fallback: check recent batch history if storage was empty
+      if (this.products.length === 0) {
+        const history = BatchService.getHistory();
+        if (history && history.length > 0 && history[0].products && history[0].products.length > 0) {
+          this.products = history[0].products;
+          this.sortByStatus(this.products);
+          this.countActive = this.products.filter(p => p.status === this.activStatus).length;
         }
       }
     },
@@ -1224,12 +1253,16 @@ export default {
 
       reader.readAsArrayBuffer(file);
     },
-    saveToLocalStorage(products: any[]) {
+    saveToLocalStorage(products: any[], broadcast: boolean = true) {
       const dataToStore = {
         expiry: ((new Date()).getTime()) + ((this.delayClearData * 3600) * 1000),
         products,
       };
       localStorage.setItem('importedData', JSON.stringify(dataToStore));
+
+      if (broadcast && this.liveSyncEnabled && products.length > 0) {
+        LiveSyncService.broadcastBatch(products);
+      }
 
       if (this.autoSaveDb && products.length > 0) {
         BatchService.saveBatch({
