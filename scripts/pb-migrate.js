@@ -59,17 +59,28 @@ async function main() {
         { name: 'batchId',    type: 'text',   required: true  },
         { name: 'name',       type: 'text',   required: false },
         { name: 'source',     type: 'text',   required: false },
-        { name: 'user',       type: 'text',   required: false },
+        { name: 'courier',    type: 'text',   required: false },
         { name: 'totalCount', type: 'number', required: false },
         { name: 'readyCount', type: 'number', required: false },
         { name: 'progress',   type: 'number', required: false },
         { name: 'data',       type: 'json',   required: false, options: { maxSize: 5000000 } },
+        {
+          name: 'user',
+          type: 'relation',
+          required: false,
+          options: {
+            collectionId: '_pb_users_auth_',
+            cascadeDelete: false,
+            maxSelect: 1,
+            displayFields: []
+          }
+        },
       ],
-      listRule:   '@request.auth.id != ""',
-      viewRule:   '@request.auth.id != ""',
-      createRule: '@request.auth.id != ""',
-      updateRule: '@request.auth.id != ""',
-      deleteRule: '@request.auth.id != ""',
+      listRule:   '',
+      viewRule:   '',
+      createRule: '',
+      updateRule: '',
+      deleteRule: '',
     }, token);
     console.log('"batches" collection created.\n');
   }
@@ -83,18 +94,28 @@ async function main() {
       name: 'live_events',
       type: 'base',
       schema: [
-        { name: 'room',    type: 'text', required: false },
-        { name: 'user',    type: 'text', required: false },
-        { name: 'type',    type: 'text', required: false },
-        { name: 'awb',     type: 'text', required: false },
-        { name: 'status',  type: 'text', required: false },
+        { name: 'room',   type: 'text', required: false },
+        { name: 'type',   type: 'text', required: false },
+        { name: 'awb',    type: 'text', required: false },
+        { name: 'status', type: 'text', required: false },
         { name: 'payload', type: 'json', required: false, options: { maxSize: 5000000 } },
+        {
+          name: 'user',
+          type: 'relation',
+          required: false,
+          options: {
+            collectionId: '_pb_users_auth_',
+            cascadeDelete: false,
+            maxSelect: 1,
+            displayFields: []
+          }
+        },
       ],
-      listRule:   '@request.auth.id != ""',
-      viewRule:   '@request.auth.id != ""',
-      createRule: '@request.auth.id != ""',
-      updateRule: '@request.auth.id != ""',
-      deleteRule: '@request.auth.id != ""',
+      listRule:   '',
+      viewRule:   '',
+      createRule: '',
+      updateRule: '',
+      deleteRule: '',
     }, token);
     console.log('"live_events" collection created.\n');
   }

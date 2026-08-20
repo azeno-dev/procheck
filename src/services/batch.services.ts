@@ -49,50 +49,45 @@ export class BatchService {
     let inDb = false;
     let dbError: string | undefined;
 
-    // Try persisting to PocketBase if user authenticated
+    // Persist to PocketBase — user relation is optional
     try {
+      // Restore auth token if user is logged in
       const locUser = localStorage.getItem('user');
-      if (!locUser) {
-        dbError = 'Utilizatorul nu este autentificat.';
-      } else {
+      if (locUser) {
         const parsed = JSON.parse(locUser);
-        const user = parsed.record;
-        const token = parsed.token;
-
-        if (!user || !user.id) {
-          dbError = 'Date utilizator invalide în localStorage.';
-        } else {
-          // Restore auth token on the PocketBase client instance
-          if (token) {
-            this.pb.authStore.save(token, user);
-          }
-
-          try {
-            await this.pb.collection('batches').create({
-              batchId: fullSession.id,
-              name: fullSession.name,
-              source: fullSession.source,
-              user: user.id,
-              totalCount: fullSession.totalCount,
-              readyCount: fullSession.readyCount,
-              progress: fullSession.progress,
-              data: JSON.stringify(fullSession)
-            });
-            inDb = true;
-          } catch (pbErr: any) {
-            const msg = pbErr?.response?.message || pbErr?.message || String(pbErr);
-            dbError = `PocketBase: ${msg}`;
-            console.error('BatchService.saveBatch DB error:', pbErr);
-          }
+        if (parsed?.token && parsed?.record) {
+          this.pb.authStore.save(parsed.token, parsed.record);
         }
       }
-    } catch (e: any) {
-      dbError = `Eroare generală: ${e?.message || String(e)}`;
-      console.warn("DB save sync error:", e);
+
+      const payload: any = {
+        batchId: fullSession.id,
+        name: fullSession.name,
+        source: fullSession.source,
+        courier: fullSession.courier,
+        totalCount: fullSession.totalCount,
+        readyCount: fullSession.readyCount,
+        progress: fullSession.progress,
+        data: JSON.stringify(fullSession)
+      };
+
+      // Attach user relation if logged in
+      if (locUser) {
+        const userId = JSON.parse(locUser)?.record?.id;
+        if (userId) payload.user = userId;
+      }
+
+      await this.pb.collection('batches').create(payload);
+      inDb = true;
+    } catch (pbErr: any) {
+      const msg = pbErr?.response?.message || pbErr?.message || String(pbErr);
+      dbError = `PocketBase: ${msg}`;
+      console.error('BatchService.saveBatch DB error:', pbErr);
     }
 
     // Always update persistent local batch history
     this.saveToHistory(fullSession);
+
 
     return { success: true, session: fullSession, inDb, error: dbError };
   }

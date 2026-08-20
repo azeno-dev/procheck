@@ -1,4 +1,6 @@
 import Peer, { type DataConnection } from 'peerjs';
+import PocketBase from 'pocketbase';
+import { Constants } from '@/Constants';
 
 export interface LiveScanEvent {
   roomId: string;
@@ -13,6 +15,7 @@ export interface LiveScanEvent {
 }
 
 export class LiveSyncService {
+  private pb: PocketBase = new PocketBase(Constants.database.url);
   private peer: Peer | null = null;
   private connections: Map<string, DataConnection> = new Map();
   private channel: BroadcastChannel | null = null;
@@ -232,6 +235,35 @@ export class LiveSyncService {
 
     // 3. Storage event fallback
     localStorage.setItem(`procheck_live_event_${event.roomId}`, JSON.stringify(event));
+
+    // 4. Persist SCAN_AWB events to PocketBase live_events (for history/audit)
+    if (event.type === 'SCAN_AWB') {
+      try {
+        const locUser = localStorage.getItem('user');
+        if (locUser) {
+          const parsed = JSON.parse(locUser);
+          if (parsed?.token && parsed?.record) {
+            this.pb.authStore.save(parsed.token, parsed.record);
+          }
+        }
+
+        const payload: any = {
+          room: event.roomId,
+          type: event.type,
+          awb: event.awb || '',
+          status: event.status || '',
+          payload: event
+        };
+
+        // Attach user relation if logged in
+        const userId = locUser ? JSON.parse(locUser)?.record?.id : null;
+        if (userId) payload.user = userId;
+
+        this.pb.collection('live_events').create(payload).catch(() => {
+          // Silently ignore if live_events collection not available
+        });
+      } catch (e) {}
+    }
   }
 
   // Subscribe to live scan events
