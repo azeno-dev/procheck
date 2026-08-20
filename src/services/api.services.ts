@@ -61,6 +61,24 @@ export default class ApiService {
         }
     }
 
+    async requestPasswordReset(email: string): Promise<any> {
+        try {
+            return await this.pb.collection('users').requestPasswordReset(email);
+        } catch (err) {
+            console.log("error.requestPasswordReset: ", err);
+            throw err;
+        }
+    }
+
+    async confirmPasswordReset(token: string, password: string, passwordConfirm: string): Promise<any> {
+        try {
+            return await this.pb.collection('users').confirmPasswordReset(token, password, passwordConfirm);
+        } catch (err) {
+            console.log("error.confirmPasswordReset: ", err);
+            throw err;
+        }
+    }
+
     setToken(user: any): void {
         this.cookies.set("authStore", user.exportToCookie());
     }

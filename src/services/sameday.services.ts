@@ -24,16 +24,16 @@ export default class SamedayService {
             const authHeader = this._headers;
             authHeader[this._AUTH_USER] = user;
             authHeader[this._AUTH_PASS] = pass;
-            console.log("authHeader: ", authHeader);
 
-            const response = await fetch(`${this.getApiUrl()}/authenticate`, {
+            const response = await fetch(`/sameday/authenticate`, {
                 method: "POST",
                 headers: authHeader,
                 mode: "cors",
+                credentials: "include",
             });
 
-            console.log("response: ", response);
-            // if (response && response.ok) {
+            // console.log("response: ", response);
+            if (response && response.ok) {
                 const data = await response.json();
                 console.log("data: ", data);
                 if (data) {
@@ -41,40 +41,42 @@ export default class SamedayService {
                     this._headers[this._EXPIRE_AT] = data.expire_at;
 
                 }
-            // }
+            }
 
         } catch (err) {
             console.log("Error at auth:", err);
         }
     }
 
-    async getData() {     
-        if (!this.tokenExpired()) {
-            await this.auth(this._config.user, this._config.pass);
+    async getData(): Promise<any[]> {     
+        if (!this.tokenExpired() && this._config) {
+            await this.auth(this._config.user || this._config.username, this._config.password || this._config.pass);
         }
 
         try {
-            const result = [];
+            const result: any[] = [];
 
             const startHour = moment().startOf('day').hour(6); // 6:00 AM today
             const endHour = moment(); // Current time
             
             // Loop from 6 AM to now, hour by hour
-            let currentHour = startHour;
+            let currentHour = startHour.clone();
             
             while (currentHour.isBefore(endHour)) {
-                let startHour = currentHour.add(1, 'hour').toDate();
-                console.log("startHour: ", startHour);
-                let endHour = currentHour.add(1, 'hour').toDate();
-                console.log("endHour: ", endHour);
+                let rangeStart = currentHour.toDate();
+                let nextHour = currentHour.add(1, 'hour');
+                let rangeEnd = nextHour.toDate();
 
-                // const response = await this.getDataTimeSpan(startHour, endHour);
-                // console.log("response: ", response);
+                const response = await this.getDataTimeSpan(rangeStart, rangeEnd);
+                if (response && Array.isArray(response)) {
+                    result.push(...response);
+                }
             }
             
-
+            return result;
         } catch (err) {
-            console.log("Error at sendEmail:", err);
+            console.log("Error at getData:", err);
+            return [];
         }        
     }
 

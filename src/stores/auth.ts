@@ -91,6 +91,14 @@ export const useAuthStore = defineStore("auth", () => {
         localStorage.clear();
     }    
 
+    async function requestPasswordReset(email: string) {
+        return await apiService.requestPasswordReset(email);
+    }
+
+    async function confirmPasswordReset(token: string, password: string, passwordConfirm: string) {
+        return await apiService.confirmPasswordReset(token, password, passwordConfirm);
+    }
+
     return {
         user,
         config,
@@ -100,6 +108,8 @@ export const useAuthStore = defineStore("auth", () => {
         getIntegrations,
         getSameday,
         login,
+        requestPasswordReset,
+        confirmPasswordReset,
         logout,
       };    
 })

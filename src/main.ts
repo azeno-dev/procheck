@@ -6,6 +6,10 @@ import { createPinia, setActivePinia } from 'pinia'
 
 import App from './App.vue'
 import router from './router'
+import ThemeService from './services/theme.services'
+
+// Initialize Light, Dark, System theme mode
+ThemeService.init();
 
 import Vue3Toastify, { type ToastContainerOptions } from 'vue3-toastify';
 

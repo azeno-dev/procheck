@@ -1,196 +1,396 @@
 <template>
+  <div class="min-h-screen flex flex-col bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 selection:bg-brand-500 selection:text-white transition-colors duration-200">
+    <!-- Public Header (when not inside app workspace and not on auth pages) -->
+    <header v-if="!$route.path.startsWith(pageStart) && !$route.path.startsWith('/auth')" class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-sm transition-all w-full">
+      <nav class="w-full px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+        <!-- Logo -->
+        <router-link to="/" class="flex items-center gap-2.5 group">
+          <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-brand-600 via-primary-500 to-indigo-400 flex items-center justify-center text-white shadow-glow-primary group-hover:scale-105 transition-transform duration-200">
+            <i class="pi pi-barcode text-xl"></i>
+          </div>
+          <span class="text-xl font-extrabold tracking-tight text-slate-900 dark:text-white">
+            Pro<span class="text-brand-600 dark:text-brand-400">Check</span>
+          </span>
+        </router-link>
 
-  <header class="bg-gray-400 text-white" v-if="!$route.path.startsWith(pageStart)">
-    <nav class="container mx-auto p-6 flex justify-between items-center">
-      <a class="text-xl font-bold" href="/">AWB Checker</a>
-      <ul class="flex space-x-6">
-        <li><a href="/" class="hover:text-gray-800">Acasă</a></li>
-        <li><a href="/#features" class="hover:text-gray-800">Caracteristici</a></li>
-        <!-- <li><a href="/#how" class="hover:text-gray-800">How</a></li> -->
-        <!-- <li><a href="/#testimonials" class="hover:text-gray-800">Testimonials</a></li> -->
-        <li><a href="/#pricing" class="hover:text-gray-800">Prețuri</a></li>
-        <li><a href="/help" class="hover:text-gray-800">Ajutor</a></li>
-        <li><a href="/contact" class="hover:text-gray-800">Contact</a></li>
-      </ul>
+        <!-- Desktop Navigation Links -->
+        <div class="hidden md:flex items-center gap-1 bg-slate-100/90 dark:bg-slate-800/90 p-1 rounded-full border border-slate-200/80 dark:border-slate-700/80 shadow-inner">
+          <router-link
+            to="/"
+            class="px-4 py-1.5 rounded-full text-sm font-semibold transition-colors"
+            :class="$route.path === '/' ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'"
+          >
+            Acasă
+          </router-link>
+          <a
+            href="/#features"
+            class="px-4 py-1.5 rounded-full text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+          >
+            Funcționalități
+          </a>
+          <a
+            href="/#how"
+            class="px-4 py-1.5 rounded-full text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+          >
+            Cum funcționează
+          </a>
+          <a
+            href="/#pricing"
+            class="px-4 py-1.5 rounded-full text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white transition-colors"
+          >
+            Prețuri
+          </a>
+          <router-link
+            to="/help"
+            class="px-4 py-1.5 rounded-full text-sm font-semibold transition-colors"
+            :class="$route.path === '/help' ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'"
+          >
+            Ajutor
+          </router-link>
+          <router-link
+            to="/contact"
+            class="px-4 py-1.5 rounded-full text-sm font-semibold transition-colors"
+            :class="$route.path === '/contact' ? 'bg-white dark:bg-slate-900 text-brand-600 dark:text-brand-400 shadow-sm font-bold' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white'"
+          >
+            Contact
+          </router-link>
+        </div>
 
-      <div v-if="!user || !user.id">
-        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" href="/auth/login">Autentificare</a>
-        <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Înregistrare</a>
+        <!-- Desktop CTA Actions -->
+        <div class="hidden md:flex items-center gap-3">
+          <!-- Theme Switcher -->
+          <ThemeSwitcher />
+
+          <template v-if="!user || !user.id">
+            <router-link to="/auth/login" class="px-4 py-2 text-sm font-semibold text-slate-700 dark:text-slate-200 hover:text-brand-600 dark:hover:text-brand-400 transition-colors">
+              Autentificare
+            </router-link>
+            <router-link to="/contact" class="px-4 py-2 text-sm font-semibold text-white bg-gradient-to-r from-brand-600 to-primary-600 hover:from-brand-500 hover:to-primary-500 rounded-xl shadow-sm hover:shadow transition-all duration-200">
+              Cere Acces Demo
+            </router-link>
+          </template>
+
+          <template v-else>
+            <router-link :to="primaryPage" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-semibold text-white bg-brand-600 hover:bg-brand-500 rounded-xl shadow-sm transition-all">
+              <i class="pi pi-th-large text-xs"></i>
+              Deschide Aplicația
+            </router-link>
+            <button @click="logout" class="p-2 text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 transition-colors" title="Deconectare">
+              <i class="pi pi-sign-out text-lg"></i>
+            </button>
+          </template>
+        </div>
+
+        <!-- Mobile Menu Toggle Button -->
+        <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 rounded-xl text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors" aria-label="Deschide meniu">
+          <i :class="mobileMenuOpen ? 'pi pi-times text-xl' : 'pi pi-bars text-xl'"></i>
+        </button>
+      </nav>
+
+      <!-- Mobile Dropdown / Drawer Menu -->
+      <transition name="slide-up">
+        <div v-if="mobileMenuOpen" class="md:hidden border-t border-slate-200 dark:border-slate-800 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg px-4 pt-3 pb-6 space-y-2 shadow-xl">
+          <router-link @click="mobileMenuOpen = false" to="/" class="block px-3 py-2 rounded-xl text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400">
+            Acasă
+          </router-link>
+          <a @click="mobileMenuOpen = false" href="/#features" class="block px-3 py-2 rounded-xl text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400">
+            Funcționalități
+          </a>
+          <a @click="mobileMenuOpen = false" href="/#how" class="block px-3 py-2 rounded-xl text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400">
+            Cum funcționează
+          </a>
+          <a @click="mobileMenuOpen = false" href="/#pricing" class="block px-3 py-2 rounded-xl text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400">
+            Prețuri
+          </a>
+          <router-link @click="mobileMenuOpen = false" to="/help" class="block px-3 py-2 rounded-xl text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400">
+            Ajutor
+          </router-link>
+          <router-link @click="mobileMenuOpen = false" to="/contact" class="block px-3 py-2 rounded-xl text-base font-medium text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-slate-800 hover:text-brand-600 dark:hover:text-brand-400">
+            Contact
+          </router-link>
+
+          <!-- Theme Switcher Row -->
+          <div class="pt-2 pb-1 flex items-center justify-between border-t border-slate-100 dark:border-slate-800">
+            <span class="text-xs font-bold text-slate-600 dark:text-slate-400">Temă:</span>
+            <ThemeSwitcher />
+          </div>
+
+          <div class="pt-2 border-t border-slate-100 dark:border-slate-800 flex flex-col gap-2">
+            <template v-if="!user || !user.id">
+              <router-link @click="mobileMenuOpen = false" to="/auth/login" class="w-full text-center px-4 py-2.5 rounded-xl font-semibold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700">
+                Autentificare
+              </router-link>
+              <router-link @click="mobileMenuOpen = false" to="/contact" class="w-full text-center px-4 py-2.5 rounded-xl font-semibold text-white bg-brand-600 hover:bg-brand-500">
+                Cere Acces Demo
+              </router-link>
+            </template>
+            <template v-else>
+              <router-link @click="mobileMenuOpen = false" :to="primaryPage" class="w-full text-center px-4 py-2.5 rounded-xl font-semibold text-white bg-brand-600">
+                Deschide Aplicația
+              </router-link>
+              <button @click="logout(); mobileMenuOpen = false" class="w-full text-center px-4 py-2 rounded-xl font-semibold text-rose-600 bg-rose-50 dark:bg-rose-950/40">
+                Deconectare
+              </button>
+            </template>
+          </div>
+        </div>
+      </transition>
+    </header>
+
+    <!-- App Header (Workspace Mode: /integrations, /integrations/import, /integrations/sameday, /integrations/dashboard) -->
+    <header v-else-if="$route.path.startsWith(pageStart)" class="sticky top-0 z-50 bg-white/90 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/80 dark:border-slate-800 shadow-sm transition-all w-full">
+      <div class="w-full px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+        <!-- Left: Logo & Workspace Tabs -->
+        <div class="flex items-center gap-4 sm:gap-6 flex-1 min-w-0">
+          <router-link to="/" class="flex items-center gap-2.5 group shrink-0">
+            <div class="w-8 h-8 rounded-xl bg-gradient-to-tr from-brand-500 to-primary-400 flex items-center justify-center text-white shadow-glow-primary group-hover:scale-105 transition-transform">
+              <i class="pi pi-barcode text-lg"></i>
+            </div>
+            <span class="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight hidden sm:inline">
+              Pro<span class="text-brand-600 dark:text-brand-400">Check</span>
+            </span>
+          </router-link>
+
+          <!-- Desktop App Nav Tabs (Segmented control) -->
+          <nav class="hidden md:flex items-center gap-1.5 bg-slate-100/90 dark:bg-slate-800/90 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/60 shadow-inner">
+            <router-link
+              to="/integrations/dashboard"
+              class="px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all"
+              :class="$route.path.includes('/dashboard') ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-700/60'"
+            >
+              <i class="pi pi-chart-bar text-xs"></i>
+              <span>Statistici</span>
+            </router-link>
+
+            <router-link
+              to="/integrations/import"
+              class="px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all"
+              :class="$route.path === '/integrations/import' ? 'bg-brand-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-700/60'"
+            >
+              <i class="pi pi-file-import text-xs"></i>
+              <span>Verificare Import</span>
+            </router-link>
+
+            <router-link
+              to="/integrations/sameday"
+              class="px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all"
+              :class="$route.path === '/integrations/sameday' ? 'bg-red-600 text-white shadow-md' : 'text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-white/80 dark:hover:bg-slate-700/60'"
+            >
+              <i class="pi pi-truck text-xs"></i>
+              <span>Sameday Live</span>
+            </router-link>
+
+            <router-link
+              to="/integrations"
+              class="px-3.5 py-1.5 rounded-lg text-xs font-bold flex items-center gap-2 transition-all"
+              :class="$route.path === '/integrations' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-white/60 dark:hover:bg-slate-700/40'"
+            >
+              <i class="pi pi-th-large text-xs"></i>
+              <span>Integrări</span>
+            </router-link>
+          </nav>
+        </div>
+
+        <!-- Right: User Controls & Quick actions -->
+        <div class="flex items-center gap-2 sm:gap-3 shrink-0">
+          <router-link
+            to="/help"
+            class="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100/80 dark:bg-slate-800 border border-slate-200/80 dark:border-slate-800 transition-colors"
+          >
+            <i class="pi pi-question-circle text-xs"></i>
+            <span>Ghid Utilizare</span>
+          </router-link>
+
+          <div class="h-5 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
+
+          <!-- Theme Option: Light, Dark, System next to User -->
+          <ThemeSwitcher />
+
+          <div class="h-5 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
+
+          <!-- User Profile Pill & Dropdown -->
+          <div class="flex items-center gap-2">
+            <div class="text-right hidden sm:block">
+              <p class="text-xs font-bold text-slate-900 dark:text-white leading-tight truncate max-w-[140px]">{{ (user && user.name) || (user && user.email) || 'Utilizator' }}</p>
+              <p class="text-[10px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center justify-end gap-1">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                Autentificat
+              </p>
+            </div>
+
+            <button
+              type="button"
+              @click="toggleUserMenu"
+              class="flex items-center gap-1.5 p-1 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition-colors"
+              aria-haspopup="true"
+              title="Meniu Utilizator"
+            >
+              <Avatar
+                :image="user && user.avatar ? getLinkForImage(user.collectionId, user.id, user.avatar) : ''"
+                :icon="!(user && user.avatar) ? 'pi pi-user' : undefined"
+                shape="circle"
+                class="bg-brand-600 text-white"
+              />
+              <i class="pi pi-angle-down text-xs text-slate-400 pr-1"></i>
+            </button>
+            <Menu ref="menuUser" id="overlay_menu" :model="userItems" :popup="true" />
+          </div>
+
+          <!-- Mobile App Menu Toggle -->
+          <button
+            @click="mobileAppMenuOpen = !mobileAppMenuOpen"
+            class="md:hidden p-2 rounded-xl text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+            title="Meniu Navigare"
+          >
+            <i :class="mobileAppMenuOpen ? 'pi pi-times text-lg' : 'pi pi-bars text-lg'"></i>
+          </button>
+        </div>
       </div>
 
-      <div v-if="user && user.id">
-        <a class="bg-blue-500 px-4 py-2 rounded text-white hover:bg-blue-400" :href="primaryPage">App</a>
-        <a class="bg-green-500 px-4 py-2 ml-4 rounded text-white hover:bg-green-400">Deconectare</a>
-      </div>
-    </nav>
-  </header>
+      <!-- Mobile App Drawer with Large Buttons -->
+      <transition name="slide-up">
+        <div v-if="mobileAppMenuOpen" class="md:hidden bg-white/95 dark:bg-slate-900/95 border-t border-slate-200 dark:border-slate-800 px-4 py-3 space-y-2 shadow-xl">
+          <!-- Theme Switcher Row -->
+          <div class="pt-1 pb-2 flex items-center justify-between border-b border-slate-100 dark:border-slate-800">
+            <span class="text-xs font-bold text-slate-600 dark:text-slate-400">Temă:</span>
+            <ThemeSwitcher />
+          </div>
 
-  <Menubar :model="headerItems" v-if="$route.path.startsWith(pageStart)">
-    <template #start>
-      <svg width="35" height="40" viewBox="0 0 35 40" fill="none" xmlns="http://www.w3.org/2000/svg" class="h-8">
-        <path
-          d="M25.87 18.05L23.16 17.45L25.27 20.46V29.78L32.49 23.76V13.53L29.18 14.73L25.87 18.04V18.05ZM25.27 35.49L29.18 31.58V27.67L25.27 30.98V35.49ZM20.16 17.14H20.03H20.17H20.16ZM30.1 5.19L34.89 4.81L33.08 12.33L24.1 15.67L30.08 5.2L30.1 5.19ZM5.72 14.74L2.41 13.54V23.77L9.63 29.79V20.47L11.74 17.46L9.03 18.06L5.72 14.75V14.74ZM9.63 30.98L5.72 27.67V31.58L9.63 35.49V30.98ZM4.8 5.2L10.78 15.67L1.81 12.33L0 4.81L4.79 5.19L4.8 5.2ZM24.37 21.05V34.59L22.56 37.29L20.46 39.4H14.44L12.34 37.29L10.53 34.59V21.05L12.42 18.23L17.45 26.8L22.48 18.23L24.37 21.05ZM22.85 0L22.57 0.69L17.45 13.08L12.33 0.69L12.05 0H22.85Z"
-          fill="var(--p-primary-color)" />
-        <path
-          d="M30.69 4.21L24.37 4.81L22.57 0.69L22.86 0H26.48L30.69 4.21ZM23.75 5.67L22.66 3.08L18.05 14.24V17.14H19.7H20.03H20.16H20.2L24.1 15.7L30.11 5.19L23.75 5.67ZM4.21002 4.21L10.53 4.81L12.33 0.69L12.05 0H8.43002L4.22002 4.21H4.21002ZM21.9 17.4L20.6 18.2H14.3L13 17.4L12.4 18.2L12.42 18.23L17.45 26.8L22.48 18.23L22.5 18.2L21.9 17.4ZM4.79002 5.19L10.8 15.7L14.7 17.14H14.74H15.2H16.85V14.24L12.24 3.09L11.15 5.68L4.79002 5.2V5.19Z"
-          fill="var(--p-text-color)" />
-      </svg>
-    </template>
+          <router-link
+            @click="mobileAppMenuOpen = false"
+            to="/integrations/dashboard"
+            class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+            :class="$route.path.includes('/dashboard') ? 'bg-indigo-600 text-white' : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'"
+          >
+            <i class="pi pi-chart-bar"></i>
+            <span>Statistici & Rapoarte</span>
+          </router-link>
+          <router-link
+            @click="mobileAppMenuOpen = false"
+            to="/integrations/import"
+            class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+            :class="$route.path === '/integrations/import' ? 'bg-brand-600 text-white' : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'"
+          >
+            <i class="pi pi-file-import"></i>
+            <span>Verificare Import (Excel)</span>
+          </router-link>
+          <router-link
+            @click="mobileAppMenuOpen = false"
+            to="/integrations/sameday"
+            class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+            :class="$route.path === '/integrations/sameday' ? 'bg-red-600 text-white' : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'"
+          >
+            <i class="pi pi-truck"></i>
+            <span>Sameday Live</span>
+          </router-link>
+          <router-link
+            @click="mobileAppMenuOpen = false"
+            to="/integrations"
+            class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors"
+            :class="$route.path === '/integrations' ? 'bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-white' : 'text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800'"
+          >
+            <i class="pi pi-th-large"></i>
+            <span>Toate Integrările</span>
+          </router-link>
+          <router-link
+            @click="mobileAppMenuOpen = false"
+            to="/help"
+            class="flex items-center gap-2.5 px-4 py-2.5 rounded-xl text-sm font-semibold text-slate-700 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800"
+          >
+            <i class="pi pi-question-circle"></i>
+            <span>Centru de Ajutor & Ghid</span>
+          </router-link>
+        </div>
+      </transition>
+    </header>
 
-    <template #item="{ item, props, hasSubmenu, root }">
-      <a v-ripple class="flex align-items-center" v-bind="props.action">
-        <span :class="item.icon" />
-        <span class="ml-2">{{ item.label }}</span>
-        <Badge v-if="item.badge" :class="{ 'ml-auto': !root, 'ml-2': root }" :value="item.badge" />
-        <span v-if="item.shortcut" class="ml-auto border-1 surface-border border-round surface-100 text-xs p-1">{{
-    item.shortcut }}</span>
-        <i v-if="hasSubmenu" :class="[
-    'pi pi-angle-down',
-    { 'pi-angle-down ml-2': root, 'pi-angle-right ml-auto': !root },
-  ]"></i>
-      </a>
-    </template>
+    <!-- Main Content Area with Smooth Page Transition -->
+    <main class="flex-1 flex flex-col">
+      <router-view v-slot="{ Component, route }" :key="$route.path">
+        <transition name="slide-up" mode="out-in">
+          <component :is="Component" :key="route.path" />
+        </transition>
+      </router-view>
+    </main>
 
-    <template #end>
-      <div class="flex align-items-center gap-2">
-        <!-- <InputText placeholder="Search" type="text" class="w-8rem sm:w-auto" /> -->
-        <p class=" my-auto mx-1" v-if="user">Hi {{ user.name || "" }}</p>
-        <Button type="button" @click="toggleUserMenu" text rounded aria-haspopup="true" aria-controls="overlay_menu">
-          <Avatar :image="user && user.avatar
-    ? getLinkForImage(user.collectionId, user.id, user.avatar)
-    : '../assets/img/user.jpg'
-    " shape="circle" />
-        </Button>
-
-        <Menu ref="menuUser" id="overlay_menu" :model="userItems" :popup="true" />
-      </div>
-    </template>
-  </Menubar>
-
-  <!-- <RouterView /> -->
-  <router-view v-slot="{ Component, route }" :key="$route.path">
-    <transition name="slide-up" mode="out-in">
-      <component :is="Component" :key="route.path" />
-    </transition>
-  </router-view>
-
-  <Footer />
+    <!-- Footer (hidden on full-screen auth pages) -->
+    <Footer v-if="!$route.path.startsWith('/auth')" />
+  </div>
 </template>
 
 <script lang="ts">
 import { ref } from "vue";
-
 import Footer from "@/components/Footer.vue";
-
-import { RouterView } from "vue-router";
+import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
+import ThemeService from "@/services/theme.services";
 import { useAuthStore, type Integration } from '@/stores/auth';
 import { Constants } from '@/Constants';
 
 export default {
-  name: "myApp", // Renaming the app so it won't conflict with the child component
+  name: "AppShell",
   components: {
     Footer,
+    ThemeSwitcher,
   },
   data() {
     return {
-      sidebar: false,
-      visibleSidebar: false,
+      mobileMenuOpen: false,
+      mobileAppMenuOpen: false,
       primaryPage: Constants.primaryPage,
       pageStart: Constants.pageStart,
       user: {
-        id: null || "",
-        name: null || "",
-        collectionId: null || "",
-        avatar: null || "",
-      },
+        id: "",
+        name: "",
+        email: "",
+        collectionId: "",
+        avatar: "",
+      } as any,
       integrations: [] as Integration[],
       authStore: useAuthStore(),
-      items: [
-        {
-          label: "Home",
-          icon: "pi pi-home",
-          command: () => {
-            this.$router.push({ path: "/", force: true });
-          },
-        },
-        {
-          label: "Features",
-          icon: "pi pi-star",
-        },
-      ],
-      headerItems: [
-        // {
-        //   label: "",
-        //   icon: "pi pi-angle-double-right",
-        //   command: () => {
-        //     this.visibleSidebar = true;
-        //   },
-        // },
-        {
-          label: "Acasă",
-          icon: "pi pi-home",
-          command: () => {
-            this.$router.push({
-              path: "/",
-              force: true,
-            });
-          },
-        },
-        {
-          label: "Integrări",
-          key: "integrations",
-          icon: "pi pi-microchip",
-          items: [
-            {
-              label: "Toate",
-              key: "all",
-              icon: "pi pi-microchip",
-              command: () => this.$router.push({ path: "/integrations", force: true })
-            },
-            {
-              label: "Import",
-              key: "import",
-              icon: "pi pi-file-import",
-              command: () => this.$router.push({ path: "/integrations/import", force: true })
-            },
-            {
-              label: "SameDay",
-              key: "sameday",
-              icon: "pi pi-truck",
-              disabled: true,
-              command: () => this.$router.push({ path: "/integrations/sameday", force: true })
-            },
-          ],
-          // command: () => this.$router.push({ path: "/integrations/import", force: true })
-        },
-        {
-          label: "Ajutor",
-          icon: "pi pi-info-circle",
-          command: () => {
-            this.$router.push({
-              path: "/help",
-              force: true,
-            });
-          },
-        },
-        {
-          label: "Contact",
-          icon: "pi pi-envelope",
-          command: () => {
-            this.$router.push({
-              path: "/contact",
-              force: true,
-            });
-          },
-        },
-      ],
       userItems: [
         {
-          label: "Profil",
+          label: "Cont & Profil",
           items: [
             {
-              label: "Setari",
-              icon: "pi pi-cog",
+              label: "Panou Statistici",
+              icon: "pi pi-chart-bar",
+              command: () => this.$router.push("/integrations/dashboard"),
+            },
+            {
+              label: "Integrări Curieri",
+              icon: "pi pi-microchip",
+              command: () => this.$router.push("/integrations"),
+            },
+            {
+              label: "Verificare Import",
+              icon: "pi pi-file-import",
+              command: () => this.$router.push("/integrations/import"),
+            },
+            {
+              label: "Ajutor & FAQ",
+              icon: "pi pi-info-circle",
+              command: () => this.$router.push("/help"),
+            },
+            {
+              separator: true
+            },
+            {
+              label: "Temă Luminoasă (Light)",
+              icon: "pi pi-sun text-amber-500",
+              command: () => ThemeService.setTheme("light"),
+            },
+            {
+              label: "Temă Întunecată (Dark)",
+              icon: "pi pi-moon text-indigo-400",
+              command: () => ThemeService.setTheme("dark"),
+            },
+            {
+              label: "Temă Sistem (Auto)",
+              icon: "pi pi-desktop text-slate-400",
+              command: () => ThemeService.setTheme("system"),
+            },
+            {
+              separator: true
             },
             {
               label: "Deconectare",
@@ -204,72 +404,51 @@ export default {
   },
   setup() {
     const menuUser = ref();
-
     return {
       menuUser,
     };
   },
   methods: {
-    open() {
-      this.sidebar = true;
-    },
-    sidebarToggle() {
-      this.sidebar = !this.sidebar;
-    },
     toggleUserMenu(event: any) {
       if (this.menuUser) {
         this.menuUser.toggle(event);
       }
     },
     getLinkForImage(collection: string, id: string, image: string) {
-      // return getLinkFile(id, image);
+      if (!image) return '';
       return `${Constants.database.url}/api/files/${collection}/${id}/${image}?download`;
     },
     async logout() {
       this.authStore.logout();
-
+      this.user = null;
       await this.$router.push({
         path: "/",
         force: true,
-        replace: true,
       });
     },
+    syncUserData() {
+      this.user = this.authStore.getUser();
+      this.integrations = this.authStore.getIntegrations();
+    }
   },
   async mounted() {
-    // console.log("this.authStore.user: ", this.authStore.user);
-    // console.log("this.$route: ", this.$route);
-
-    this.user = this.authStore.getUser();
-    this.integrations = this.authStore.getIntegrations();
-    
-    if (this.integrations && this.integrations.length > 0) {
-      this.integrations.forEach((integration: Integration) => {
-        if (integration.active) {
-          const ints = this.headerItems.filter((item) => item.key == "integrations");
-          if (ints.length == 1) {
-            const intValue = ints[0].items?.filter((item) => item.key == integration.type);
-            if (intValue && intValue.length == 1) {
-              intValue[0].disabled = false;
-            }
-          }
-        }
-      })
-    }
-
-    if (this.$route.path == Constants.primaryPage) {
-      if (!this.authStore.user) {
-        if (!this.user) {
-          await this.$router.push({
-            path: "/auth/login",
-            force: true,
-            replace: true,
-          });
-        }
-      } else {
-
+    this.syncUserData();
+    if (this.$route.path.startsWith(Constants.pageStart)) {
+      if (!this.authStore.user && !this.user) {
+        await this.$router.push({
+          path: "/auth/login",
+          force: true,
+        });
       }
     }
-
   },
+  watch: {
+    '$route'() {
+      this.syncUserData();
+      this.mobileMenuOpen = false;
+      this.mobileAppMenuOpen = false;
+    }
+  }
 };
 </script>
+

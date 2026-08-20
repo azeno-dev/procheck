@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
 import Login from '../views/layouts/auth/Login.vue'
+import ResetPassword from '../views/layouts/auth/ResetPassword.vue'
 
 import Home from '../views/Home.vue'
 import Help from '../views/Help.vue'
@@ -8,6 +9,7 @@ import Contact from '../views/Contact.vue'
 import Integrations from '../views/integrations/Integrations.vue'
 import ProductView from '../views/integrations/ProductView.vue'
 import SameDayView from '../views/integrations/SameDayView.vue'
+import DashboardView from '../views/integrations/DashboardView.vue'
 
 
 // error page
@@ -31,13 +33,17 @@ const routes = [
     component: Contact,
     meta: { title: "Cel mai bun verificator" + appname },
   },
-  // {
-  //   path: '/check',
-  //   name: 'Verificare produse',
-  //   beforeEnter: authGuard,
-  //   component: ProductView,
-  //   meta: { title: "Cel mai bun verificator" + appname },
-  // },
+  {
+    path: '/integrations/dashboard',
+    name: 'Statistici & Rapoarte',
+    beforeEnter: authGuard,
+    component: DashboardView,
+    meta: { title: "Statistici - ProCheck" + appname },
+  },
+  {
+    path: '/dashboard',
+    redirect: '/integrations/dashboard'
+  },
   {
     path: '/integrations',
     name: 'Integrari',
@@ -68,7 +74,18 @@ const routes = [
   {
     path: '/auth/login',
     name: 'Autentificare',
-    component: Login
+    component: Login,
+    meta: { title: "Autentificare - ProCheck" + appname }
+  },
+  {
+    path: '/auth/reset-password',
+    name: 'Resetare Parola',
+    component: ResetPassword,
+    meta: { title: "Resetare Parolă - ProCheck" + appname }
+  },
+  {
+    path: '/auth/forgot-password',
+    redirect: '/auth/reset-password'
   },
   // layout/error
   {

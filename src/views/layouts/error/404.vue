@@ -1,46 +1,28 @@
 <template>
-  <div class="container lg:max-w-7xl mx-auto text-center mt-40">
-    <div class="space-y-8">
-      <h1 class="text-9xl dark:text-white text-gray-800 font-bold">404</h1>
-      <h2 class="text-4xl dark:text-white text-gray-800">
-        Această pagină nu a fost găsită
-      </h2>
-      <p class="dark:text-gray-500 text-gray-800">
-        Ne pare rău, pagina pe care o cauți nu a fost găsit!
-      </p>
-      <button
-        @click="$router.push('/')"
-        class="bg-primary rounded text-white py-3 px-5"
+  <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors">
+    <div class="max-w-md w-full text-center space-y-6 bg-white dark:bg-slate-900 p-8 sm:p-12 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
+      <div class="w-20 h-20 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center mx-auto text-3xl font-mono font-extrabold shadow-inner">
+        404
+      </div>
+      <div class="space-y-2">
+        <h1 class="text-2xl font-extrabold text-slate-900 tracking-tight">Pagina nu a fost găsită</h1>
+        <p class="text-sm text-slate-500">
+          Ne pare rău, pagina pe care o cauți nu există sau a fost mutată.
+        </p>
+      </div>
+      <router-link
+        to="/"
+        class="inline-flex items-center justify-center gap-2 w-full py-3 px-6 rounded-xl font-bold text-sm text-white bg-brand-600 hover:bg-brand-500 shadow-md transition-all"
       >
-        Reveniți la pagina principală
-      </button>
+        <i class="pi pi-home"></i>
+        <span>Reveniți la Pagina Principală</span>
+      </router-link>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-import { useAuthStore } from '@/stores/auth';
-import { Constants } from "@/Constants";
-
 export default {
-  data() {
-    return {
-      authStore: useAuthStore(),
-    }
-  },  
-  async mounted() {
-
-    if (this.authStore.user) {
-      await this.authStore.getUser();
-    }
-
-    if (this.authStore && this.authStore.user) {
-      this.$router.push(Constants.primaryPage);
-    } else {
-      this.authStore.logout();
-      // this.$router.push("/");
-    }    
-    // console.log("authStore: ", this.authStore);
-  },
-}
-</script>@/stores/auth
+  name: "Page404"
+};
+</script>
