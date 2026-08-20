@@ -6,19 +6,19 @@
       <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
         <div>
           <div class="flex items-center gap-2">
-            <div class="w-8 h-8 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-base shadow-sm">
+            <div class="w-8 h-8 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-base shadow-sm">
               <i class="pi pi-chart-bar"></i>
             </div>
-            <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Panou Statistici & Rapoarte</h1>
+            <h1 class="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">Panou Statistici & Rapoarte</h1>
           </div>
-          <p class="text-xs text-slate-500 mt-0.5">Statistici în timp real, distribuție curieri și istoric sesiuni scanare</p>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Statistici în timp real, distribuție curieri și istoric sesiuni scanare</p>
         </div>
 
         <div class="flex items-center gap-2">
           <!-- Refresh stats -->
           <button
             @click="loadStats"
-            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 border border-slate-200 shadow-sm transition-all"
+            class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 shadow-sm transition-all"
             title="Reîmprospătează datele"
           >
             <i class="pi pi-refresh text-xs"></i>
@@ -43,57 +43,57 @@
       <!-- 1. TOP KPI METRICS GRID -->
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <!-- Card 1: Total Parcels -->
-        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm flex items-center justify-between">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/90 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
           <div class="space-y-1">
-            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Total Colete Procesate</p>
-            <p class="text-2xl font-black text-slate-900 tracking-tight">{{ stats.allTime.totalParcels }}</p>
-            <p class="text-[11px] text-slate-400 flex items-center gap-1">
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Total Colete Procesate</p>
+            <p class="text-2xl font-black text-slate-900 dark:text-white tracking-tight">{{ stats.allTime.totalParcels }}</p>
+            <p class="text-[11px] text-slate-400 dark:text-slate-500 flex items-center gap-1">
               <i class="pi pi-history text-[10px]"></i>
               <span>În {{ stats.allTime.totalBatches }} sesiuni de lucru</span>
             </p>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-brand-50 text-brand-600 flex items-center justify-center text-xl shadow-inner">
+          <div class="w-12 h-12 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center text-xl shadow-inner">
             <i class="pi pi-box"></i>
           </div>
         </div>
 
         <!-- Card 2: Ready Parcels -->
-        <div class="bg-white rounded-2xl p-5 border border-emerald-200/80 shadow-sm flex items-center justify-between">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-emerald-200/80 dark:border-emerald-800/80 shadow-sm flex items-center justify-between transition-colors">
           <div class="space-y-1">
-            <p class="text-xs font-semibold text-emerald-600 uppercase tracking-wider">Colete Pregătite</p>
-            <p class="text-2xl font-black text-emerald-700 tracking-tight">{{ stats.allTime.readyParcels }}</p>
-            <p class="text-[11px] text-emerald-600 font-semibold flex items-center gap-1">
+            <p class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider">Colete Pregătite</p>
+            <p class="text-2xl font-black text-emerald-700 dark:text-emerald-300 tracking-tight">{{ stats.allTime.readyParcels }}</p>
+            <p class="text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1">
               <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
               <span>Rată validare: {{ stats.allTime.successRate }}%</span>
             </p>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-xl shadow-inner">
+          <div class="w-12 h-12 rounded-2xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-xl shadow-inner">
             <i class="pi pi-check-circle"></i>
           </div>
         </div>
 
         <!-- Card 3: Current Session Pending -->
-        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm flex items-center justify-between">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/90 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
           <div class="space-y-1">
-            <p class="text-xs font-semibold text-rose-500 uppercase tracking-wider">În Așteptare (Activ)</p>
-            <p class="text-2xl font-black text-rose-600 tracking-tight">{{ stats.currentSession.pending }}</p>
-            <p class="text-[11px] text-slate-400">Din {{ stats.currentSession.total }} colete curente</p>
+            <p class="text-xs font-semibold text-rose-500 dark:text-rose-400 uppercase tracking-wider">În Așteptare (Activ)</p>
+            <p class="text-2xl font-black text-rose-600 dark:text-rose-400 tracking-tight">{{ stats.currentSession.pending }}</p>
+            <p class="text-[11px] text-slate-400 dark:text-slate-500">Din {{ stats.currentSession.total }} colete curente</p>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-rose-50 text-rose-500 flex items-center justify-center text-xl shadow-inner">
+          <div class="w-12 h-12 rounded-2xl bg-rose-50 dark:bg-rose-950/60 text-rose-500 dark:text-rose-400 flex items-center justify-center text-xl shadow-inner">
             <i class="pi pi-clock"></i>
           </div>
         </div>
 
         <!-- Card 4: Global Success Rate -->
-        <div class="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-sm flex items-center justify-between">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/90 dark:border-slate-800 shadow-sm flex items-center justify-between transition-colors">
           <div class="space-y-1">
-            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wider">Eficiență Globală</p>
-            <p class="text-2xl font-black text-indigo-600 tracking-tight">{{ stats.allTime.successRate }}%</p>
-            <div class="w-24 h-1.5 bg-slate-100 rounded-full overflow-hidden mt-1">
+            <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Eficiență Globală</p>
+            <p class="text-2xl font-black text-indigo-600 dark:text-indigo-400 tracking-tight">{{ stats.allTime.successRate }}%</p>
+            <div class="w-24 h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden mt-1">
               <div class="h-full bg-indigo-500 rounded-full" :style="{ width: stats.allTime.successRate + '%' }"></div>
             </div>
           </div>
-          <div class="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-xl shadow-inner">
+          <div class="w-12 h-12 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-xl shadow-inner">
             <i class="pi pi-percentage"></i>
           </div>
         </div>
@@ -103,7 +103,7 @@
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         
         <!-- Left 2 Cols: Active Session Card -->
-        <div class="lg:col-span-2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden flex flex-col justify-between">
+        <div class="lg:col-span-2 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden flex flex-col justify-between border border-slate-800">
           <!-- Background glow circle -->
           <div class="absolute -top-24 -right-24 w-72 h-72 bg-brand-500/20 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -173,26 +173,26 @@
         </div>
 
         <!-- Right 1 Col: Courier Distribution Breakdown -->
-        <div class="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-sm space-y-4 flex flex-col justify-between">
+        <div class="bg-white dark:bg-slate-900 rounded-3xl p-6 border border-slate-200/90 dark:border-slate-800 shadow-sm space-y-4 flex flex-col justify-between transition-colors">
           <div>
-            <h3 class="text-sm font-bold text-slate-900 flex items-center gap-2">
-              <i class="pi pi-chart-pie text-brand-600"></i>
+            <h3 class="text-sm font-bold text-slate-900 dark:text-white flex items-center gap-2">
+              <i class="pi pi-chart-pie text-brand-600 dark:text-brand-400"></i>
               <span>Distribuție pe Curieri</span>
             </h3>
-            <p class="text-xs text-slate-500 mt-0.5">Volum total colete procesate pe curier</p>
+            <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Volum total colete procesate pe curier</p>
           </div>
 
           <div class="space-y-3.5">
             <!-- Sameday -->
             <div class="space-y-1.5">
               <div class="flex justify-between text-xs font-semibold">
-                <span class="flex items-center gap-1.5 text-slate-700">
+                <span class="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
                   <span class="w-2.5 h-2.5 rounded-full bg-red-500"></span>
                   Sameday Courier
                 </span>
-                <span class="text-slate-900 font-bold">{{ stats.courierBreakdown['Sameday'] }} colete</span>
+                <span class="text-slate-900 dark:text-white font-bold">{{ stats.courierBreakdown['Sameday'] }} colete</span>
               </div>
-              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div class="h-full bg-red-500 rounded-full" :style="{ width: getCourierPct('Sameday') + '%' }"></div>
               </div>
             </div>
@@ -200,13 +200,13 @@
             <!-- Fan Courier -->
             <div class="space-y-1.5">
               <div class="flex justify-between text-xs font-semibold">
-                <span class="flex items-center gap-1.5 text-slate-700">
+                <span class="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
                   <span class="w-2.5 h-2.5 rounded-full bg-blue-600"></span>
                   Fan Courier
                 </span>
-                <span class="text-slate-900 font-bold">{{ stats.courierBreakdown['Fan Courier'] }} colete</span>
+                <span class="text-slate-900 dark:text-white font-bold">{{ stats.courierBreakdown['Fan Courier'] }} colete</span>
               </div>
-              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div class="h-full bg-blue-600 rounded-full" :style="{ width: getCourierPct('Fan Courier') + '%' }"></div>
               </div>
             </div>
@@ -214,13 +214,13 @@
             <!-- DPD -->
             <div class="space-y-1.5">
               <div class="flex justify-between text-xs font-semibold">
-                <span class="flex items-center gap-1.5 text-slate-700">
+                <span class="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
                   <span class="w-2.5 h-2.5 rounded-full bg-rose-600"></span>
                   DPD România
                 </span>
-                <span class="text-slate-900 font-bold">{{ stats.courierBreakdown['DPD'] }} colete</span>
+                <span class="text-slate-900 dark:text-white font-bold">{{ stats.courierBreakdown['DPD'] }} colete</span>
               </div>
-              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div class="h-full bg-rose-600 rounded-full" :style="{ width: getCourierPct('DPD') + '%' }"></div>
               </div>
             </div>
@@ -228,19 +228,19 @@
             <!-- Others -->
             <div class="space-y-1.5">
               <div class="flex justify-between text-xs font-semibold">
-                <span class="flex items-center gap-1.5 text-slate-700">
+                <span class="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
                   <span class="w-2.5 h-2.5 rounded-full bg-slate-400"></span>
                   Alți Curieri
                 </span>
-                <span class="text-slate-900 font-bold">{{ stats.courierBreakdown['Altele'] }} colete</span>
+                <span class="text-slate-900 dark:text-white font-bold">{{ stats.courierBreakdown['Altele'] }} colete</span>
               </div>
-              <div class="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+              <div class="w-full h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                 <div class="h-full bg-slate-400 rounded-full" :style="{ width: getCourierPct('Altele') + '%' }"></div>
               </div>
             </div>
           </div>
 
-          <div class="pt-3 border-t border-slate-100 text-[11px] text-slate-400 flex items-center justify-between">
+          <div class="pt-3 border-t border-slate-100 dark:border-slate-800 text-[11px] text-slate-400 dark:text-slate-500 flex items-center justify-between">
             <span>Sincronizat cu istoricul local & DB</span>
             <i class="pi pi-check-circle text-emerald-500"></i>
           </div>
@@ -249,12 +249,12 @@
       </div>
 
       <!-- 3. BATCH & SCAN SESSIONS HISTORY TABLE -->
-      <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm overflow-hidden space-y-4 p-6">
+      <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-sm overflow-hidden space-y-4 p-6 transition-colors">
         
         <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
           <div>
-            <h3 class="text-base font-bold text-slate-900">Istoric Sesiuni de Lucru & Arhivă Batch-uri</h3>
-            <p class="text-xs text-slate-500">Sesiunile salvate pot fi restaurate oricând în verificator sau exportate în Excel</p>
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">Istoric Sesiuni de Lucru & Arhivă Batch-uri</h3>
+            <p class="text-xs text-slate-500 dark:text-slate-400">Sesiunile salvate pot fi restaurate oricând în verificator sau exportate în Excel</p>
           </div>
 
           <button
@@ -270,7 +270,7 @@
         <!-- Table -->
         <div v-if="stats.recentBatches.length > 0" class="overflow-x-auto">
           <table class="w-full text-left text-xs">
-            <thead class="bg-slate-50 text-slate-700 font-bold uppercase tracking-wider border-b border-slate-200">
+            <thead class="bg-slate-50 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 font-bold uppercase tracking-wider border-b border-slate-200 dark:border-slate-700">
               <tr>
                 <th class="p-3">Sesiune / Denumire</th>
                 <th class="p-3">Sursă</th>
@@ -281,11 +281,11 @@
                 <th class="p-3 text-right">Acțiuni</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100">
-              <tr v-for="batch in stats.recentBatches" :key="batch.id" class="hover:bg-slate-50/80 transition-colors">
-                <td class="p-3 font-semibold text-slate-800">
+            <tbody class="divide-y divide-slate-100 dark:divide-slate-800">
+              <tr v-for="batch in stats.recentBatches" :key="batch.id" class="hover:bg-slate-50/80 dark:hover:bg-slate-800/60 transition-colors">
+                <td class="p-3 font-semibold text-slate-800 dark:text-slate-200">
                   <div class="flex items-center gap-2">
-                    <div class="w-7 h-7 rounded-lg bg-slate-100 text-slate-600 flex items-center justify-center text-xs">
+                    <div class="w-7 h-7 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 flex items-center justify-center text-xs">
                       <i :class="batch.source === 'sameday' ? 'pi pi-truck text-red-500' : 'pi pi-file-excel text-emerald-600'"></i>
                     </div>
                     <span>{{ batch.name }}</span>
@@ -294,32 +294,32 @@
                 <td class="p-3">
                   <span
                     class="px-2.5 py-0.5 rounded-full text-[11px] font-bold"
-                    :class="batch.source === 'sameday' ? 'bg-red-50 text-red-700 border border-red-200' : 'bg-brand-50 text-brand-700 border border-brand-200'"
+                    :class="batch.source === 'sameday' ? 'bg-red-50 dark:bg-red-950/60 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800' : 'bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 border border-brand-200 dark:border-brand-800'"
                   >
                     {{ batch.source === 'sameday' ? 'Sameday API' : 'Excel Import' }}
                   </span>
                 </td>
-                <td class="p-3 text-slate-500 whitespace-nowrap">
+                <td class="p-3 text-slate-500 dark:text-slate-400 whitespace-nowrap">
                   {{ new Date(batch.createdAt).toLocaleString('ro-RO', { dateStyle: 'short', timeStyle: 'short' }) }}
                 </td>
-                <td class="p-3 text-center font-mono font-bold text-slate-900">
+                <td class="p-3 text-center font-mono font-bold text-slate-900 dark:text-white">
                   {{ batch.totalCount }}
                 </td>
-                <td class="p-3 text-center font-mono font-bold text-emerald-600">
+                <td class="p-3 text-center font-mono font-bold text-emerald-600 dark:text-emerald-400">
                   {{ batch.readyCount }}
                 </td>
                 <td class="p-3">
                   <div class="flex items-center gap-2">
-                    <div class="w-20 h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="w-20 h-2 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
                       <div class="h-full bg-emerald-500 rounded-full" :style="{ width: batch.progress + '%' }"></div>
                     </div>
-                    <span class="font-bold text-slate-700 text-[11px]">{{ batch.progress }}%</span>
+                    <span class="font-bold text-slate-700 dark:text-slate-300 text-[11px]">{{ batch.progress }}%</span>
                   </div>
                 </td>
                 <td class="p-3 text-right space-x-2 whitespace-nowrap">
                   <button
                     @click="restoreBatch(batch)"
-                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-brand-50 text-brand-700 hover:bg-brand-100 transition-colors"
+                    class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-xs font-semibold bg-brand-50 dark:bg-brand-950/60 text-brand-700 dark:text-brand-300 hover:bg-brand-100 dark:hover:bg-brand-900/60 transition-colors"
                     title="Încarcă în verificator"
                   >
                     <i class="pi pi-external-link text-xs"></i>
@@ -327,7 +327,7 @@
                   </button>
                   <button
                     @click="removeBatch(batch.id)"
-                    class="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                    class="p-1 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 dark:hover:bg-rose-950/60 transition-colors"
                     title="Șterge sesiune"
                   >
                     <i class="pi pi-trash text-xs"></i>
@@ -339,10 +339,10 @@
         </div>
 
         <!-- Empty history state -->
-        <div v-else class="text-center py-10 text-slate-400 text-sm space-y-2">
-          <i class="pi pi-inbox text-3xl block text-slate-300"></i>
+        <div v-else class="text-center py-10 text-slate-400 dark:text-slate-500 text-sm space-y-2">
+          <i class="pi pi-inbox text-3xl block text-slate-300 dark:text-slate-600"></i>
           <p>Nu există încă sesiuni salvate în arhivă.</p>
-          <p class="text-xs text-slate-400">Fiecare import sau sincronizare de colete va apărea automat aici.</p>
+          <p class="text-xs text-slate-400 dark:text-slate-500">Fiecare import sau sincronizare de colete va apărea automat aici.</p>
         </div>
 
       </div>
@@ -355,7 +355,7 @@
 <script lang="ts">
 import BatchService, { type BatchSession } from '@/services/batch.services';
 import * as XLSX from 'xlsx';
-import { toast } from 'vue3-toastify';
+import { toast } from 'vue-sonner';
 
 export default {
   name: "DashboardView",
@@ -400,8 +400,8 @@ export default {
     },
     async saveCurrentBatchToDb() {
       const importedDataStr = localStorage.getItem('importedData');
-      if (!importedDataStr) {
-        toast.warn("Nu există date de salvat în sesiunea curentă.");
+      if (!importedDataStr || this.stats.currentSession.total === 0) {
+        toast.warning("Nu există date de salvat în sesiunea curentă.");
         return;
       }
 

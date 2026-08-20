@@ -63,7 +63,21 @@ html.dark .glass-panel {
   border: 1px solid rgba(51, 65, 85, 0.6);
 }
 
-/* PrimeVue Components Dark Mode Overrides */
+/* PrimeVue Dialog - Refined Compact Header & Typography */
+.p-dialog {
+  border-radius: 1rem !important;
+}
+.p-dialog-header {
+  padding: 0.875rem 1.25rem !important;
+}
+.p-dialog-header .p-dialog-title {
+  font-size: 0.9375rem !important;
+  font-weight: 700 !important;
+}
+.p-dialog-content {
+  padding: 0 1.25rem 1.25rem 1.25rem !important;
+}
+
 html.dark .p-dialog {
   background-color: #0f172a !important;
   border: 1px solid #1e293b !important;
@@ -77,7 +91,6 @@ html.dark .p-dialog-header {
 }
 html.dark .p-dialog-header .p-dialog-title {
   color: #f8fafc !important;
-  font-weight: 800 !important;
 }
 html.dark .p-dialog-header .p-dialog-header-icon {
   color: #94a3b8 !important;
@@ -92,12 +105,18 @@ html.dark .p-dialog-content {
 }
 
 /* PrimeVue Form Inputs in Dark Mode */
+.p-inputtext,
+.p-inputnumber-input {
+  font-size: 0.8125rem !important;
+  padding: 0.45rem 0.75rem !important;
+}
+
 html.dark .p-inputtext,
 html.dark .p-inputnumber-input {
   background-color: #1e293b !important;
   color: #f8fafc !important;
   border-color: #334155 !important;
-  border-radius: 0.75rem !important;
+  border-radius: 0.625rem !important;
 }
 html.dark .p-inputtext:focus,
 html.dark .p-inputnumber-input:focus {
@@ -110,6 +129,12 @@ html.dark .p-inputnumber-input::placeholder {
 }
 
 /* PrimeVue Buttons */
+.p-button {
+  font-size: 0.8125rem !important;
+  padding: 0.45rem 0.875rem !important;
+  border-radius: 0.625rem !important;
+}
+
 html.dark .p-button.p-button-secondary {
   background-color: #1e293b !important;
   border-color: #334155 !important;

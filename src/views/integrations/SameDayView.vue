@@ -1,228 +1,234 @@
 <template>
   <div class="min-h-[calc(100vh-4rem)] bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col transition-colors duration-200">
     
-    <!-- Modern Command Center Header (Second Header) -->
-    <div class="sticky top-16 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 shadow-sm px-4 sm:px-6 lg:px-8 py-3 w-full space-y-3">
-      
-      <!-- Upper Command Bar: Inputs + Primary Action Cluster -->
-      <div class="flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-3 w-full">
+    <!-- Modern Single Command Bar Header -->
+    <div class="sticky top-16 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 shadow-sm w-full relative">
+      <div class="px-4 sm:px-6 lg:px-8 py-2.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 w-full">
         
-        <!-- Left: Search & Scanner Hub -->
-        <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 flex-1 w-full lg:max-w-3xl">
+        <!-- Left: Search & Scanner Hub with Dynamic On-Click/Focus Expansion -->
+        <div class="flex items-center gap-2 flex-1 min-w-0 max-w-full md:max-w-md lg:max-w-lg transition-all duration-300">
           <!-- Direct AWB Scanner Input -->
-          <div class="relative flex-1" id="searchHeader">
+          <div
+            class="relative transition-all duration-300 ease-out"
+            :class="!activSearch ? 'flex-1 min-w-[190px] max-w-xs sm:max-w-sm' : 'w-32 sm:w-40 shrink-0'"
+            id="searchHeader"
+          >
             <div class="relative flex items-center">
-              <i class="pi pi-barcode absolute left-3 text-red-600 dark:text-red-400 text-lg"></i>
+              <i class="pi pi-barcode absolute left-3 text-red-600 dark:text-red-400 text-base"></i>
               <input
                 ref="barcodeInput"
                 v-model="searchQueryAWB"
                 :tabindex="0"
                 id="searchInputAWB"
                 type="text"
-                class="w-full pl-9 pr-24 py-2 border rounded-xl text-sm font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-semibold"
-                :class="activSearch ? 'bg-slate-100 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500' : 'bg-white dark:bg-slate-800 border-red-300 dark:border-red-500 text-slate-900 dark:text-white shadow-sm focus:border-red-500'"
-                placeholder="Scanează AWB Sameday..."
+                class="w-full pl-8 pr-12 py-1.5 border rounded-xl text-xs font-mono tracking-wider focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all font-semibold"
+                :class="activSearch ? 'bg-slate-100 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-pointer' : 'bg-white dark:bg-slate-800 border-red-300 dark:border-red-500 text-slate-900 dark:text-white shadow-xs focus:border-red-500'"
+                :placeholder="!activSearch ? 'Scanează AWB Sameday...' : 'AWB'"
+                @click="activSearch = false; searchQuery = ''"
+                @focus="activSearch = false; searchQuery = ''"
                 @mouseenter="activSearch = false; searchQuery = ''"
                 :readonly="activSearch"
               />
               
               <!-- In-Input Camera & Clear Actions -->
-              <div class="absolute right-1.5 flex items-center gap-1">
+              <div class="absolute right-1.5 flex items-center gap-0.5 z-20 pointer-events-auto">
                 <button
                   v-if="searchQueryAWB"
-                  @click="searchQueryAWB = ''"
-                  class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-md"
-                  title="Șterge"
+                  type="button"
+                  @click.stop.prevent="clearAwbInput"
+                  @mousedown.stop.prevent
+                  class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-md transition-colors cursor-pointer"
+                  title="Șterge text"
                 >
-                  <i class="pi pi-times text-xs"></i>
+                  <i class="pi pi-times text-[10px]"></i>
                 </button>
                 <button
                   type="button"
-                  @click="showCameraScanner = true"
-                  class="inline-flex items-center gap-1 px-2.5 py-1 bg-red-50 dark:bg-red-950/60 hover:bg-red-100 dark:hover:bg-red-900/60 text-red-700 dark:text-red-300 rounded-lg text-xs font-bold border border-red-200 dark:border-red-800 transition-colors"
+                  @click.stop.prevent="showCameraScanner = true"
+                  @mousedown.stop.prevent
+                  class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-md transition-colors flex items-center justify-center cursor-pointer"
                   title="Scanează cu camera telefonului"
                 >
                   <i class="pi pi-camera text-xs"></i>
-                  <span>Cameră</span>
                 </button>
               </div>
             </div>
           </div>
 
           <!-- Client & City Filter -->
-          <div class="relative sm:w-64">
+          <div
+            class="relative transition-all duration-300 ease-out"
+            :class="activSearch ? 'flex-1 min-w-[190px] max-w-xs sm:max-w-sm' : 'w-32 sm:w-40 shrink-0'"
+          >
             <div class="relative flex items-center">
-              <i class="pi pi-search absolute left-3 text-slate-400 text-xs"></i>
+              <i class="pi pi-search absolute left-2.5 text-slate-400 text-xs pointer-events-none"></i>
               <input
+                ref="clientSearchInput"
                 v-model="searchQuery"
                 type="text"
-                class="w-full pl-8 pr-8 py-2 border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all"
-                :class="!activSearch ? 'bg-slate-100 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500' : 'bg-white dark:bg-slate-800 border-red-300 dark:border-red-500 text-slate-900 dark:text-white shadow-sm focus:border-red-500'"
-                placeholder="Filtru client, oraș..."
+                class="w-full pl-7 pr-7 py-1.5 border rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-red-500/20 transition-all"
+                :class="!activSearch ? 'bg-slate-100 dark:bg-slate-800/80 border-slate-300 dark:border-slate-700 text-slate-400 dark:text-slate-500 cursor-pointer' : 'bg-white dark:bg-slate-800 border-red-300 dark:border-red-500 text-slate-900 dark:text-white shadow-xs focus:border-red-500'"
+                :placeholder="activSearch ? 'Filtru client, oraș, status...' : 'Filtru client...'"
+                @click="activSearch = true; searchQueryAWB = ''"
+                @focus="activSearch = true; searchQueryAWB = ''"
                 @mouseenter="activSearch = true; searchQueryAWB = ''"
                 :readonly="!activSearch"
               />
               <button
                 v-if="searchQuery"
-                @click="searchQuery = ''"
-                class="absolute right-2 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 rounded-md"
+                type="button"
+                @click.stop.prevent="clearClientSearch"
+                @mousedown.stop.prevent
+                class="absolute right-1.5 p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 rounded-md transition-colors cursor-pointer z-20"
                 title="Șterge"
               >
-                <i class="pi pi-times text-xs"></i>
+                <i class="pi pi-times text-[10px]"></i>
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Right: Grouped Action Clusters -->
-        <div class="flex items-center flex-wrap gap-2 justify-between lg:justify-end shrink-0">
+        <!-- Center: Status Filter Pills Perfectly Centered -->
+        <div class="flex items-center justify-center shrink-0">
+          <div class="inline-flex items-center gap-0.5 bg-slate-100/90 dark:bg-slate-800/90 p-0.5 rounded-xl text-[11px] font-bold border border-slate-200/60 dark:border-slate-700/60 shadow-inner">
+            <button
+              @click="activeTab = 'all'"
+              class="px-2.5 py-1 rounded-lg transition-all"
+              :class="activeTab === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
+            >
+              Toate ({{ products.length }})
+            </button>
+            <button
+              @click="activeTab = 'ready'"
+              class="px-2.5 py-1 rounded-lg transition-all flex items-center gap-1"
+              :class="activeTab === 'ready' ? 'bg-emerald-600 text-white shadow-xs' : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'"
+            >
+              <span class="w-1.5 h-1.5 rounded-full" :class="activeTab === 'ready' ? 'bg-white' : 'bg-emerald-500'"></span>
+              <span>Pregătite ({{ countActive }})</span>
+            </button>
+            <button
+              @click="activeTab = 'pending'"
+              class="px-2.5 py-1 rounded-lg transition-all flex items-center gap-1"
+              :class="activeTab === 'pending' ? 'bg-rose-600 text-white shadow-xs' : 'text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40'"
+            >
+              <span class="w-1.5 h-1.5 rounded-full" :class="activeTab === 'pending' ? 'bg-white' : 'bg-rose-500'"></span>
+              <span>Rămase ({{ products.length - countActive }})</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right: Actions + Tools + View Switcher -->
+        <div class="flex items-center justify-end flex-wrap gap-2 shrink-0">
           
           <!-- Hidden file input for Excel upload -->
           <input type="file" @change="handleFileUpload" class="hidden" ref="fileInput" accept=".xlsx, .xls">
 
-          <!-- Primary Actions (Sameday Sync & Save DB) -->
+          <!-- Primary Actions (Sameday Sync & Save DB - Icon-Only with Hover Expand & Tooltips) -->
           <div class="flex items-center gap-1.5">
             <button
               @click="syncSamedayData"
               :disabled="syncing"
-              class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-red-600 to-rose-500 hover:from-red-500 hover:to-rose-400 shadow-sm hover:shadow transition-all disabled:opacity-50"
+              class="group flex items-center px-2 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-red-600 to-rose-500 hover:from-red-500 hover:to-rose-400 shadow-sm hover:shadow transition-all disabled:opacity-50"
               title="Sincronizează coletele de azi direct prin Sameday API"
             >
-              <i v-if="syncing" class="pi pi-spin pi-spinner text-xs"></i>
-              <i v-else class="pi pi-refresh text-xs"></i>
-              <span>{{ syncing ? 'Sincronizare...' : 'Sync Sameday' }}</span>
+              <i v-if="syncing" class="pi pi-spin pi-spinner text-xs shrink-0"></i>
+              <i v-else class="pi pi-refresh text-xs shrink-0"></i>
+              <span class="max-w-0 opacity-0 group-hover:max-w-28 group-hover:opacity-100 group-hover:ml-1.5 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out text-[11px]">{{ syncing ? 'Sincronizare...' : 'Sync Sameday' }}</span>
             </button>
 
             <button
               @click="saveBatchToDb"
               :disabled="products.length === 0 || savingToDb"
-              class="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 shadow-sm disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              class="group flex items-center px-2 py-1.5 rounded-xl text-xs font-bold text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800 hover:bg-slate-50 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all"
               title="Salvează sesiunea în Baza de Date"
             >
-              <i :class="savingToDb ? 'pi pi-spin pi-spinner text-xs text-red-600 dark:text-red-400' : 'pi pi-cloud-upload text-xs text-red-600 dark:text-red-400'"></i>
-              <span>{{ savingToDb ? 'Salvare...' : 'Salvează DB' }}</span>
+              <i :class="savingToDb ? 'pi pi-spin pi-spinner text-xs text-red-600 dark:text-red-400' : 'pi pi-cloud-upload text-xs text-red-600 dark:text-red-400'" class="shrink-0"></i>
+              <span class="max-w-0 opacity-0 group-hover:max-w-24 group-hover:opacity-100 group-hover:ml-1.5 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out text-[11px]">{{ savingToDb ? 'Salvare...' : 'Salvează DB' }}</span>
             </button>
           </div>
 
           <!-- Divider -->
-          <div class="h-6 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
+          <div class="h-5 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
 
-          <!-- Secondary Tools Group -->
-          <div class="flex items-center gap-1 bg-slate-100/90 dark:bg-slate-800/90 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-inner">
+          <!-- Secondary Tools Group (Icon-Only with Hover Expand & Tooltips) -->
+          <div class="flex items-center gap-0.5 bg-slate-100/90 dark:bg-slate-800/90 p-0.5 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-inner">
             <!-- Import Excel -->
             <button
               @click="triggerFileInput"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs transition-all"
-              title="Import din fișier Excel"
+              class="group flex items-center px-2 py-1.5 rounded-lg text-xs font-semibold text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs transition-all"
+              title="Importă colete din fișier Excel (.xlsx)"
             >
-              <i class="pi pi-file-import text-xs"></i>
-              <span class="hidden sm:inline">Import</span>
+              <i class="pi pi-file-import text-xs shrink-0"></i>
+              <span class="max-w-0 opacity-0 group-hover:max-w-20 group-hover:opacity-100 group-hover:ml-1.5 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out text-[11px] font-bold">Import</span>
             </button>
 
             <!-- Export -->
             <button
               @click="exportData"
               :disabled="products.length === 0"
-              class="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all"
-              title="Exportă tabelul în Excel"
+              class="group flex items-center px-2 py-1.5 rounded-lg text-xs font-semibold text-emerald-700 dark:text-emerald-400 hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              title="Exportă tabelul în format Excel"
             >
-              <i class="pi pi-file-excel text-xs"></i>
-              <span class="hidden sm:inline">Export</span>
+              <i class="pi pi-file-excel text-xs shrink-0"></i>
+              <span class="max-w-0 opacity-0 group-hover:max-w-20 group-hover:opacity-100 group-hover:ml-1.5 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out text-[11px] font-bold">Export</span>
             </button>
 
-            <!-- Live Multi-Device Sync -->
+            <!-- Live Multi-Device Sync (Connected / Disconnected Dynamic Colors, Dot Removed) -->
             <button
               @click="showPairingModal = true"
-              class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold text-indigo-700 dark:text-indigo-300 hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs transition-all"
-              title="Conectare Telefon ↔ Desktop"
+              class="group flex items-center px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs"
+              :class="liveSyncEnabled ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'"
+              :title="liveSyncEnabled ? 'Live Sync Conectat (Sincronizare activă)' : 'Live Sync Deconectat / Inactiv (Click pentru conectare)'"
             >
-              <span class="w-1.5 h-1.5 rounded-full bg-indigo-500 animate-ping"></span>
-              <span>Live Sync</span>
+              <i
+                class="pi pi-sync text-xs shrink-0"
+                :class="liveSyncEnabled ? 'animate-spin' : ''"
+                style="animation-duration: 3.5s;"
+              ></i>
+              <span class="max-w-0 opacity-0 group-hover:max-w-24 group-hover:opacity-100 group-hover:ml-1.5 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out text-[11px] font-bold">
+                {{ liveSyncEnabled ? 'Live Sync' : 'Sync Oprit' }}
+              </span>
             </button>
 
             <!-- Sound Mute/Unmute -->
             <button
               @click="soundEnabled = !soundEnabled; saveDataToLocalStorage('soundEnabled', soundEnabled)"
-              class="p-1.5 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs transition-colors"
+              class="group flex items-center px-2 py-1.5 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs transition-all"
               :class="soundEnabled ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'"
-              :title="soundEnabled ? 'Sunet activat' : 'Sunet dezactivat'"
+              :title="soundEnabled ? 'Sunet activat (click pentru mut)' : 'Sunet dezactivat (click pentru activare)'"
             >
-              <i :class="soundEnabled ? 'pi pi-volume-up' : 'pi pi-volume-off'"></i>
+              <i :class="soundEnabled ? 'pi pi-volume-up text-xs' : 'pi pi-volume-off text-xs'" class="shrink-0"></i>
+              <span class="max-w-0 opacity-0 group-hover:max-w-20 group-hover:opacity-100 group-hover:ml-1.5 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out text-[11px] font-bold">{{ soundEnabled ? 'Sunet On' : 'Sunet Off' }}</span>
             </button>
 
             <!-- Reset Data -->
             <button
               @click="showClearConfirm = true"
               :disabled="products.length === 0"
-              class="p-1.5 rounded-lg text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
-              title="Șterge datele curente"
+              class="group flex items-center px-2 py-1.5 rounded-lg text-xs text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/60 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
+              title="Șterge / Resetează toate coletele"
             >
-              <i class="pi pi-trash"></i>
+              <i class="pi pi-trash text-xs shrink-0"></i>
+              <span class="max-w-0 opacity-0 group-hover:max-w-24 group-hover:opacity-100 group-hover:ml-1.5 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out text-[11px] font-bold">Resetează</span>
             </button>
 
             <!-- Settings -->
             <button
               @click="showSettingsDrawer = true"
-              class="p-1.5 rounded-lg text-xs text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs transition-colors"
-              title="Setări scaner și temporizatoare"
+              class="group flex items-center px-2 py-1.5 rounded-lg text-xs text-slate-700 dark:text-slate-300 hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs transition-all"
+              title="Configurare Verificator Sameday"
             >
-              <i class="pi pi-cog"></i>
+              <i class="pi pi-cog text-xs shrink-0"></i>
+              <span class="max-w-0 opacity-0 group-hover:max-w-20 group-hover:opacity-100 group-hover:ml-1.5 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out text-[11px] font-bold">Setări</span>
             </button>
           </div>
 
-        </div>
-      </div>
-
-      <!-- Lower Status Ribbon: Segmented Filters + Centered Progress + View Mode -->
-      <div class="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 pt-2 border-t border-slate-100 dark:border-slate-800 w-full">
-        
-        <!-- Filter Pills Segmented Control -->
-        <div class="flex items-center gap-1 bg-slate-100/90 dark:bg-slate-800/90 p-1 rounded-xl text-xs font-bold border border-slate-200/60 dark:border-slate-700/60 shadow-inner">
-          <button
-            @click="activeTab = 'all'"
-            class="px-3.5 py-1.5 rounded-lg transition-all"
-            :class="activeTab === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'"
-          >
-            Toate ({{ products.length }})
-          </button>
-          <button
-            @click="activeTab = 'ready'"
-            class="px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5"
-            :class="activeTab === 'ready' ? 'bg-emerald-600 text-white shadow-sm' : 'text-emerald-700 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-950/40'"
-          >
-            <span class="w-1.5 h-1.5 rounded-full" :class="activeTab === 'ready' ? 'bg-white' : 'bg-emerald-500'"></span>
-            <span>Pregătite ({{ countActive }})</span>
-          </button>
-          <button
-            @click="activeTab = 'pending'"
-            class="px-3.5 py-1.5 rounded-lg transition-all flex items-center gap-1.5"
-            :class="activeTab === 'pending' ? 'bg-rose-600 text-white shadow-sm' : 'text-rose-700 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/40'"
-          >
-            <span class="w-1.5 h-1.5 rounded-full" :class="activeTab === 'pending' ? 'bg-white' : 'bg-rose-500'"></span>
-            <span>Rămase ({{ products.length - countActive }})</span>
-          </button>
-        </div>
-
-        <!-- Right: Integrated Progress Pill & View Mode Switcher -->
-        <div class="flex items-center gap-3 justify-between sm:justify-end">
-          <!-- Clean Progress Pill -->
-          <div class="flex items-center gap-2.5 bg-slate-50 dark:bg-slate-800/80 px-3 py-1.5 rounded-xl border border-slate-200 dark:border-slate-700">
-            <span class="text-[11px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Progres:</span>
-            <div class="w-24 sm:w-32 h-2.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-              <div
-                class="h-full bg-gradient-to-r from-emerald-500 to-teal-400 transition-all duration-300 rounded-full"
-                :style="{ width: progressPercentage + '%' }"
-              ></div>
-            </div>
-            <span class="text-xs font-black text-slate-800 dark:text-white min-w-[2.5rem]">{{ progressPercentage }}%</span>
-          </div>
-
-          <!-- View Mode Toggle (Cards vs Table) -->
-          <div class="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 p-1 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner">
+          <!-- View Mode Toggle (Cards vs Table) moved above -->
+          <div class="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner">
             <button
               @click="viewMode = 'grid'"
               class="p-1.5 rounded-lg text-xs transition-all"
-              :class="viewMode === 'grid' ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'"
+              :class="viewMode === 'grid' ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'"
               title="Vizualizare Carduri"
             >
               <i class="pi pi-th-large"></i>
@@ -230,16 +236,23 @@
             <button
               @click="viewMode = 'table'"
               class="p-1.5 rounded-lg text-xs transition-all"
-              :class="viewMode === 'table' ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-sm' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'"
+              :class="viewMode === 'table' ? 'bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-xs' : 'text-slate-500 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white'"
               title="Vizualizare Tabel"
             >
               <i class="pi pi-list"></i>
             </button>
           </div>
-        </div>
 
+        </div>
       </div>
 
+      <!-- Sleek Horizontal Progress Line running along the bottom edge -->
+      <div class="w-full h-1 bg-slate-200/70 dark:bg-slate-800/90 overflow-hidden" :title="`Progres: ${progressPercentage}%`">
+        <div
+          class="h-full bg-gradient-to-r from-emerald-500 via-teal-400 to-emerald-400 transition-all duration-300"
+          :style="{ width: progressPercentage + '%' }"
+        ></div>
+      </div>
     </div>
 
     <!-- Main Workspace Content -->
@@ -453,67 +466,67 @@
       @close="showSettingsDrawer = false"
       header="Configurare Verificator Sameday"
       modal
-      :style="{ width: '28rem' }"
-      :breakpoints="{ '575px': '92vw' }"
+      :style="{ width: '26rem' }"
+      :breakpoints="{ '575px': '94vw' }"
     >
-      <div class="space-y-4 pt-2">
+      <div class="space-y-3 pt-1">
         <div class="space-y-1">
-          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-200">Sufix ignorat la scanare AWB</label>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-200">Sufix ignorat la scanare AWB</label>
           <InputText
             v-model="awbEndWith"
             type="text"
-            class="w-full text-sm font-mono"
+            class="w-full text-xs font-mono"
             @change="saveDataToLocalStorage('awbEndWith', awbEndWith)"
           />
-          <p class="text-[11px] text-slate-500 dark:text-slate-400">Ex: 001</p>
+          <p class="text-[10px] text-slate-500 dark:text-slate-400">Ex: 001</p>
         </div>
 
         <div class="space-y-1">
-          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-200">Lungime minimă AWB (caractere)</label>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-200">Lungime minimă AWB (caractere)</label>
           <InputNumber
             v-model="awbLength"
-            class="w-full text-sm"
+            class="w-full text-xs"
             @change="saveDataToLocalStorage('awbLength', awbLength)"
           />
         </div>
 
         <div class="space-y-1">
-          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-200">Temporizator Auto-Clear input (secunde)</label>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-200">Temporizator Auto-Clear input (secunde)</label>
           <InputNumber
             v-model="delayAutoClear"
-            class="w-full text-sm"
+            class="w-full text-xs"
             @change="saveDataToLocalStorage('delayAutoClear', delayAutoClear)"
           />
         </div>
 
         <div class="space-y-1">
-          <label class="block text-xs font-semibold text-slate-700 dark:text-slate-200">Expirare sesiune locală (ore)</label>
+          <label class="block text-[11px] font-bold text-slate-700 dark:text-slate-200">Expirare sesiune locală (ore)</label>
           <InputNumber
             v-model="delayClearData"
-            class="w-full text-sm"
+            class="w-full text-xs"
             @change="saveDataToLocalStorage('delayClearData', delayClearData)"
           />
         </div>
 
         <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
-          <span class="text-xs font-semibold text-slate-700 dark:text-slate-200">Semnale sonore scanare</span>
+          <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200">Semnale sonore scanare</span>
           <InputSwitch v-model="soundEnabled" @change="saveDataToLocalStorage('soundEnabled', soundEnabled)" />
         </div>
 
         <div class="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-800">
           <div>
-            <span class="text-xs font-semibold text-slate-700 dark:text-slate-200 block">Salvare automată în DB</span>
-            <span class="text-[10px] text-slate-500 dark:text-slate-400">Sincronizează la fiecare validare</span>
+            <span class="text-[11px] font-bold text-slate-700 dark:text-slate-200 block">Salvare automată în DB</span>
+            <span class="text-[9px] text-slate-500 dark:text-slate-400">Sincronizează la fiecare validare</span>
           </div>
           <InputSwitch v-model="autoSaveDb" @change="saveDataToLocalStorage('autoSaveDb', autoSaveDb)" />
         </div>
 
         <!-- Live Phone <-> Desktop Multi-Device Sync Section -->
-        <div class="pt-3 border-t border-slate-100 dark:border-slate-800 space-y-2.5">
+        <div class="pt-2.5 border-t border-slate-100 dark:border-slate-800 space-y-2">
           <div class="flex items-center justify-between">
             <div>
-              <span class="text-xs font-bold text-slate-800 dark:text-slate-100 block">Sincronizare Telefon ↔ Desktop</span>
-              <span class="text-[10px] text-slate-500 dark:text-slate-400">Scanează cu telefonul, vezi rezultatele pe ecranul mare</span>
+              <span class="text-[11px] font-bold text-slate-800 dark:text-slate-100 block">Sincronizare Telefon ↔ Desktop</span>
+              <span class="text-[9px] text-slate-500 dark:text-slate-400">Scanează de pe telefon și vezi modificările pe desktop</span>
             </div>
             <InputSwitch v-model="liveSyncEnabled" @change="saveDataToLocalStorage('liveSyncEnabled', liveSyncEnabled)" />
           </div>
@@ -521,7 +534,7 @@
           <button
             type="button"
             @click="showPairingModal = true"
-            class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-xl text-xs font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 transition-colors"
+            class="w-full flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl text-[11px] font-bold text-indigo-700 dark:text-indigo-300 bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 transition-colors"
           >
             <i class="pi pi-qrcode text-xs"></i>
             <span>Conectare Telefon prin QR Code</span>
@@ -529,11 +542,11 @@
         </div>
 
         <!-- Collapsible Custom Sound Settings & DB Audio Upload at the end -->
-        <div v-if="soundEnabled" class="pt-3 border-t border-slate-100 dark:border-slate-800">
+        <div v-if="soundEnabled" class="pt-2.5 border-t border-slate-100 dark:border-slate-800">
           <SoundSettings />
         </div>
 
-        <div class="flex justify-end pt-4 border-t border-slate-100 dark:border-slate-800">
+        <div class="flex justify-end pt-3 border-t border-slate-100 dark:border-slate-800">
           <Button label="Închide" severity="secondary" @click="showSettingsDrawer = false" />
         </div>
       </div>
@@ -545,10 +558,10 @@
       @close="showClearConfirm = false"
       header="Confirmare Resetare"
       modal
-      :style="{ width: '24rem' }"
+      :style="{ width: '22rem' }"
     >
-      <div class="space-y-4 pt-2">
-        <p class="text-sm text-slate-600 dark:text-slate-300">Sigur dorești să ștergi toate cele {{ products.length }} colete din sesiunea curentă?</p>
+      <div class="space-y-3 pt-1">
+        <p class="text-xs text-slate-600 dark:text-slate-300">Sigur dorești să ștergi toate cele {{ products.length }} colete din sesiunea curentă?</p>
         <div class="flex justify-end gap-2 pt-2 border-t border-slate-100 dark:border-slate-800">
           <Button label="Anulează" severity="secondary" text @click="showClearConfirm = false" />
           <Button label="Șterge Tot" severity="danger" @click="clearData(); showClearConfirm = false" />
@@ -583,8 +596,7 @@
 
 <script lang="ts">
 import * as XLSX from 'xlsx';
-import { toast } from 'vue3-toastify';
-import 'vue3-toastify/dist/index.css';
+import { toast } from 'vue-sonner';
 import CameraScannerModal from '@/components/CameraScannerModal.vue';
 import DevicePairingModal from '@/components/DevicePairingModal.vue';
 import SoundSettings from '@/components/SoundSettings.vue';
@@ -634,24 +646,21 @@ export default {
   },
   setup() {
     const notifyAWBExist = (awb: string, delay: number) => {
-      toast(`AWB #${awb.toUpperCase()} a fost validat!`, {
-        autoClose: (delay * 3) * 1000,
-        type: "success",
-        position: "bottom-right",
+      toast.success(`AWB #${awb.toUpperCase()} validat!`, {
+        description: 'Coletul Sameday a fost marcat ca Pregătit.',
+        duration: (delay * 3) * 1000,
       });
     };
     const notifyAWBDouble = (awb: string, count: number) => {
-      toast(`ATENȚIE: AWB #${awb.toUpperCase()} a fost găsit de ${count} ori!`, {
-        type: "warning",
-        position: "bottom-right",
-        autoClose: false,
+      toast.warning(`AWB #${awb.toUpperCase()} duplicat!`, {
+        description: `Acest colet a fost deja scanat (găsit de ${count} ori).`,
+        duration: 6000,
       });
     };
     const notifyAWBError = (awb: string) => {
-      toast(`EROARE: AWB #${awb.toUpperCase()} nu a fost găsit în listă!`, {
-        type: "error",
-        position: "bottom-right",
-        autoClose: false,
+      toast.error(`AWB #${awb.toUpperCase()} inexistent!`, {
+        description: 'Acest AWB nu se regăsește în lista Sameday încărcată.',
+        duration: 6000,
       });
     };
 
@@ -770,7 +779,7 @@ export default {
   methods: {
     async syncSamedayData() {
       if (!this.samedayIntegration || !this.samedayIntegration.service) {
-        toast.warn("Vă rugăm să configurați credențialele Sameday în secțiunea Integrări!");
+        toast.warning("Vă rugăm să configurați credențialele Sameday în secțiunea Integrări!");
         return;
       }
 
@@ -978,6 +987,22 @@ export default {
       const wb = XLSX.utils.book_new();
       XLSX.utils.book_append_sheet(wb, ws, 'Sameday Verificate');
       XLSX.writeFile(wb, `sameday-export-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    },
+    clearAwbInput() {
+      clearTimeout(this.timeout);
+      this.searchQueryAWB = '';
+      this.activSearch = false;
+      this.$nextTick(() => {
+        const el = this.$refs.barcodeInput as HTMLInputElement | undefined;
+        if (el) el.focus();
+      });
+    },
+    clearClientSearch() {
+      this.searchQuery = '';
+      this.$nextTick(() => {
+        const el = this.$refs.clientSearchInput as HTMLInputElement | undefined;
+        if (el) el.focus();
+      });
     },
     clearData() {
       this.products = [];

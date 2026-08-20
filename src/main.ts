@@ -1,5 +1,6 @@
 import './assets/main.css'
 import 'primeicons/primeicons.css'
+import 'vue-sonner/style.css'
 
 import { createApp } from 'vue'
 import { createPinia, setActivePinia } from 'pinia'
