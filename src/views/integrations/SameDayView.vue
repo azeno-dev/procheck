@@ -123,13 +123,26 @@
           <!-- Hidden file input for Excel upload -->
           <input type="file" @change="handleFileUpload" class="hidden" ref="fileInput" accept=".xlsx, .xls">
 
-          <!-- Primary Actions (Sameday Sync & Save DB - Icon-Only with Hover Expand & Tooltips) -->
+          <!-- Primary Actions (Sameday Sync with Time-Range Selector & Save DB) -->
           <div class="flex items-center gap-1.5">
+            <!-- Sync Time Range Dropdown -->
+            <select
+              v-model="selectedTimeRange"
+              class="px-2 py-1.5 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 rounded-xl text-[11px] font-bold focus:outline-none focus:ring-1 focus:ring-red-500 cursor-pointer shadow-inner transition-colors"
+              title="Selectează intervalul de sincronizare Sameday"
+            >
+              <option value="today">Azi</option>
+              <option value="24h">24 ore</option>
+              <option value="3days">3 zile</option>
+              <option value="7days">7 zile</option>
+              <option value="30days">30 zile</option>
+            </select>
+
             <button
               @click="syncSamedayData"
               :disabled="syncing"
-              class="group flex items-center px-2 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-red-600 to-rose-500 hover:from-red-500 hover:to-rose-400 shadow-sm hover:shadow transition-all disabled:opacity-50"
-              title="Sincronizează coletele de azi direct prin Sameday API"
+              class="group flex items-center px-2.5 py-1.5 rounded-xl text-xs font-bold text-white bg-gradient-to-r from-red-600 to-rose-500 hover:from-red-500 hover:to-rose-400 shadow-sm hover:shadow transition-all disabled:opacity-50"
+              :title="`Sincronizează coletele din Sameday API (${getTimeRangeLabel(selectedTimeRange)})`"
             >
               <i v-if="syncing" class="pi pi-spin pi-spinner text-xs shrink-0"></i>
               <i v-else class="pi pi-refresh text-xs shrink-0"></i>
@@ -624,6 +637,7 @@ export default {
       samedayService: {} as SamedayService,
       authStore: useAuthStore(),
       samedayIntegration: {} as Integration,
+      selectedTimeRange: 'today' as 'today' | '24h' | '3days' | '7days' | '30days',
       syncing: false,
       searchQueryAWB: '',
       searchQuery: '',
@@ -777,6 +791,16 @@ export default {
     });
   },
   methods: {
+    getTimeRangeLabel(range: string): string {
+      switch (range) {
+        case 'today': return 'Azi';
+        case '24h': return 'Ultimele 24 ore';
+        case '3days': return 'Ultimele 3 zile';
+        case '7days': return 'Ultimele 7 zile';
+        case '30days': return 'Ultimele 30 zile';
+        default: return range;
+      }
+    },
     async syncSamedayData() {
       if (!this.samedayIntegration || !this.samedayIntegration.service) {
         toast.warning("Vă rugăm să configurați credențialele Sameday în secțiunea Integrări!");
@@ -785,16 +809,19 @@ export default {
 
       this.syncing = true;
       try {
-        const result = await this.samedayService.getData();
+        this.samedayService.setConfig(this.samedayIntegration.service);
+        const result = await this.samedayService.getData(this.selectedTimeRange);
         if (result && Array.isArray(result) && result.length > 0) {
           const values = result.map((item: any, idx: number) => ({
             id: idx + Date.now(),
             awb: (item.awbNumber || item.awb || '').toString().trim(),
             date: item.date || new Date().toLocaleDateString('ro-RO'),
             status: item.status && item.status === this.activStatus ? this.activStatus : this.inactivStatus,
-            clientName: item.recipientName || item.clientName || '',
-            clientPhone: item.recipientPhone || item.clientPhone || '',
+            clientName: item.clientName || item.recipientName || '',
+            clientPhone: item.clientPhone || item.recipientPhone || '',
             observations: item.observation || item.observations || '',
+            county: item.county || '',
+            city: item.city || '',
             index: "",
           })).filter((item: any) => item.awb.length > 0);
 
@@ -802,9 +829,13 @@ export default {
           this.sortByStatus(this.products);
           this.countActive = this.products.filter(p => p.status === this.activStatus).length;
           this.saveToLocalStorage(this.products);
-          toast.success(`Au fost sincronizate ${values.length} AWB-uri din Sameday!`);
+          toast.success(`Au fost sincronizate ${values.length} colete din Sameday!`, {
+            description: `Interval selectat: ${this.getTimeRangeLabel(this.selectedTimeRange)}`
+          });
         } else {
-          toast.info("Sincronizarea Sameday a fost executată (niciun colet nou găsit pentru intervalul selectat).");
+          toast.info(`Niciun colet găsit pentru intervalul "${this.getTimeRangeLabel(this.selectedTimeRange)}".`, {
+            description: `Sfat: Schimbă intervalul la "24 ore" sau "7 zile" dacă AWB-urile au fost create anterior.`
+          });
         }
       } catch (err) {
         console.error("Sameday sync error:", err);
