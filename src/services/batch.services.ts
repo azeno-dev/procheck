@@ -24,7 +24,7 @@ export class BatchService {
   }
 
   // Save or sync batch to DB and local backup
-  async saveBatch(session: Partial<BatchSession>): Promise<{ success: boolean; session: BatchSession; inDb: boolean }> {
+  async saveBatch(session: Partial<BatchSession>): Promise<{ success: boolean; session: BatchSession; inDb: boolean; error?: string }> {
     const now = new Date().toISOString();
     const batchId = session.id || 'batch_' + Date.now();
     const total = session.products ? session.products.length : (session.totalCount || 0);
@@ -47,14 +47,26 @@ export class BatchService {
     };
 
     let inDb = false;
+    let dbError: string | undefined;
 
     // Try persisting to PocketBase if user authenticated
     try {
       const locUser = localStorage.getItem('user');
-      if (locUser) {
-        const user = JSON.parse(locUser).record;
-        if (user && user.id) {
-          // Attempt to save to 'batches' or update 'clients' collection
+      if (!locUser) {
+        dbError = 'Utilizatorul nu este autentificat.';
+      } else {
+        const parsed = JSON.parse(locUser);
+        const user = parsed.record;
+        const token = parsed.token;
+
+        if (!user || !user.id) {
+          dbError = 'Date utilizator invalide în localStorage.';
+        } else {
+          // Restore auth token on the PocketBase client instance
+          if (token) {
+            this.pb.authStore.save(token, user);
+          }
+
           try {
             await this.pb.collection('batches').create({
               batchId: fullSession.id,
@@ -67,20 +79,22 @@ export class BatchService {
               data: JSON.stringify(fullSession)
             });
             inDb = true;
-          } catch (pbErr) {
-            // Collection might not exist yet on backend, save metadata in client record if possible
-            // console.info("Pocketbase batches collection note:", pbErr);
+          } catch (pbErr: any) {
+            const msg = pbErr?.response?.message || pbErr?.message || String(pbErr);
+            dbError = `PocketBase: ${msg}`;
+            console.error('BatchService.saveBatch DB error:', pbErr);
           }
         }
       }
-    } catch (e) {
+    } catch (e: any) {
+      dbError = `Eroare generală: ${e?.message || String(e)}`;
       console.warn("DB save sync error:", e);
     }
 
     // Always update persistent local batch history
     this.saveToHistory(fullSession);
 
-    return { success: true, session: fullSession, inDb };
+    return { success: true, session: fullSession, inDb, error: dbError };
   }
 
   // Save session to history store
