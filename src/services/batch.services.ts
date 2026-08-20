@@ -24,7 +24,7 @@ export class BatchService {
   }
 
   // Save or sync batch to DB and local backup
-  async saveBatch(session: Partial<BatchSession>): Promise<{ success: boolean; session: BatchSession; inDb: boolean }> {
+  async saveBatch(session: Partial<BatchSession>): Promise<{ success: boolean; session: BatchSession; inDb: boolean; error?: string }> {
     const now = new Date().toISOString();
     const batchId = session.id || 'batch_' + Date.now();
     const total = session.products ? session.products.length : (session.totalCount || 0);
@@ -47,40 +47,49 @@ export class BatchService {
     };
 
     let inDb = false;
+    let dbError: string | undefined;
 
-    // Try persisting to PocketBase if user authenticated
+    // Persist to PocketBase — user relation is optional
     try {
+      // Restore auth token if user is logged in
       const locUser = localStorage.getItem('user');
       if (locUser) {
-        const user = JSON.parse(locUser).record;
-        if (user && user.id) {
-          // Attempt to save to 'batches' or update 'clients' collection
-          try {
-            await this.pb.collection('batches').create({
-              batchId: fullSession.id,
-              name: fullSession.name,
-              source: fullSession.source,
-              user: user.id,
-              totalCount: fullSession.totalCount,
-              readyCount: fullSession.readyCount,
-              progress: fullSession.progress,
-              data: JSON.stringify(fullSession)
-            });
-            inDb = true;
-          } catch (pbErr) {
-            // Collection might not exist yet on backend, save metadata in client record if possible
-            // console.info("Pocketbase batches collection note:", pbErr);
-          }
+        const parsed = JSON.parse(locUser);
+        if (parsed?.token && parsed?.record) {
+          this.pb.authStore.save(parsed.token, parsed.record);
         }
       }
-    } catch (e) {
-      console.warn("DB save sync error:", e);
+
+      const payload: any = {
+        batchId: fullSession.id,
+        name: fullSession.name,
+        source: fullSession.source,
+        courier: fullSession.courier,
+        totalCount: fullSession.totalCount,
+        readyCount: fullSession.readyCount,
+        progress: fullSession.progress,
+        data: JSON.stringify(fullSession)
+      };
+
+      // Attach user relation if logged in
+      if (locUser) {
+        const userId = JSON.parse(locUser)?.record?.id;
+        if (userId) payload.user = userId;
+      }
+
+      await this.pb.collection('batches').create(payload);
+      inDb = true;
+    } catch (pbErr: any) {
+      const msg = pbErr?.response?.message || pbErr?.message || String(pbErr);
+      dbError = `PocketBase: ${msg}`;
+      console.error('BatchService.saveBatch DB error:', pbErr);
     }
 
     // Always update persistent local batch history
     this.saveToHistory(fullSession);
 
-    return { success: true, session: fullSession, inDb };
+
+    return { success: true, session: fullSession, inDb, error: dbError };
   }
 
   // Save session to history store

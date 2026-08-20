@@ -1,3 +1,4 @@
+import Peer, { type DataConnection } from 'peerjs';
 import PocketBase from 'pocketbase';
 import { Constants } from '@/Constants';
 
@@ -14,17 +15,15 @@ export interface LiveScanEvent {
 }
 
 export class LiveSyncService {
-  private pb: PocketBase;
+  private pb: PocketBase = new PocketBase(Constants.database.url);
+  private peer: Peer | null = null;
+  private connections: Map<string, DataConnection> = new Map();
   private channel: BroadcastChannel | null = null;
   private currentRoom: string = '';
   private listeners: Array<(event: LiveScanEvent) => void> = [];
-  private pollInterval: any = null;
-  private lastProcessedTimestamp: number = Date.now();
-
-  constructor() {
-    this.pb = new PocketBase(Constants.database.url);
-    this.pb.autoCancellation(false);
-  }
+  private lastProcessedTimestamp: number = 0;
+  private isHost: boolean = false;
+  private reconnectTimer: any = null;
 
   // Get or initialize persistent Room ID for current user/device
   getOrCreateRoomId(): string {
@@ -43,12 +42,16 @@ export class LiveSyncService {
     this.initChannel(roomId);
   }
 
-  // Initialize sync channel
+  getRoomId(): string {
+    return this.currentRoom || this.getOrCreateRoomId();
+  }
+
+  // Initialize sync channel & WebRTC Peer
   initChannel(roomId: string) {
     this.currentRoom = roomId;
     this.lastProcessedTimestamp = Date.now();
 
-    // 1. Local BroadcastChannel
+    // 1. Local BroadcastChannel for same-device multi-tab
     try {
       if (this.channel) {
         this.channel.close();
@@ -77,8 +80,94 @@ export class LiveSyncService {
       }
     });
 
-    // 3. Cloud / Database Real-time subscription & fallback polling
-    this.startDbSync(roomId);
+    // 3. WebRTC Direct P2P Sync
+    this.initPeer(roomId);
+  }
+
+  private cleanPeerId(roomId: string): string {
+    return 'procheck-' + roomId.toLowerCase().replace(/[^a-z0-9]/g, '');
+  }
+
+  private initPeer(roomId: string) {
+    if (this.peer) {
+      try {
+        this.peer.destroy();
+      } catch (e) {}
+      this.peer = null;
+    }
+    this.connections.clear();
+
+    const hostPeerId = this.cleanPeerId(roomId);
+
+    try {
+      this.peer = new Peer(hostPeerId, {
+        debug: 1,
+      });
+
+      this.peer.on('open', () => {
+        this.isHost = true;
+      });
+
+      this.peer.on('connection', (conn: DataConnection) => {
+        this.setupConnection(conn);
+      });
+
+      this.peer.on('error', (err: any) => {
+        // If ID is already taken, this client is a mobile/secondary peer connecting to the host
+        if (err.type === 'unavailable-id') {
+          this.isHost = false;
+          if (this.peer) {
+            try { this.peer.destroy(); } catch (e) {}
+          }
+          const clientPeerId = `${hostPeerId}-c-${Math.floor(1000 + Math.random() * 9000)}`;
+          this.peer = new Peer(clientPeerId, { debug: 1 });
+
+          this.peer.on('open', () => {
+            if (this.peer) {
+              const conn = this.peer.connect(hostPeerId, { reliable: true });
+              this.setupConnection(conn);
+            }
+          });
+
+          this.peer.on('connection', (conn: DataConnection) => {
+            this.setupConnection(conn);
+          });
+        }
+      });
+    } catch (err) {
+      console.warn("PeerJS init error:", err);
+    }
+  }
+
+  private setupConnection(conn: DataConnection) {
+    conn.on('open', () => {
+      this.connections.set(conn.peer, conn);
+
+      // If mobile connects, request batch sync from host
+      if (!this.isHost) {
+        this.requestBatchSync();
+      }
+    });
+
+    conn.on('data', (data: any) => {
+      try {
+        const event = typeof data === 'string' ? JSON.parse(data) : data;
+        if (event && event.timestamp > this.lastProcessedTimestamp) {
+          this.lastProcessedTimestamp = event.timestamp;
+          this.notifyListeners(event);
+        }
+      } catch (e) {
+        console.error("Error processing peer data:", e);
+      }
+    });
+
+    conn.on('close', () => {
+      this.connections.delete(conn.peer);
+    });
+
+    conn.on('error', () => {
+      this.connections.delete(conn.peer);
+    });
   }
 
   // Broadcast an AWB scan event across devices
@@ -95,38 +184,7 @@ export class LiveSyncService {
     };
 
     this.lastProcessedTimestamp = event.timestamp;
-
-    // 1. Broadcast locally
-    if (this.channel) {
-      try {
-        this.channel.postMessage(event);
-      } catch (e) {}
-    }
-
-    // 2. Save in localStorage to trigger storage events
-    localStorage.setItem(`procheck_live_event_${roomId}`, JSON.stringify(event));
-
-    // 3. Persist event to Database / PocketBase
-    try {
-      const locUser = localStorage.getItem('user');
-      if (locUser) {
-        const user = JSON.parse(locUser).record;
-        if (user && user.id) {
-          try {
-            await this.pb.collection('live_events').create({
-              room: roomId,
-              user: user.id,
-              type: event.type,
-              awb: event.awb,
-              status: event.status,
-              payload: JSON.stringify(event)
-            });
-          } catch (pbErr) {
-            // If live_events collection is not present, we use batches/client metadata
-          }
-        }
-      }
-    } catch (e) {}
+    this.sendEvent(event);
   }
 
   // Broadcast entire products list across devices in the room
@@ -142,31 +200,7 @@ export class LiveSyncService {
     };
 
     this.lastProcessedTimestamp = event.timestamp;
-
-    if (this.channel) {
-      try {
-        this.channel.postMessage(event);
-      } catch (e) {}
-    }
-
-    localStorage.setItem(`procheck_live_event_${roomId}`, JSON.stringify(event));
-
-    try {
-      const locUser = localStorage.getItem('user');
-      if (locUser) {
-        const user = JSON.parse(locUser).record;
-        if (user && user.id) {
-          try {
-            await this.pb.collection('live_events').create({
-              room: roomId,
-              user: user.id,
-              type: 'BATCH_SYNC',
-              payload: JSON.stringify(event)
-            });
-          } catch (pbErr) {}
-        }
-      }
-    } catch (e) {}
+    this.sendEvent(event);
   }
 
   // Request sync from any connected device that has the batch
@@ -179,13 +213,57 @@ export class LiveSyncService {
       timestamp: Date.now()
     };
 
+    this.sendEvent(event);
+  }
+
+  private sendEvent(event: LiveScanEvent) {
+    // 1. Direct WebRTC send to all connected peers
+    this.connections.forEach(conn => {
+      if (conn.open) {
+        try {
+          conn.send(event);
+        } catch (e) {}
+      }
+    });
+
+    // 2. BroadcastChannel
     if (this.channel) {
       try {
         this.channel.postMessage(event);
       } catch (e) {}
     }
 
-    localStorage.setItem(`procheck_live_event_${roomId}`, JSON.stringify(event));
+    // 3. Storage event fallback
+    localStorage.setItem(`procheck_live_event_${event.roomId}`, JSON.stringify(event));
+
+    // 4. Persist SCAN_AWB events to PocketBase live_events (for history/audit)
+    if (event.type === 'SCAN_AWB') {
+      try {
+        const locUser = localStorage.getItem('user');
+        if (locUser) {
+          const parsed = JSON.parse(locUser);
+          if (parsed?.token && parsed?.record) {
+            this.pb.authStore.save(parsed.token, parsed.record);
+          }
+        }
+
+        const payload: any = {
+          room: event.roomId,
+          type: event.type,
+          awb: event.awb || '',
+          status: event.status || '',
+          payload: event
+        };
+
+        // Attach user relation if logged in
+        const userId = locUser ? JSON.parse(locUser)?.record?.id : null;
+        if (userId) payload.user = userId;
+
+        this.pb.collection('live_events').create(payload).catch(() => {
+          // Silently ignore if live_events collection not available
+        });
+      } catch (e) {}
+    }
   }
 
   // Subscribe to live scan events
@@ -203,39 +281,20 @@ export class LiveSyncService {
     });
   }
 
-  // PocketBase DB sync & network relay
-  private async startDbSync(roomId: string) {
-    if (this.pollInterval) {
-      clearInterval(this.pollInterval);
-    }
-
-    // Try PocketBase real-time subscription
-    try {
-      await this.pb.collection('live_events').subscribe('*', (e: any) => {
-        if (e.record && e.record.room === roomId) {
-          try {
-            const event: LiveScanEvent = JSON.parse(e.record.payload);
-            if (event.timestamp > this.lastProcessedTimestamp) {
-              this.lastProcessedTimestamp = event.timestamp;
-              this.notifyListeners(event);
-            }
-          } catch (err) {}
-        }
-      });
-    } catch (e) {
-      // If collection doesn't exist yet, standard interval polling on DB or localStorage acts as fallback
-    }
-  }
-
   cleanup() {
     if (this.channel) {
       this.channel.close();
       this.channel = null;
     }
-    if (this.pollInterval) {
-      clearInterval(this.pollInterval);
-      this.pollInterval = null;
+    if (this.reconnectTimer) {
+      clearTimeout(this.reconnectTimer);
+      this.reconnectTimer = null;
     }
+    if (this.peer) {
+      try { this.peer.destroy(); } catch (e) {}
+      this.peer = null;
+    }
+    this.connections.clear();
     this.listeners = [];
   }
 }

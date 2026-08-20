@@ -980,6 +980,11 @@ export default {
           result[0].index = this.countActive;
           this.saveToLocalStorage(this.products);
 
+          // Broadcast individual AWB scan to paired devices (mobile → desktop or vice-versa)
+          if (this.liveSyncEnabled) {
+            LiveSyncService.broadcastScan(result[0].awb, result[0].status, result[0]);
+          }
+
           if (this.activSearch) {
             setTimeout(() => {
               this.notifyAWBExist(valueSearch, this.delayAutoClear);
@@ -1284,10 +1289,14 @@ export default {
         if (res.inDb) {
           toast.success("Coletele Sameday au fost salvate în baza de date PocketBase!");
         } else {
-          toast.success("Sesiunea Sameday a fost sincronizată în arhiva permanentă!");
+          toast.warning("Salvat local, nu în PocketBase.", {
+            description: res.error || "Colecția 'batches' poate să nu existe în PocketBase."
+          });
         }
-      } catch (e) {
-        toast.error("Eroare la salvarea în baza de date.");
+      } catch (e: any) {
+        toast.error("Eroare la salvarea în baza de date.", {
+          description: e?.message || String(e)
+        });
       } finally {
         this.savingToDb = false;
       }
@@ -1396,7 +1405,7 @@ export default {
           this.sortByStatus(this.products);
           this.countActive = this.products.filter(p => p.status === this.activStatus).length;
           match.index = this.countActive;
-          this.saveToLocalStorage(this.products);
+          this.saveToLocalStorage(this.products, false); // no re-broadcast to avoid loop
           soundService.playSound('success', this.soundEnabled);
           toast.success(`📱 Sincronizat de pe telefon: AWB #${match.awb}`);
         }

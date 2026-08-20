@@ -28,3 +28,8 @@ coverage
 *.sw?
 
 *.tsbuildinfo
+
+# Environment files with secrets — use .env.*.example as templates
+.env.development
+.env.production
+.env.staging
