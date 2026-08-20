@@ -3,15 +3,15 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
       
       <!-- Top Banner -->
-      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-sm">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 bg-white dark:bg-slate-900 p-6 sm:p-8 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-200">
         <div class="space-y-1">
-          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 border border-brand-200 px-3 py-0.5 rounded-full">
+          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800 px-3 py-0.5 rounded-full shadow-xs">
             Hub Conexiuni & Curieri
           </span>
-          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
+          <h1 class="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Integrări Disponibile
           </h1>
-          <p class="text-xs sm:text-sm text-slate-500 max-w-xl">
+          <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-xl">
             Configurează conexiunile API cu platformele de curierat și sincronizează automat AWB-urile generate pentru procesare rapidă.
           </p>
         </div>
@@ -19,7 +19,7 @@
         <div class="flex items-center gap-3">
           <router-link
             to="/integrations/import"
-            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-brand-600 hover:bg-brand-500 shadow-md transition-all"
+            class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-white bg-brand-600 hover:bg-brand-500 shadow-md hover:shadow-lg transition-all"
           >
             <i class="pi pi-file-import"></i>
             <span>Verificare Import (Excel)</span>

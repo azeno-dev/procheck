@@ -315,11 +315,15 @@
 
     <!-- Footer (hidden on full-screen auth pages) -->
     <Footer v-if="!$route.path.startsWith('/auth')" />
+
+    <!-- Global Modern Sonner Toaster (Stacked physics, rich colors, dark mode sync) -->
+    <Toaster richColors position="bottom-right" closeButton :expand="true" :visibleToasts="4" />
   </div>
 </template>
 
 <script lang="ts">
 import { ref } from "vue";
+import { Toaster } from "vue-sonner";
 import Footer from "@/components/Footer.vue";
 import ThemeSwitcher from "@/components/ThemeSwitcher.vue";
 import ThemeService from "@/services/theme.services";
@@ -331,6 +335,7 @@ export default {
   components: {
     Footer,
     ThemeSwitcher,
+    Toaster,
   },
   data() {
     return {

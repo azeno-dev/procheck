@@ -1,9 +1,9 @@
 <template>
-  <div class="bg-white rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-card-hover transition-all duration-300 p-6 flex flex-col justify-between relative overflow-hidden group">
+  <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200/90 dark:border-slate-800 shadow-sm hover:shadow-card-hover hover:border-brand-300 dark:hover:border-brand-700 transition-all duration-300 p-6 flex flex-col justify-between relative overflow-hidden group">
     <!-- Top Bar: Flag & Options -->
     <div class="flex items-center justify-between mb-4">
       <div class="flex items-center gap-2">
-        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-600 border border-slate-200 flex items-center gap-1.5">
+        <span class="text-xs font-semibold px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-700 flex items-center gap-1.5">
           <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
           România
         </span>
@@ -12,7 +12,7 @@
       <div>
         <button
           @click="onMoreClick($event)"
-          class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+          class="p-1.5 rounded-lg text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
           title="Opțiuni"
         >
           <i class="pi pi-ellipsis-v text-sm"></i>
@@ -23,27 +23,27 @@
 
     <!-- Center Logo & Name -->
     <div class="flex flex-col items-center justify-center py-6 text-center">
-      <div class="w-24 h-24 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center p-3 mb-3 group-hover:scale-105 transition-transform duration-200 shadow-inner">
+      <div class="w-24 h-24 rounded-2xl bg-slate-50 dark:bg-slate-800/80 border border-slate-100 dark:border-slate-700/80 flex items-center justify-center p-3 mb-3 group-hover:scale-105 transition-transform duration-200 shadow-inner">
         <img
           :src="imageUrl || 'https://sameday.ro/app/themes/samedaytwo/public/images/logo/logo-sameday.svg'"
           alt="Integration Logo"
           class="max-h-12 max-w-full object-contain"
         />
       </div>
-      <h3 class="text-lg font-bold text-slate-900 capitalize">{{ service?.name || 'Sameday Curier' }}</h3>
-      <p class="text-xs text-slate-500 mt-1">Sincronizare automată AWB & Colete</p>
+      <h3 class="text-lg font-bold text-slate-900 dark:text-white capitalize">{{ service?.name || 'Sameday Curier' }}</h3>
+      <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Sincronizare automată AWB & Colete</p>
     </div>
 
     <!-- Bottom Bar: Status & Edit Button -->
-    <div class="pt-4 border-t border-slate-100 flex items-center justify-between">
+    <div class="pt-4 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between">
       <div class="flex items-center gap-1.5">
         <span
           class="w-2 h-2 rounded-full"
-          :class="active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300'"
+          :class="active ? 'bg-emerald-500 animate-pulse' : 'bg-slate-300 dark:bg-slate-600'"
         ></span>
         <span
           class="text-xs font-semibold"
-          :class="active ? 'text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full' : 'text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full'"
+          :class="active ? 'text-emerald-700 dark:text-emerald-300 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800' : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-full border border-slate-200 dark:border-slate-700'"
         >
           {{ active ? 'Conectat' : 'Neconfigurat' }}
         </span>
@@ -51,7 +51,7 @@
 
       <button
         @click="onEditClick"
-        class="inline-flex items-center gap-1 text-xs font-bold text-brand-600 hover:text-brand-500 bg-brand-50 hover:bg-brand-100 px-3 py-1.5 rounded-lg transition-colors"
+        class="inline-flex items-center gap-1 text-xs font-bold text-brand-600 dark:text-brand-400 hover:text-brand-500 bg-brand-50 dark:bg-brand-950/60 hover:bg-brand-100 dark:hover:bg-brand-900/60 border border-brand-200 dark:border-brand-800 px-3 py-1.5 rounded-lg transition-colors"
       >
         <i class="pi pi-pencil text-xs"></i>
         <span>Configurează</span>
@@ -69,7 +69,7 @@
     :style="{ width: '45rem' }"
     :breakpoints="{ '1199px': '75vw', '575px': '92vw' }"
   >
-    <div class="prose prose-sm max-w-none text-slate-700 p-2" v-html="doc || '<p>Documentația pentru această integrare va fi disponibilă în curând.</p>'"></div>
+    <div class="prose prose-sm dark:prose-invert max-w-none text-slate-700 dark:text-slate-300 p-2" v-html="doc || '<p>Documentația pentru această integrare va fi disponibilă în curând.</p>'"></div>
   </Dialog>
 
   <!-- Edit Credentials Dialog -->
@@ -82,22 +82,22 @@
     :breakpoints="{ '575px': '92vw' }"
   >
     <div class="space-y-4 pt-2">
-      <p class="text-xs text-slate-500">Introduceți credențialele furnizate de curier pentru sincronizare automată.</p>
+      <p class="text-xs text-slate-500 dark:text-slate-400">Introduceți credențialele furnizate de curier pentru sincronizare automată.</p>
 
       <div class="space-y-1">
-        <label for="api_url" class="block text-xs font-semibold text-slate-700">API URL</label>
+        <label for="api_url" class="block text-xs font-semibold text-slate-700 dark:text-slate-200">API URL</label>
         <InputText
           id="api_url"
           type="text"
           :value="service.api_url || 'https://api.sameday.ro'"
-          class="w-full bg-slate-100 text-slate-500 text-sm"
+          class="w-full bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-sm"
           readonly
           disabled
         />
       </div>
 
       <div class="space-y-1">
-        <label for="user" class="block text-xs font-semibold text-slate-700">Utilizator API</label>
+        <label for="user" class="block text-xs font-semibold text-slate-700 dark:text-slate-200">Utilizator API</label>
         <InputText
           id="user"
           type="text"
@@ -109,7 +109,7 @@
       </div>
 
       <div class="space-y-1">
-        <label for="password" class="block text-xs font-semibold text-slate-700">Parolă API</label>
+        <label for="password" class="block text-xs font-semibold text-slate-700 dark:text-slate-200">Parolă API</label>
         <InputGroup>
           <InputText
             id="password"
@@ -125,7 +125,7 @@
         </InputGroup>
       </div>
 
-      <div class="flex justify-end gap-2 pt-4 border-t border-slate-100">
+      <div class="flex justify-end gap-2 pt-4 border-t border-slate-100 dark:border-slate-800">
         <Button type="button" label="Anulează" severity="secondary" text @click="showEditDialog = false" />
         <Button type="button" label="Salvează Datele" @click="onSaveServiceClick" />
       </div>
@@ -213,4 +213,3 @@ export default {
   }
 };
 </script>
-

@@ -1,42 +1,42 @@
 <template>
-  <div class="container lg:max-w-7xl mx-auto text-center mt-40">
-    <div class="space-y-8">
-      <h1 class="text-9xl dark:text-white text-gray-800 font-bold">500</h1>
-      <h2 class="text-4xl dark:text-white text-gray-800">
-        Internal Server Error
-      </h2>
-      <p class="dark:text-gray-500 max-w-2xl mx-auto text-gray-800">
-        Upps, Internal server error, this may occur because your hosting service
-        has experienced a response failure
-      </p>
-      <div class="flex gap-5 justify-center">
+  <div class="min-h-[calc(100vh-4rem)] flex items-center justify-center p-4 bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
+    <div class="max-w-md w-full text-center space-y-6 bg-white dark:bg-slate-900 p-8 sm:p-12 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-xl">
+      <div class="w-20 h-20 rounded-2xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mx-auto text-3xl font-mono font-extrabold shadow-inner">
+        500
+      </div>
+      <div class="space-y-2">
+        <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Eroare Internă de Server</h1>
+        <p class="text-sm text-slate-500 dark:text-slate-400">
+          A apărut o problemă neașteptată în timpul procesării cererii. Te rugăm să încerci din nou.
+        </p>
+      </div>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
         <button
-          @click="
-            directTo(
-              'https://www.google.com/search?q=internal server error 500'
-            )
-          "
-          class="bg-primary rounded text-white py-3 px-5"
+          @click="reloadPage"
+          class="inline-flex items-center justify-center gap-2 flex-1 py-3 px-5 rounded-xl font-bold text-sm text-white bg-brand-600 hover:bg-brand-500 shadow-md transition-all"
         >
-          How to fix this?
+          <i class="pi pi-refresh"></i>
+          <span>Reîncarcă Pagina</span>
         </button>
-        <button
-          @click="directTo('')"
-          class="bg-white border dark:bg-gray-800 dark:border-gray-700 rounded dark:text-white py-3 px-5"
+        <router-link
+          to="/"
+          class="inline-flex items-center justify-center gap-2 flex-1 py-3 px-5 rounded-xl font-bold text-sm text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
         >
-          Try Reload
-        </button>
+          <i class="pi pi-home"></i>
+          <span>Acasă</span>
+        </router-link>
       </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
-  export default {
-    methods: {
-      directTo(links: string) {
-        window.location.href = links;
-      },
-    },
-  };
+export default {
+  name: "Page500",
+  methods: {
+    reloadPage() {
+      window.location.reload();
+    }
+  }
+};
 </script>

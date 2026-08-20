@@ -1,5 +1,5 @@
 <template>
-  <div class="overflow-hidden">
+  <div class="overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-200">
     <!-- Hero Section -->
     <section class="relative pt-12 pb-20 md:pt-20 md:pb-32 bg-gradient-to-b from-slate-900 via-slate-900 to-slate-950 text-white overflow-hidden">
       <!-- Background Glow Highlights -->
@@ -116,107 +116,107 @@
     </section>
 
     <!-- Key Metrics Ribbon -->
-    <section class="bg-white border-y border-slate-200 py-10 shadow-sm">
+    <section class="bg-white dark:bg-slate-900 border-y border-slate-200 dark:border-slate-800 py-10 shadow-sm transition-colors duration-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-slate-100">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-y md:divide-y-0 md:divide-x divide-slate-100 dark:divide-slate-800">
           <div class="pt-4 md:pt-0">
-            <p class="text-3xl lg:text-4xl font-extrabold text-brand-600">99.98%</p>
-            <p class="text-sm font-medium text-slate-600 mt-1">Acuratețe Expediere Coletărie</p>
+            <p class="text-3xl lg:text-4xl font-extrabold text-brand-600 dark:text-brand-400">99.98%</p>
+            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-1">Acuratețe Expediere Coletărie</p>
           </div>
           <div class="pt-4 md:pt-0">
-            <p class="text-3xl lg:text-4xl font-extrabold text-primary-600">3x</p>
-            <p class="text-sm font-medium text-slate-600 mt-1">Viteză Crescută de Ambalare</p>
+            <p class="text-3xl lg:text-4xl font-extrabold text-primary-600 dark:text-primary-400">3x</p>
+            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-1">Viteză Crescută de Ambalare</p>
           </div>
           <div class="pt-4 md:pt-0">
-            <p class="text-3xl lg:text-4xl font-extrabold text-emerald-600">&lt; 0.2s</p>
-            <p class="text-sm font-medium text-slate-600 mt-1">Timp Răspuns per Scanare</p>
+            <p class="text-3xl lg:text-4xl font-extrabold text-emerald-600 dark:text-emerald-400">&lt; 0.2s</p>
+            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-1">Timp Răspuns per Scanare</p>
           </div>
           <div class="pt-4 md:pt-0">
-            <p class="text-3xl lg:text-4xl font-extrabold text-indigo-600">500.000+</p>
-            <p class="text-sm font-medium text-slate-600 mt-1">AWB-uri Verificate cu Succes</p>
+            <p class="text-3xl lg:text-4xl font-extrabold text-indigo-600 dark:text-indigo-400">500.000+</p>
+            <p class="text-sm font-medium text-slate-600 dark:text-slate-400 mt-1">AWB-uri Verificate cu Succes</p>
           </div>
         </div>
       </div>
     </section>
 
     <!-- Features Section -->
-    <section id="features" class="py-20 md:py-28 bg-slate-50">
+    <section id="features" class="py-20 md:py-28 bg-slate-50 dark:bg-slate-950 transition-colors duration-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 border border-brand-200 px-3 py-1 rounded-full">
+          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800 px-3.5 py-1 rounded-full shadow-xs">
             Eficiență Fără Compromis
           </span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Tot ce ai nevoie pentru ambalare și verificare fără cusur
           </h2>
-          <p class="text-base sm:text-lg text-slate-600">
+          <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300">
             Platforma ProCheck este proiectată special pentru depozite, magazine online și operatori logistici.
           </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <!-- Feature 1 -->
-          <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-card-hover transition-all duration-300 group">
-            <div class="w-12 h-12 rounded-xl bg-brand-50 text-brand-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white transition-all duration-200">
+          <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-card-hover hover:border-brand-300 dark:hover:border-brand-700 transition-all duration-300 group">
+            <div class="w-12 h-12 rounded-xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-brand-600 group-hover:text-white transition-all duration-200 shadow-inner">
               <i class="pi pi-barcode"></i>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3">Scanare Barcode Ultrarapidă</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Scanare Barcode Ultrarapidă</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               Scanează mii de etichete succesiv fără blocaje. Câmpul de căutare se re-focusează și se curăță automat conform setărilor tale.
             </p>
           </div>
 
           <!-- Feature 2 -->
-          <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-card-hover transition-all duration-300 group">
-            <div class="w-12 h-12 rounded-xl bg-emerald-50 text-emerald-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200">
+          <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-card-hover hover:border-emerald-300 dark:hover:border-emerald-700 transition-all duration-300 group">
+            <div class="w-12 h-12 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-200 shadow-inner">
               <i class="pi pi-volume-up"></i>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3">Feedback Audio Instant</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Feedback Audio Instant</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               Semnale audio clare și distincte pentru colet găsit cu succes, avertisment la colet deja scanat (dublat) sau eroare colet inexistent.
             </p>
           </div>
 
           <!-- Feature 3 -->
-          <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-card-hover transition-all duration-300 group">
-            <div class="w-12 h-12 rounded-xl bg-primary-50 text-primary-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-primary-600 group-hover:text-white transition-all duration-200">
+          <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-card-hover hover:border-primary-300 dark:hover:border-primary-700 transition-all duration-300 group">
+            <div class="w-12 h-12 rounded-xl bg-primary-50 dark:bg-primary-950/60 text-primary-600 dark:text-primary-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-primary-600 group-hover:text-white transition-all duration-200 shadow-inner">
               <i class="pi pi-file-excel"></i>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3">Import & Export Excel (XLSX)</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Import & Export Excel (XLSX)</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               Trage și plasează fișierul generat din platforma de curierat sau ERP. Exportă raportul final cu starea fiecărui colet la sfârșitul zilei.
             </p>
           </div>
 
           <!-- Feature 4 -->
-          <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-card-hover transition-all duration-300 group">
-            <div class="w-12 h-12 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-200">
+          <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-card-hover hover:border-indigo-300 dark:hover:border-indigo-700 transition-all duration-300 group">
+            <div class="w-12 h-12 rounded-xl bg-indigo-50 dark:bg-indigo-950/60 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-200 shadow-inner">
               <i class="pi pi-truck"></i>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3">Sincronizare Sameday API</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Sincronizare Sameday API</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               Conectare directă prin cheie API pentru a prelua comenzile din platforma Sameday și a actualiza automat statusurile.
             </p>
           </div>
 
           <!-- Feature 5 -->
-          <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-card-hover transition-all duration-300 group">
-            <div class="w-12 h-12 rounded-xl bg-amber-50 text-amber-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-amber-600 group-hover:text-white transition-all duration-200">
+          <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-card-hover hover:border-amber-300 dark:hover:border-amber-700 transition-all duration-300 group">
+            <div class="w-12 h-12 rounded-xl bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-amber-600 group-hover:text-white transition-all duration-200 shadow-inner">
               <i class="pi pi-shield"></i>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3">Prevenire Erori & Colete Dublate</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">Prevenire Erori & Colete Dublate</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               Sistemul avertizează imediat dacă un colet a fost scanat anterior sau dacă există discrepanțe între comanda clientului și AWB.
             </p>
           </div>
 
           <!-- Feature 6 -->
-          <div class="bg-white p-8 rounded-2xl border border-slate-200/80 shadow-sm hover:shadow-card-hover transition-all duration-300 group">
-            <div class="w-12 h-12 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-rose-600 group-hover:text-white transition-all duration-200">
+          <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200/80 dark:border-slate-800 shadow-sm hover:shadow-card-hover hover:border-rose-300 dark:hover:border-rose-700 transition-all duration-300 group">
+            <div class="w-12 h-12 rounded-xl bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center text-2xl mb-6 group-hover:scale-110 group-hover:bg-rose-600 group-hover:text-white transition-all duration-200 shadow-inner">
               <i class="pi pi-mobile"></i>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-3">100% Responsiv Desktop & Mobil</h3>
-            <p class="text-sm text-slate-600 leading-relaxed">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white mb-3">100% Responsiv Desktop & Mobil</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               Funcționează impecabil atât pe monitoare mari de depozit, cât și pe tablete industriale sau telefoane mobile cu scanner integrat.
             </p>
           </div>
@@ -225,50 +225,50 @@
     </section>
 
     <!-- How It Works Section -->
-    <section id="how" class="py-20 md:py-28 bg-white border-t border-slate-200">
+    <section id="how" class="py-20 md:py-28 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 transition-colors duration-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-full">
+          <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 px-3.5 py-1 rounded-full shadow-xs">
             Flux de Lucru Simplificat
           </span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Cum funcționează ProCheck în 3 pași
           </h2>
-          <p class="text-base sm:text-lg text-slate-600">
+          <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300">
             Economisește până la 2 ore zilnic per stație de ambalare.
           </p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
           <!-- Step 1 -->
-          <div class="relative bg-slate-50 p-8 rounded-2xl border border-slate-200 flex flex-col items-center text-center space-y-4">
+          <div class="relative bg-slate-50 dark:bg-slate-950 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col items-center text-center space-y-4">
             <div class="w-14 h-14 rounded-full bg-brand-600 text-white font-extrabold text-xl flex items-center justify-center shadow-glow-primary">
               1
             </div>
-            <h3 class="text-xl font-bold text-slate-900">Încarcă AWB-urile</h3>
-            <p class="text-sm text-slate-600">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Încarcă AWB-urile</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400">
               Importă fișierul Excel descărcat din aplicația de curierat sau apasă butonul de sincronizare automată Sameday.
             </p>
           </div>
 
           <!-- Step 2 -->
-          <div class="relative bg-slate-50 p-8 rounded-2xl border border-slate-200 flex flex-col items-center text-center space-y-4">
+          <div class="relative bg-slate-50 dark:bg-slate-950 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col items-center text-center space-y-4">
             <div class="w-14 h-14 rounded-full bg-primary-600 text-white font-extrabold text-xl flex items-center justify-center shadow-glow-primary">
               2
             </div>
-            <h3 class="text-xl font-bold text-slate-900">Scanează Coletele</h3>
-            <p class="text-sm text-slate-600">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Scanează Coletele</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400">
               Folosește cititorul de coduri de bare la împachetare. AWB-urile se marchează instant ca „Pregătit” cu sunet de confirmare.
             </p>
           </div>
 
           <!-- Step 3 -->
-          <div class="relative bg-slate-50 p-8 rounded-2xl border border-slate-200 flex flex-col items-center text-center space-y-4">
+          <div class="relative bg-slate-50 dark:bg-slate-950 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col items-center text-center space-y-4">
             <div class="w-14 h-14 rounded-full bg-emerald-600 text-white font-extrabold text-xl flex items-center justify-center shadow-glow-emerald">
               3
             </div>
-            <h3 class="text-xl font-bold text-slate-900">Validează & Exportă</h3>
-            <p class="text-sm text-slate-600">
+            <h3 class="text-xl font-bold text-slate-900 dark:text-white">Validează & Exportă</h3>
+            <p class="text-sm text-slate-600 dark:text-slate-400">
               Verifică dintr-o privire coletele rămase nepregătite și exportă lista actualizată către curier sau depozit.
             </p>
           </div>
@@ -277,38 +277,38 @@
     </section>
 
     <!-- Pricing Section -->
-    <section id="pricing" class="py-20 md:py-28 bg-slate-50 border-t border-slate-200">
+    <section id="pricing" class="py-20 md:py-28 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 transition-colors duration-200">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="text-center max-w-3xl mx-auto mb-16 space-y-4">
-          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 bg-brand-50 border border-brand-200 px-3 py-1 rounded-full">
+          <span class="text-xs font-bold uppercase tracking-wider text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-950/60 border border-brand-200 dark:border-brand-800 px-3.5 py-1 rounded-full shadow-xs">
             Planuri Accesibile
           </span>
-          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+          <h2 class="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
             Alege planul potrivit pentru volumul tău
           </h2>
-          <p class="text-base sm:text-lg text-slate-600">
+          <p class="text-base sm:text-lg text-slate-600 dark:text-slate-300">
             Toate planurile includ asistență tehnică și actualizări continue.
           </p>
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto items-stretch">
           <!-- Plan Start -->
-          <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div class="space-y-4">
-              <h3 class="text-xl font-bold text-slate-900">Start</h3>
-              <p class="text-sm text-slate-500">Pentru magazine mici și afaceri la început.</p>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white">Start</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400">Pentru magazine mici și afaceri la început.</p>
               <div class="pt-2">
-                <span class="text-4xl font-extrabold text-slate-900">49 lei</span>
-                <span class="text-slate-500 text-sm"> / lună</span>
+                <span class="text-4xl font-extrabold text-slate-900 dark:text-white">49 lei</span>
+                <span class="text-slate-500 dark:text-slate-400 text-sm"> / lună</span>
               </div>
-              <ul class="space-y-3 pt-4 text-sm text-slate-600">
+              <ul class="space-y-3 pt-4 text-sm text-slate-600 dark:text-slate-300">
                 <li class="flex items-center gap-2"><i class="pi pi-check text-emerald-500"></i> Până la 1.000 AWB-uri / lună</li>
                 <li class="flex items-center gap-2"><i class="pi pi-check text-emerald-500"></i> Import & Export Excel XLSX</li>
                 <li class="flex items-center gap-2"><i class="pi pi-check text-emerald-500"></i> Scanare & semnale audio</li>
                 <li class="flex items-center gap-2"><i class="pi pi-check text-emerald-500"></i> Suport prin Email</li>
               </ul>
             </div>
-            <router-link to="/contact" class="mt-8 block text-center px-4 py-2.5 rounded-xl font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">
+            <router-link to="/contact" class="mt-8 block text-center px-4 py-2.5 rounded-xl font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
               Alege Start
             </router-link>
           </div>
@@ -339,21 +339,21 @@
           </div>
 
           <!-- Plan Business / Enterprise -->
-          <div class="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
+          <div class="bg-white dark:bg-slate-900 p-8 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
             <div class="space-y-4">
-              <h3 class="text-xl font-bold text-slate-900">Enterprise</h3>
-              <p class="text-sm text-slate-500">Pentru centre logistice, depozite mari și 3PL.</p>
+              <h3 class="text-xl font-bold text-slate-900 dark:text-white">Enterprise</h3>
+              <p class="text-sm text-slate-500 dark:text-slate-400">Pentru centre logistice, depozite mari și 3PL.</p>
               <div class="pt-2">
-                <span class="text-4xl font-extrabold text-slate-900">Personalizat</span>
+                <span class="text-4xl font-extrabold text-slate-900 dark:text-white">Personalizat</span>
               </div>
-              <ul class="space-y-3 pt-4 text-sm text-slate-600">
+              <ul class="space-y-3 pt-4 text-sm text-slate-600 dark:text-slate-300">
                 <li class="flex items-center gap-2"><i class="pi pi-check text-emerald-500"></i> Multi-depozit & Utilizatori multipli</li>
                 <li class="flex items-center gap-2"><i class="pi pi-check text-emerald-500"></i> Integrări ERP / WMS la comandă</li>
                 <li class="flex items-center gap-2"><i class="pi pi-check text-emerald-500"></i> SLA dedicat & Account manager</li>
                 <li class="flex items-center gap-2"><i class="pi pi-check text-emerald-500"></i> Server privat & Custom branding</li>
               </ul>
             </div>
-            <router-link to="/contact" class="mt-8 block text-center px-4 py-2.5 rounded-xl font-bold text-slate-700 bg-slate-100 hover:bg-slate-200 transition-colors">
+            <router-link to="/contact" class="mt-8 block text-center px-4 py-2.5 rounded-xl font-bold text-slate-700 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors">
               Contactează-ne
             </router-link>
           </div>

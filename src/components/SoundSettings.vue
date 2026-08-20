@@ -119,7 +119,7 @@
 
 <script lang="ts">
 import soundService, { type SoundType, type SoundConfig } from '@/services/sound.services';
-import { toast } from 'vue3-toastify';
+import { toast } from 'vue-sonner';
 
 export default {
   name: "SoundSettings",
