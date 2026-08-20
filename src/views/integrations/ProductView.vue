@@ -3,8 +3,9 @@
     
     <!-- Modern Single Command Bar Header -->
     <div class="sticky top-16 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-b border-slate-200/90 dark:border-slate-800 shadow-sm w-full relative">
-      <div class="px-4 sm:px-6 lg:px-8 py-2.5 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-3 w-full">
-        
+      
+      <!-- DESKTOP COMMAND BAR (>= md) -->
+      <div class="hidden md:flex px-4 sm:px-6 lg:px-8 py-2.5 items-center justify-between gap-3 w-full">
         <!-- Left: Search & Scanner Hub with Dynamic On-Click/Focus Expansion -->
         <div class="flex items-center gap-2 flex-1 min-w-0 max-w-full md:max-w-md lg:max-w-lg transition-all duration-300">
           <!-- Direct AWB Scanner Input -->
@@ -14,7 +15,7 @@
             id="searchHeader"
           >
             <div class="relative flex items-center">
-              <i class="pi pi-barcode absolute left-3 text-brand-600 dark:text-brand-400 text-base"></i>
+              <i class="pi pi-barcode absolute left-3 text-brand-600 dark:text-brand-400 text-base pointer-events-none"></i>
               <input
                 ref="barcodeInput"
                 v-model="searchQueryAWB"
@@ -123,7 +124,7 @@
           <!-- Hidden file input for Excel upload -->
           <input type="file" @change="handleFileUpload" class="hidden" ref="fileInput" accept=".xlsx, .xls">
 
-          <!-- Primary Actions (Import & Save - Icon-Only with Hover Expand & Tooltips) -->
+          <!-- Primary Actions (Import & Save) -->
           <div class="flex items-center gap-1.5">
             <button
               @click="triggerFileInput"
@@ -148,7 +149,7 @@
           <!-- Divider -->
           <div class="h-5 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
 
-          <!-- Secondary Tools Group (Icon-Only with Hover Expand & Tooltips) -->
+          <!-- Secondary Tools Group -->
           <div class="flex items-center gap-0.5 bg-slate-100/90 dark:bg-slate-800/90 p-0.5 rounded-xl border border-slate-200/80 dark:border-slate-700/80 shadow-inner">
             <!-- Export -->
             <button
@@ -161,12 +162,12 @@
               <span class="max-w-0 opacity-0 group-hover:max-w-20 group-hover:opacity-100 group-hover:ml-1.5 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out text-[11px] font-bold">Export</span>
             </button>
 
-            <!-- Live Multi-Device Sync (Connected / Disconnected Dynamic Colors, Dot Removed) -->
+            <!-- Live Multi-Device Sync -->
             <button
               @click="showPairingModal = true"
               class="group flex items-center px-2 py-1.5 rounded-lg text-xs font-bold transition-all hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs"
               :class="liveSyncEnabled ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500 hover:text-slate-600 dark:hover:text-slate-300'"
-              :title="liveSyncEnabled ? 'Live Sync Conectat (Sincronizare activă)' : 'Live Sync Deconectat / Inactiv (Click pentru conectare)'"
+              :title="liveSyncEnabled ? 'Live Sync Conectat' : 'Live Sync Deconectat'"
             >
               <i
                 class="pi pi-sync text-xs shrink-0"
@@ -183,7 +184,7 @@
               @click="soundEnabled = !soundEnabled; saveDataToLocalStorage('soundEnabled', soundEnabled)"
               class="group flex items-center px-2 py-1.5 rounded-lg text-xs font-semibold hover:bg-white dark:hover:bg-slate-700 hover:shadow-xs transition-all"
               :class="soundEnabled ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-400 dark:text-slate-500'"
-              :title="soundEnabled ? 'Sunet activat (click pentru mut)' : 'Sunet dezactivat (click pentru activare)'"
+              :title="soundEnabled ? 'Sunet activat' : 'Sunet dezactivat'"
             >
               <i :class="soundEnabled ? 'pi pi-volume-up text-xs' : 'pi pi-volume-off text-xs'" class="shrink-0"></i>
               <span class="max-w-0 opacity-0 group-hover:max-w-20 group-hover:opacity-100 group-hover:ml-1.5 overflow-hidden whitespace-nowrap transition-all duration-300 ease-out text-[11px] font-bold">{{ soundEnabled ? 'Sunet On' : 'Sunet Off' }}</span>
@@ -211,7 +212,7 @@
             </button>
           </div>
 
-          <!-- View Mode Toggle (Cards vs Table) moved above -->
+          <!-- View Mode Toggle -->
           <div class="flex items-center gap-0.5 bg-slate-100 dark:bg-slate-800 p-0.5 rounded-xl border border-slate-200 dark:border-slate-700 shadow-inner">
             <button
               @click="viewMode = 'grid'"
@@ -230,7 +231,113 @@
               <i class="pi pi-list"></i>
             </button>
           </div>
+        </div>
+      </div>
 
+      <!-- STREAMLINED MOBILE COMMAND BAR (< md) -->
+      <div class="md:hidden px-3 py-2.5 space-y-2">
+        <!-- Row 1: Full-Width Scanner Bar + Options Menu -->
+        <div class="flex items-center gap-1.5">
+          <!-- AWB Scanner Input Mode -->
+          <div v-if="!mobileSearchMode" class="relative flex-1">
+            <i class="pi pi-barcode absolute left-3 top-1/2 -translate-y-1/2 text-brand-600 dark:text-brand-400 text-sm pointer-events-none"></i>
+            <input
+              ref="mobileBarcodeInput"
+              v-model="searchQueryAWB"
+              type="text"
+              class="w-full pl-8 pr-16 py-2 bg-white dark:bg-slate-800 border border-brand-400 dark:border-brand-500 rounded-xl text-xs font-mono font-bold tracking-wider text-slate-900 dark:text-white shadow-xs focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              placeholder="Scanează AWB..."
+              @focus="activSearch = false; searchQuery = ''"
+            />
+            <div class="absolute right-1.5 top-1/2 -translate-y-1/2 flex items-center gap-0.5 z-20">
+              <button
+                v-if="searchQueryAWB"
+                type="button"
+                @click.stop.prevent="clearAwbInput"
+                class="p-1 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+                title="Șterge"
+              >
+                <i class="pi pi-times text-xs"></i>
+              </button>
+              <button
+                type="button"
+                @click.stop.prevent="showCameraScanner = true"
+                class="p-1.5 text-brand-600 dark:text-brand-400 hover:bg-brand-50 dark:hover:bg-slate-700 rounded-lg transition-colors flex items-center justify-center"
+                title="Scanează cu camera"
+              >
+                <i class="pi pi-camera text-base"></i>
+              </button>
+            </div>
+          </div>
+
+          <!-- Client Filter Mode -->
+          <div v-else class="relative flex-1">
+            <i class="pi pi-search absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xs pointer-events-none"></i>
+            <input
+              ref="mobileClientInput"
+              v-model="searchQuery"
+              type="text"
+              class="w-full pl-8 pr-8 py-2 bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 rounded-xl text-xs text-slate-900 dark:text-white shadow-xs focus:outline-none focus:ring-2 focus:ring-brand-500/20"
+              placeholder="Filtru client, oraș..."
+              @focus="activSearch = true; searchQueryAWB = ''"
+            />
+            <button
+              v-if="searchQuery"
+              type="button"
+              @click.stop.prevent="clearClientSearch"
+              class="absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400"
+              title="Șterge"
+            >
+              <i class="pi pi-times text-xs"></i>
+            </button>
+          </div>
+
+          <!-- Toggle between AWB scanner & Client Search -->
+          <button
+            type="button"
+            @click="mobileSearchMode = !mobileSearchMode; activSearch = mobileSearchMode"
+            class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-xs active:scale-95 transition-all shrink-0"
+            :title="mobileSearchMode ? 'Comută la Scanare AWB' : 'Comută la Căutare Text'"
+          >
+            <i :class="mobileSearchMode ? 'pi pi-barcode text-brand-600 dark:text-brand-400 text-sm' : 'pi pi-search text-slate-500 text-sm'"></i>
+          </button>
+
+          <!-- Mobile Options Action Sheet Trigger -->
+          <button
+            type="button"
+            @click="showMobileOptions = true"
+            class="p-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 shadow-xs active:scale-95 transition-all shrink-0"
+            title="Meniu Opțiuni & Instrumente"
+          >
+            <i class="pi pi-ellipsis-v text-sm"></i>
+          </button>
+        </div>
+
+        <!-- Row 2: Status Filter Segmented Control -->
+        <div class="grid grid-cols-3 gap-1 bg-slate-100/90 dark:bg-slate-800/90 p-1 rounded-xl border border-slate-200/80 dark:border-slate-700/80 text-[11px] font-bold">
+          <button
+            @click="activeTab = 'all'"
+            class="py-1.5 px-2 rounded-lg text-center transition-all truncate"
+            :class="activeTab === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-xs' : 'text-slate-600 dark:text-slate-400'"
+          >
+            Toate ({{ products.length }})
+          </button>
+          <button
+            @click="activeTab = 'ready'"
+            class="py-1.5 px-2 rounded-lg text-center transition-all flex items-center justify-center gap-1 truncate"
+            :class="activeTab === 'ready' ? 'bg-emerald-600 text-white shadow-xs' : 'text-emerald-700 dark:text-emerald-400'"
+          >
+            <span class="w-1.5 h-1.5 rounded-full" :class="activeTab === 'ready' ? 'bg-white' : 'bg-emerald-500'"></span>
+            <span>Pregătite ({{ countActive }})</span>
+          </button>
+          <button
+            @click="activeTab = 'pending'"
+            class="py-1.5 px-2 rounded-lg text-center transition-all flex items-center justify-center gap-1 truncate"
+            :class="activeTab === 'pending' ? 'bg-rose-600 text-white shadow-xs' : 'text-rose-700 dark:text-rose-400'"
+          >
+            <span class="w-1.5 h-1.5 rounded-full" :class="activeTab === 'pending' ? 'bg-white' : 'bg-rose-500'"></span>
+            <span>Rămase ({{ products.length - countActive }})</span>
+          </button>
         </div>
       </div>
 
@@ -241,25 +348,32 @@
           :style="{ width: progressPercentage + '%' }"
         ></div>
       </div>
+
+      <!-- Sleek Live Sync Connected Line directly below header (Mobile & Desktop) -->
+      <div
+        v-if="liveSyncEnabled"
+        class="w-full h-[2px] bg-gradient-to-r from-indigo-500 via-sky-400 to-purple-500 animate-pulse transition-all shadow-[0_1px_6px_rgba(99,102,241,0.5)]"
+        title="Live Sync Conectat (Mobil ↔ Desktop)"
+      ></div>
     </div>
 
     <!-- Main Workspace Content -->
     <div class="flex-1 w-full px-4 sm:px-6 lg:px-8 py-6">
       
       <!-- Empty State / Dropzone -->
-      <div v-if="products.length === 0" class="flex flex-col items-center justify-center p-12 bg-white dark:bg-slate-900/70 rounded-3xl border-2 border-dashed border-slate-300 dark:border-slate-800 text-center space-y-4 my-8 shadow-sm max-w-2xl mx-auto">
-        <div class="w-16 h-16 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center text-3xl shadow-inner">
+      <div v-if="products.length === 0" class="flex flex-col items-center justify-center p-6 sm:p-12 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 text-center space-y-3 sm:space-y-4 my-4 sm:my-8 shadow-sm max-w-2xl mx-auto">
+        <div class="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-brand-50 dark:bg-brand-950/60 text-brand-600 dark:text-brand-400 flex items-center justify-center text-2xl sm:text-3xl shadow-inner">
           <i class="pi pi-file-excel"></i>
         </div>
         <div class="space-y-1">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">Niciun colet încărcat</h3>
+          <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">Niciun colet încărcat</h3>
           <p class="text-xs sm:text-sm text-slate-500 dark:text-slate-400 max-w-md">
             Încarcă un fișier Excel (.xlsx) exportat din platforma de curierat pentru a începe scanarea și verificarea coletelor.
           </p>
         </div>
         <button
           @click="triggerFileInput"
-          class="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-bold text-sm text-white bg-gradient-to-r from-brand-600 to-primary-600 hover:from-brand-500 hover:to-primary-500 shadow-md transition-all"
+          class="inline-flex items-center gap-2 px-5 py-2.5 sm:px-6 sm:py-3 rounded-xl font-bold text-xs sm:text-sm text-white bg-gradient-to-r from-brand-600 to-primary-600 hover:from-brand-500 hover:to-primary-500 shadow-md active:scale-95 transition-all"
         >
           <i class="pi pi-upload"></i>
           <span>Selectează Fișier Excel</span>
@@ -556,6 +670,105 @@
       <i class="pi pi-camera text-2xl"></i>
     </button>
 
+    <!-- Mobile Options Bottom Sheet / Dialog -->
+    <Dialog
+      v-model:visible="showMobileOptions"
+      header="Opțiuni & Instrumente"
+      position="bottom"
+      modal
+      :style="{ width: '100vw', maxWidth: '30rem', margin: '0' }"
+      class="rounded-t-3xl dark:bg-slate-900 dark:text-white"
+    >
+      <div class="space-y-2 py-2">
+        <button
+          type="button"
+          @click="triggerFileInput(); showMobileOptions = false"
+          class="w-full flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold text-xs text-slate-800 dark:text-slate-100 transition-colors"
+        >
+          <div class="w-9 h-9 rounded-xl bg-brand-500/10 text-brand-600 dark:text-brand-400 flex items-center justify-center text-base">
+            <i class="pi pi-file-import"></i>
+          </div>
+          <div class="text-left">
+            <div class="font-bold text-xs">Importă Fișier Excel</div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-normal">Încarcă colete din .xlsx sau .xls</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          @click="saveBatchToDb(); showMobileOptions = false"
+          :disabled="products.length === 0 || savingToDb"
+          class="w-full flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold text-xs text-slate-800 dark:text-slate-100 transition-colors disabled:opacity-40"
+        >
+          <div class="w-9 h-9 rounded-xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center text-base">
+            <i class="pi pi-cloud-upload"></i>
+          </div>
+          <div class="text-left">
+            <div class="font-bold text-xs">Salvează în Baza de Date</div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-normal">Arhivează sesiunea curentă în cloud</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          @click="exportData(); showMobileOptions = false"
+          :disabled="products.length === 0"
+          class="w-full flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold text-xs text-slate-800 dark:text-slate-100 transition-colors disabled:opacity-40"
+        >
+          <div class="w-9 h-9 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center text-base">
+            <i class="pi pi-file-excel"></i>
+          </div>
+          <div class="text-left">
+            <div class="font-bold text-xs">Exportă Raport Excel</div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-normal">Descarcă coletele verificate</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          @click="showPairingModal = true; showMobileOptions = false"
+          class="w-full flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold text-xs text-slate-800 dark:text-slate-100 transition-colors"
+        >
+          <div class="w-9 h-9 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-base">
+            <i class="pi pi-qrcode"></i>
+          </div>
+          <div class="text-left">
+            <div class="font-bold text-xs">Sincronizare Telefon ↔ Desktop</div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-normal">{{ liveSyncEnabled ? 'Live Sync Activ (Scanare partajată)' : 'Conectare prin cod QR' }}</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          @click="showSettingsDrawer = true; showMobileOptions = false"
+          class="w-full flex items-center gap-3 p-3 rounded-2xl bg-slate-50 dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 font-bold text-xs text-slate-800 dark:text-slate-100 transition-colors"
+        >
+          <div class="w-9 h-9 rounded-xl bg-slate-500/10 text-slate-600 dark:text-slate-300 flex items-center justify-center text-base">
+            <i class="pi pi-cog"></i>
+          </div>
+          <div class="text-left">
+            <div class="font-bold text-xs">Setări Scaner & Sunet</div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-normal">Lungime AWB, semnale audio și auto-clear</div>
+          </div>
+        </button>
+
+        <button
+          type="button"
+          @click="showClearConfirm = true; showMobileOptions = false"
+          :disabled="products.length === 0"
+          class="w-full flex items-center gap-3 p-3 rounded-2xl bg-rose-50 dark:bg-rose-950/40 hover:bg-rose-100 dark:hover:bg-rose-900/40 font-bold text-xs text-rose-700 dark:text-rose-400 transition-colors disabled:opacity-40"
+        >
+          <div class="w-9 h-9 rounded-xl bg-rose-500/10 text-rose-600 flex items-center justify-center text-base">
+            <i class="pi pi-trash"></i>
+          </div>
+          <div class="text-left">
+            <div class="font-bold text-xs">Resetează Coletele</div>
+            <div class="text-[10px] text-rose-400 font-normal">Șterge lista curentă de verificare</div>
+          </div>
+        </button>
+      </div>
+    </Dialog>
+
     <!-- Camera Scanner Modal -->
     <CameraScannerModal
       v-model="showCameraScanner"
@@ -568,6 +781,14 @@
       :currentAwbList="products"
       @simulate-scan="handleIncomingLiveScan"
     />
+
+    <!-- Small Sleek Horizontal Connected Line on Screen Bottom (Mobile & Desktop) -->
+    <div
+      v-if="liveSyncEnabled"
+      class="fixed bottom-0 inset-x-0 z-30 pointer-events-none"
+    >
+      <div class="w-full h-1 bg-gradient-to-r from-indigo-500 via-sky-400 to-purple-500 shadow-[0_-2px_10px_rgba(99,102,241,0.5)] animate-pulse"></div>
+    </div>
 
   </div>
 </template>
@@ -593,6 +814,8 @@ export default {
     return {
       showCameraScanner: false,
       showPairingModal: false,
+      showMobileOptions: false,
+      mobileSearchMode: false,
       liveSyncEnabled: true,
       savingToDb: false,
       autoSaveDb: false,
@@ -947,8 +1170,39 @@ export default {
     handleCameraScan(scannedAWB: string) {
       this.activSearch = false;
       this.searchQueryAWB = scannedAWB;
+      this.processScannedAWB(scannedAWB);
       if (this.liveSyncEnabled) {
         LiveSyncService.broadcastScan(scannedAWB, this.activStatus, undefined, 'mobile');
+      }
+    },
+    processScannedAWB(rawAWB: string) {
+      if (!rawAWB || this.products.length === 0) return;
+      let clean = rawAWB.trim().toLowerCase();
+      if (this.awbEndWith && clean.endsWith(this.awbEndWith.toLowerCase())) {
+        clean = clean.slice(0, -this.awbEndWith.length);
+      }
+
+      const matches = this.products.filter(p => p.awb && p.awb.trim().toLowerCase().includes(clean));
+      if (matches.length === 1) {
+        const item = matches[0];
+        if (item.status !== this.activStatus) {
+          item.status = this.activStatus;
+          this.sortByStatus(this.products);
+          this.countActive = this.products.filter(p => p.status === this.activStatus).length;
+          item.index = this.countActive;
+          this.saveToLocalStorage(this.products);
+          soundService.playSound('success', this.soundEnabled);
+          this.notifyAWBExist(item.awb, this.delayAutoClear);
+        } else {
+          soundService.playSound('warning', this.soundEnabled);
+          this.notifyAWBDouble(item.awb, 1);
+        }
+      } else if (matches.length > 1) {
+        soundService.playSound('warning', this.soundEnabled);
+        this.notifyAWBDouble(clean, matches.length);
+      } else {
+        soundService.playSound('error', this.soundEnabled);
+        this.notifyAWBError(clean);
       }
     },
     handleIncomingLiveScan(scannedAwb: string) {

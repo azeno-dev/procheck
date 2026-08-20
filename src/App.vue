@@ -203,8 +203,10 @@
 
           <div class="h-5 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
 
-          <!-- Theme Option: Light, Dark, System next to User -->
-          <ThemeSwitcher />
+          <!-- Theme Option: Light, Dark, System next to User (Desktop only, available in mobile drawer) -->
+          <div class="hidden sm:block">
+            <ThemeSwitcher />
+          </div>
 
           <div class="h-5 w-px bg-slate-200 dark:bg-slate-800 hidden sm:block"></div>
 
